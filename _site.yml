@@ -1,0 +1,29 @@
+name: "Longitudinal-2021"
+title: "Applied Longitudinal Data Analysis"
+description: 
+output_dir: "_site"
+navbar:
+  right:
+    - text: "Home"
+      href: index.html
+    - text: "Lectures"
+      menu:
+        - text: "Intro to longitudinal"
+          href: intro.html
+        - text: "MLM refresher"
+          href: MLM.html
+    - text: "Workshops"
+      menu:
+        - text: "ggplot"
+          href: ggplot.html
+        - text: "lme4"
+          href: lme4.html     
+    - text: "Syllabus"
+      href: Syllabus.html
+    - text: "Homeworks"
+      href: Homeworks.html
+    - icon: fab fa-github
+      href: https://github.com/josh-jackson/bayes
+
+
+output: distill::distill_article

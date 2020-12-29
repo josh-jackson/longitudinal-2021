@@ -1,0 +1,19 @@
+{
+  "articles": [
+    {
+      "path": "about.html",
+      "author": [],
+      "contents": "\n\n\n\n",
+      "last_modified": "2020-12-29T13:43:47-06:00"
+    },
+    {
+      "path": "index.html",
+      "title": "Applied Longitudinal Data Analysis",
+      "description": "Updates and Announcements",
+      "author": [],
+      "contents": "\ntest\nTest again.\nThrice for good luck.\n\n\n\n",
+      "last_modified": "2020-12-29T13:43:49-06:00"
+    }
+  ],
+  "collections": []
+}

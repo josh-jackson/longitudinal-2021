@@ -1,0 +1,9 @@
+---
+title: "Applied Longitudinal Data Analysis"
+description: Updates and Announcements
+site: distill::distill_website
+---
+
+1. test 
+2. Test again. 
+3. Thrice for good luck. 
