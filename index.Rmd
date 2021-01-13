@@ -4,4 +4,4 @@ description: Updates and Announcements
 site: distill::distill_website
 ---
 
-Jan 18th. Welcome to the website! 
+Jan 13th. Welcome to the website! 

@@ -98,7 +98,8 @@ wide<- tribble(
 wide
 ```
   
-If we went and tried to pivot_longer we'd end up with  
+If we went and tried to pivot_longer we'd end up with 
+
 ```{r}
 wide %>% 
   pivot_longer(cols = ext_1:ext_3, names_to = "time", values_to = "EXT")
@@ -347,6 +348,9 @@ soep <- soep %>%
                 to = rep(NA, 7), warn_missing = F)))
 paged_table(soep)
 ```
+
+
+mapvalues technically is depreciated and not currently worked on. This is fine, but a newer replacement for it is using dplyr's recode. However, it is does not work well vectorized names so it isn't as useful for our purposes.  
 
 
 ## Reverse-Scoring  

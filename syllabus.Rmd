@@ -6,7 +6,7 @@ output:
     toc_depth: 2
 ---
 
-**Class hours** Monday and Wednesday 1-2:20
+**Class hours** Monday and Wednesday 1-2:20  
 **Instructor**: Joshua Jackson  
 **Office**: Spare Bedroom  
 **Office hours**: By appointment  
