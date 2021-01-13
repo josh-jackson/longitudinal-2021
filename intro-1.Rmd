@@ -1,0 +1,523 @@
+---
+title: "Intro to longitudinal thinking"
+output: xaringan::moon_reader
+---
+```{r, echo=FALSE}
+library(tidyverse)
+```
+
+Goals for today: 
+1. Get a feeling for how to think/talk about longitudinal/repeated measures data
+2. Introduce some important terms
+3. Begin to develop a framework for analysis
+
+---
+## how to think longitudinal-y
+
+.pull-left[
+1. lines/trajectories 
+
+2. variance decomposition 
+]
+
+.pull-right[
+```{r, echo = FALSE}
+simp<- tribble(
+  ~ID,  ~Y, ~time,
+1,5,1,
+1,7,2,
+2,4,1,
+2,6,2,
+3,3,1,
+3,5,2,
+4,2,1,
+4,4,2,
+5,1,1,
+5,3,2)
+ggplot(simp, aes(x=time, y=Y)) +
+    geom_point() 
+```
+]
+
+---
+## Types of change (most common)
+
+Differential / rank order consistency/rank order stability. 
+
+Mean level/ absolute change. 
+
+---
+.pull-left[
+Perfect rank order, mean level increase
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+ ro.ml <- ggplot(simp, aes(x=time, y=Y)) +
+    geom_point() + 
+  stat_summary(fun = mean, geom="line", size = 4)+ geom_smooth(aes(group = ID), method=lm, se=FALSE)
+```
+]
+
+.pull-right[
+No rank order, mean level increase
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+library(tidyverse)
+simp2<- tribble(
+  ~ID,  ~Y, ~time,
+1,1,1,
+1,5,2,
+2,1.5,1,
+2,4.5,2,
+3,2,1,
+3,4,2,
+4,2.5,1,
+4,3.5,2,
+5,3,1,
+5,3,2)
+
+noro.ml<- ggplot(simp2, aes(x=time, y=Y)) +
+    geom_point() +   stat_summary(fun = mean, geom="line", size = 4) + geom_smooth(aes(group = ID), method=lm,  
+                se=FALSE) 
+library(patchwork)
+ro.ml + noro.ml
+
+```
+]
+
+---
+### types of change cont
+
+Individual differences in change. 
+
+Structural.
+
+Variance (or parameters other than location).
+
+Ipsative
+
+---
+## Be precise about change and stability
+
+(Usually) it clearer to refer to the type of change in terms of an equation or pictorially. Putting a word onto it usually causes some confusion, which is why there are a lot of redundant terms in the literature. 
+
+---
+## Thought example
+
+Think of your construct of choice. Can you describe at least 4 ways it can "change"
+
+---
+## Useful qualities
+
+- Interval or greater scale of measurement. We can measures change on non interval or ratio scale but it is more difficult. 
+
+- Construct has the same meaning across measurement occasions. Usually the same items. Called measurement invariance. Complicates developmental work
+
+- 2 or more measurement occasions. More is better! Though often 3 - 10 is practically fine (More is better in terms of people and indicators, too) 
+
+---
+# Defining time metric
+
+Time is the most important part of a longitudinal analyses. The key to interpreting your output is to know how you handled your time variable. 
+
+What is the process that is changing someone? Age? Time in study? Year? Wave? 
+
+Is it a naturally occurring developmental process? Then maybe age is the best metric. What about tracking child's cognitive ability, something that might be influenced by level of schooling? Here grade may be more important than age. If you are running an intervention you may want to put everyone on the same starting metric and then control for nuisance variables like age or schooling level.   
+
+---
+## Example
+.pull-left[
+Using some resting state imaging data, lets think about how we can model and think about this data using our current skills (ie standard regression and plotting)
+
+```{r, echo = FALSE, message=FALSE, warning = FALSE}
+
+example <- read_csv("~/Box/5165 Applied Longitudinal Data Analysis/Longitudinal/example.csv")
+example$year <- example$week
+```
+
+
+```{r,eval = FALSE, message=FALSE, warning = FALSE}
+gg1 <- ggplot(example,
+   aes(x = year, y = SMN7, group = ID)) + geom_point()  
+print(gg1)
+
+```
+]
+
+.pull-right[
+We defined time as year in study. How would this look if we used age? 
+```{r, echo = FALSE, message=FALSE, warning = FALSE}
+gg1 <- ggplot(example,
+   aes(x = year, y = SMN7, group = ID)) + geom_point()  
+print(gg1)
+
+```
+]
+
+---
+.pull-left[
+Do we have repeated assessments per person? Lets find out. 
+
+```{r, eval = FALSE, message=FALSE, warning = FALSE}
+library(viridis)
+ ggplot(example,
+   aes(x = year, y = SMN7, group = ID, colour = ID)) + geom_line(alpha = .4) +scale_color_viridis(   )
+```
+]
+
+.pull-right[
+
+```{r, echo = FALSE, message=FALSE, warning = FALSE}
+library(viridis)
+ ggplot(example,
+   aes(x = year, y = SMN7, group = ID, colour = ID)) + geom_line(alpha = .4) +scale_color_viridis(   )
+```
+
+Note that some people start at different levels. Some people have more data in terms of assessment points and years. Also, the shape of change isn't necessarily a straight line. 
+
+]
+
+---
+We often want to look at this at a per person level to get more info. 
+```{r, warning = FALSE, message=FALSE}
+ggplot(example, aes(x = year, y = SMN7, group = ID)) + geom_line() +  geom_point() + facet_wrap( ~ ID)
+```
+
+---
+.pull-left[
+As part of our dataset we have different groups. A question we may have is if they change differently across time. Lets take a look at this. 
+```{r, eval = FALSE, warning = FALSE, message=FALSE}
+ggplot(example,
+   aes(x = year, y = SMN7, group = ID)) + geom_line() + facet_grid(. ~ group)
+```
+]
+
+.pull-right[
+
+```{r, echo = FALSE, warning = FALSE, message=FALSE}
+ggplot(example,
+   aes(x = year, y = SMN7, group = ID)) + geom_line() + facet_grid(. ~ group)
+```
+
+
+
+]
+
+
+---
+.pull-left[
+Beside the occular technique, we're going to need to do something more to address our theoretical questions. Lets look at some random people in the sample and run some regressions. 
+```{r, eval = FALSE,message= FALSE, warning=FALSE}
+set.seed(11)
+ex.random <- example %>% 
+  dplyr::select(ID) %>% 
+  distinct %>% 
+  sample_n(10) 
+
+example2 <-
+  left_join(ex.random, example)  
+  
+ggplot(example2,
+   aes(x = week, y = SMN7, group = ID)) +  geom_point() + stat_smooth(method="lm") + facet_wrap( ~ID)
+```
+]
+
+.pull-right[
+
+```{r, echo = FALSE, message= FALSE, warning=FALSE}
+set.seed(11)
+ex.random <- example %>% 
+  dplyr::select(ID) %>% 
+  distinct %>% 
+  sample_n(10) 
+
+example2 <-
+  left_join(ex.random, example)  
+  
+ggplot(example2,
+   aes(x = week, y = SMN7, group = ID)) +  geom_point() + stat_smooth(method="lm") + facet_wrap( ~ID)
+```
+]
+
+
+---
+Lets look at individual level regressions
+
+```{r}
+library(tidyverse)
+library(broom)
+
+regressions <- example2 %>% 
+  group_by(ID) %>% 
+  do(tidy(lm(SMN7 ~ week, data=.)))
+
+regressions
+
+```
+
+---
+What can we see? Estimates give us an intercept and regression coefficient for each person. Some people increase across time, some decrease. Some we cannot do statistical tests on -- why? 
+
+Well that is per person. Lets get the average starting value and change per week
+```{r}
+regressions %>% 
+  group_by(term) %>% 
+  summarise(avg.reg = mean(estimate))
+```
+
+---
+Lets plot the average trend across everyone. Start with a best fit line not taking into account that people have repeated measures. 
+
+```{r, warning = FALSE, message = FALSE}
+ggplot(example, aes(x = year, y = SMN7)) + geom_point() + stat_smooth() 
+```
+
+
+--- 
+
+
+```{r,warning = FALSE, message = FALSE}
+ggplot(example, aes(x = year, y = SMN7)) + geom_point() + stat_smooth(method = "lm") 
+```
+
+---
+```{r,warning = FALSE, message = FALSE}
+ggplot(example, aes(x = year, y = SMN7)) + geom_point() + stat_smooth(method = "lm") + facet_grid(. ~ group)
+```
+
+---
+.pull-left[
+```{r,eval=FALSE,warning = FALSE, message = FALSE}
+gg9 <- ggplot(example, aes(x = year, y = SMN7, group = ID)) + geom_point(alpha = 0.05) + stat_smooth(method = "lm", se = FALSE)   
+gg10 <- gg9 +  stat_smooth(data = example, aes(x = year, y = SMN7, group=1, color = "black"), method = "lm", size = 2) + guides(fill=FALSE)
+
+gg11 <- gg10 + facet_grid(.~ group) + theme(legend.position="none")
+
+gg11
+
+```
+]
+
+.pull-right[
+
+```{r,echo=FALSE,warning = FALSE, message = FALSE}
+gg9 <- ggplot(example, aes(x = year, y = SMN7, group = ID)) + geom_point(alpha = 0.05) + stat_smooth(method = "lm", se = FALSE)   
+gg10 <- gg9 +  stat_smooth(data = example, aes(x = year, y = SMN7, group=1, color = "black"), method = "lm", size = 2) + guides(fill=FALSE)
+
+gg11 <- gg10 + facet_grid(.~ group) + theme(legend.position="none")
+
+gg11
+
+```
+
+]
+
+
+---
+## Using MLM to examine 
+aka HLM, aka mixed effects, aka random effects.  
+
+Why? BC we would 1. violate standard regression assumptions. 2. because of the flexibility
+
+Splits the model into two components:   
+mean and variance   
+location and scale  
+fixed and random  
+constant (across people) and varying (across people)  
+
+---
+## Terminology again
+
+General Linear Models  
+GeneralIZED Linear Models  
+General Linear Mixed Models  
+GeneralIZED Linear Mixed Models  
+  
+Mixed means both fixed and random effects   
+"...IZED" means gaussian and other data generating processes 
+
+---
+## what about SEM? 
+MLM and SEM can be equivalent. 
+
+We will start with MLM/HLM is a simple extension of standard regression models. Best suited to run models when the time of measurement differs from person to person (compared to equal intervals). MLM is also better suited for complex error structures and complex nesting above and beyond assessments within person
+
+SEMs two primary advantages are the ability to account for measurement error via latent variables and incorporating multiple DVs. 
+
+---
+## Why not RM ANOVA? 
+tl;dr: it is less flexible. Antiquated method. 
+1. Cannot handle missing data
+2. Assumes rate of change is the same for all individuals.
+3. Time is categorical. 
+4. Accounting for correlation across time uses up many parameters (df penalty).
+5. Handles various types of predictors - continuous vs nominal & static vs dynamic
+6. Special case of MLM, might as well learn/use flexible model
+
+---
+## Modeling dependency
+
+We have multiple DVs per person with longitudinal data. If we ignored the person aspect, the residuals would likely be related, violating standard regression assumption. MLM accounts for residuals for outcomes from the same person through modeling different "levels" (of random effects).
+
+To have a “level”, there must be random outcome variation left over. With longitudinal data we have people nested in observations. 
+
+Level 1: observation level (observation specific variance)  
+Level 2: person level (person specific variance)  
+
+---
+### Person specific variance
+.pull-left[
+Some people start at different levels and some people change at different rates
+]
+
+.pull-right[
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+ggplot(example, aes(x = year, y = SMN7, group = ID, colour = ID)) + stat_smooth(method = "lm", se = FALSE, alpha = .5) +scale_color_viridis()
+```
+]
+
+---
+### Observation level variance
+.pull-left[
+After account for a person starting level and their slope, there is still residual variance left over. 
+]
+
+.pull-right[
+```{r, echo = FALSE, message= FALSE, warning=FALSE}
+ob.var <- example %>% 
+  filter(ID %in% c("67","82", "110")) 
+
+example3 <-
+  left_join(ob.var, example)  
+  
+ggplot(example3,
+   aes(x = week, y = SMN7, group = ID)) +  geom_point() + stat_smooth(method="lm") + facet_wrap( ~ID)
+```
+]
+
+
+---
+## Thinking about variation 
+A goal of longitudinal data analysis (and all other data analysis) is to explain this variation. We will fit models that are more constrained (makes assumptions about the shape of change across people) to see if that increases or reduces variation at the two levels. 
+
+To the extent that we can put variance into different "piles" (eg people change at different rates) we will have more explained variance and less unexplained variance. Less unexplained variance means our model fits better ie it represents our data better
+
+---
+## Speaking of variation 
+
+Between-Person (BP) Variation:  
+Level-2 – “INTER-individual Differences” - Time-Invariant   
+BP = More/less than other people  
+
+
+Within-Person (WP) Variation:  
+Level-1 – “INTRA-individual Differences” – Time-Varying  
+WP = more/less than one’s average  
+
+Any variable measured over time usually has both BP and WP variation. People who vary in positive emotion may be higher in PE. If we did not separate the two and only looked at WP then we will introduce bias. 
+
+
+---
+### Within person focus
+
+Within-Person Change: Systematic change
+Magnitude or direction of change can be different across individuals. Can refer to between person (inter individual differences) in within person change (intra individual)
+
+Within-Person Fluctuation: No systematic change
+Outcome just varies/fluctuates over time (e.g., emotion, stress). Time is just a way to get lots of data per individual
+
+
+---
+
+---
+## Why longitudinal? 
+At least 7 reasons:
+
+1. Identification of intraindividual change (and stability). Do people increase or decrease with time or age. Is this pattern monotonic? Should this best be conceptualized as a stable process or something that is more dynamic? On average how do people change? Ex: people decline in cognitive ability across time. 
+
+2. Inter-individual differences in intraindividual change. Does everyone change the same? Do some people start higher but change less? Do some increase while some decrease? Ex: not all people people decline in cognitive ability across time, but some do. 
+
+3. Examine joint relationship among intraindividual change for two or more constructs. If variable X goes up does variable Y also go up across time? Does this always happen or only during certain times? Is this association due to a third variable or does it mean that change occurs for similar reasons? Ex: changes in cognitive ability are associated with changes in health across time.   
+
+---
+
+4. Determinants of intraindividual change. What are the repeated experiences that can push construct X around. Do these have similar effects at all times? Ex: people declinein cognitive ability across time. Ex: I have better memory compared to other times when I engage in cognitive activities vs times that I do not.   
+
+5. Determinants of interindividual differences in intraindividual change. Do events, background characteristics, interventions or other between person characteristic shape why certain people change while others don't? Ex: people decline less in cognitive ability across time if tend to do cognitively engaging activities.  
+
+6. Inter-individual differences in intraindividual fluctuation and determinants of intraindividual fluctuation. Does everyone vary the same? Why are some more variable than others? Ex: Someone who is depressed fluctuates more in happiness than someone who is not depressed
+
+7. Are there different classes/populations/mixtures of intraindividual change? Ex: do people who decrease vs don't in cognitive ability across time exist as different groups? (Vs construing differences as on a continuum). 
+
+
+---
+## Design considerations
+
+1. Number of assessment waves
+
+Remember high school algebra: two points define a line. But, that assumes we can measure constructs without error. Three assessment points will better define changes in psychological variables. As a default, you need three waves of data to use MLM models. However, some simplifications can be made with MLM. Two wave assessments are mostly better with SEM approaches. 
+
+---
+2. Scale of measurement
+Measurement is always the basis for good quantitative analysis. Without good measurement you are just spitting into the wind. Standard measurement concerns remain (reliability, dimensionality) but extra concerns exist with longitudinal data. 
+
+What does it mean for categorical variables to change over time? Can you imagine a trajectory for what this is measuring? 
+
+What about ranks, such as in preference for school subjects? What if the class composition changes -- what is this assessing? Given that ranks are related such that if I increase someone has to decrease, how does that impact change assessments?   
+
+Can I analyze childhood and adult variables simultaneously if assess the same construct, even though they may be measured differently? How can you measure change in the same construct but with different measures? To assess math ability in 5 year olds you can ask them about addition, can you do that in a sample of 20 year olds? 
+
+
+---
+3. Standardizing
+It is standard practice to z-score to get standardized responses. However, it is not straight forward to do so when using longitudinal data. Why would z-scoring your variables be problematic? 
+
+First, if you scale for age, for example, this takes out a potential explanatory variable. 
+
+Second, it also can add error if not everyone is standardized consistently (say if standardization is across age groups and someone just misses a cut). 
+
+Third, is that you take away the mean for each assessment such that the expected change across time is zero.  
+
+---
+4. Reliability 
+
+The goal of longitudinal analyses is to understand why some construct changes or stays the same across time. A major difficulty in addressing this goal is whether you are able to accurately assess the construct of interest. To the extent that your measure is reliable it assesses true score variance as opposed to error variance. The amount of error score variance assessed is important given that error variance will masquerade as change across time.
+
+
+Reliability of the change estimate depends on how much error there is in the assessment and the number of waves. These two components are similar to inter item correlation and number of items being the two main components that effect reliability in cross sectional analyses. 
+
+---
+5. Measurement invariance
+
+Do you assess the same construct at each time? What would happen if we looked at change in IQ from 1st grade to 12 grade and used the first grade IQ test at each time? The construct that you assessed at the first wave is likely not the same assessed later. 
+
+To test this formally is called measurement invariance and is typically done through SEM.  Often there is a large assumption that what we are measuring now is the same at each wave of assessment.  
+
+
+---
+## Threats to validity
+
+1. Missing data
+Missing completely at random (MCAR) means that the missingness pattern is due entirely to randomness
+
+Missing at random (MAR) means that there is conditional randomness. Missingness may be due to other variables in the dataset. 
+
+Not missing at random (NMAR) means that the missingness is systematic based on the missing values and not associated with measured variables. For example, in a study of reading ability, kids with low reading ability drop out, due to not liking to take tests on reading ability. 
+
+Typically, we make the assumption we are working under MAR and thus we will have unbiased estimates when predictors of missingness are incorporated into the model. 
+
+---
+2. Attrition/Mortality
+Major contributor to missing data
+
+3. History/cohort effects
+Know that the processes driving change can be due to a specific event or cohort.
+
+4. Maturation 
+Change may occur because of natural processes. Thus if you just follow someone across time they will likely change irregardless of say, if they are in the control group.
+
+---
+5. Testing 
+Having people take the same survey, test or interview multiple times may lead them to respond differently. Does that change result from development or does it result from them being familiar with the test? 
+
+6. Selection 
+If you are looking at life events, know that life events are not distributed randomly. Moreover, people who stay in studies and even sign up for studies are different from those that do not. As a result, it is often hard to make internally valid inferences with longitudinal data. 
+
+

@@ -1,0 +1,3550 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"/>
+  <meta name="generator" content="distill" />
+
+  <style type="text/css">
+  /* Hide doc at startup (prevent jankiness while JS renders/transforms) */
+  body {
+    visibility: hidden;
+  }
+  </style>
+
+ <!--radix_placeholder_import_source-->
+ <!--/radix_placeholder_import_source-->
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ad0000; } /* Alert */
+code span.an { color: #5e5e5e; } /* Annotation */
+code span.at { color: #20794d; } /* Attribute */
+code span.bn { color: #ad0000; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007ba5; } /* ControlFlow */
+code span.ch { color: #20794d; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #5e5e5e; } /* Comment */
+code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+code span.dt { color: #ad0000; } /* DataType */
+code span.dv { color: #ad0000; } /* DecVal */
+code span.er { color: #ad0000; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #ad0000; } /* Float */
+code span.fu { color: #4758ab; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #5e5e5e; } /* Information */
+code span.kw { color: #007ba5; } /* Keyword */
+code span.op { color: #5e5e5e; } /* Operator */
+code span.ot { color: #007ba5; } /* Other */
+code span.pp { color: #ad0000; } /* Preprocessor */
+code span.sc { color: #20794d; } /* SpecialChar */
+code span.ss { color: #20794d; } /* SpecialString */
+code span.st { color: #20794d; } /* String */
+code span.va { color: #111111; } /* Variable */
+code span.vs { color: #20794d; } /* VerbatimString */
+code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+</style>
+
+  <!--radix_placeholder_meta_tags-->
+  <title>Applied Longitudinal Data Analysis: Working with data</title>
+
+
+
+
+  <!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
+  <meta property="og:title" content="Applied Longitudinal Data Analysis: Working with data"/>
+  <meta property="og:type" content="article"/>
+  <meta property="og:locale" content="en_US"/>
+  <meta property="og:site_name" content="Applied Longitudinal Data Analysis"/>
+
+  <!--  https://dev.twitter.com/cards/types/summary -->
+  <meta property="twitter:card" content="summary"/>
+  <meta property="twitter:title" content="Applied Longitudinal Data Analysis: Working with data"/>
+
+  <!--/radix_placeholder_meta_tags-->
+  <!--radix_placeholder_rmarkdown_metadata-->
+
+  <script type="text/json" id="radix-rmarkdown-metadata">
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","output"]}},"value":[{"type":"character","attributes":{},"value":["Working with data"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["toc","toc_depth"]}},"value":[{"type":"logical","attributes":{},"value":[true]},{"type":"integer","attributes":{},"value":[2]}]}]}]}
+  </script>
+  <!--/radix_placeholder_rmarkdown_metadata-->
+  <!--radix_placeholder_navigation_in_header-->
+  <meta name="distill:offset" content=""/>
+
+  <script type="application/javascript">
+
+    window.headroom_prevent_pin = false;
+
+    window.document.addEventListener("DOMContentLoaded", function (event) {
+
+      // initialize headroom for banner
+      var header = $('header').get(0);
+      var headerHeight = header.offsetHeight;
+      var headroom = new Headroom(header, {
+        tolerance: 5,
+        onPin : function() {
+          if (window.headroom_prevent_pin) {
+            window.headroom_prevent_pin = false;
+            headroom.unpin();
+          }
+        }
+      });
+      headroom.init();
+      if(window.location.hash)
+        headroom.unpin();
+      $(header).addClass('headroom--transition');
+
+      // offset scroll location for banner on hash change
+      // (see: https://github.com/WickyNilliams/headroom.js/issues/38)
+      window.addEventListener("hashchange", function(event) {
+        window.scrollTo(0, window.pageYOffset - (headerHeight + 25));
+      });
+
+      // responsive menu
+      $('.distill-site-header').each(function(i, val) {
+        var topnav = $(this);
+        var toggle = topnav.find('.nav-toggle');
+        toggle.on('click', function() {
+          topnav.toggleClass('responsive');
+        });
+      });
+
+      // nav dropdowns
+      $('.nav-dropbtn').click(function(e) {
+        $(this).next('.nav-dropdown-content').toggleClass('nav-dropdown-active');
+        $(this).parent().siblings('.nav-dropdown')
+           .children('.nav-dropdown-content').removeClass('nav-dropdown-active');
+      });
+      $("body").click(function(e){
+        $('.nav-dropdown-content').removeClass('nav-dropdown-active');
+      });
+      $(".nav-dropdown").click(function(e){
+        e.stopPropagation();
+      });
+    });
+  </script>
+
+  <style type="text/css">
+
+  /* Theme (user-documented overrideables for nav appearance) */
+
+  .distill-site-nav {
+    color: rgba(255, 255, 255, 0.8);
+    background-color: #0F2E3D;
+    font-size: 15px;
+    font-weight: 300;
+  }
+
+  .distill-site-nav a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .distill-site-nav a:hover {
+    color: white;
+  }
+
+  @media print {
+    .distill-site-nav {
+      display: none;
+    }
+  }
+
+  .distill-site-header {
+
+  }
+
+  .distill-site-footer {
+
+  }
+
+
+  /* Site Header */
+
+  .distill-site-header {
+    width: 100%;
+    box-sizing: border-box;
+    z-index: 3;
+  }
+
+  .distill-site-header .nav-left {
+    display: inline-block;
+    margin-left: 8px;
+  }
+
+  @media screen and (max-width: 768px) {
+    .distill-site-header .nav-left {
+      margin-left: 0;
+    }
+  }
+
+
+  .distill-site-header .nav-right {
+    float: right;
+    margin-right: 8px;
+  }
+
+  .distill-site-header a,
+  .distill-site-header .title {
+    display: inline-block;
+    text-align: center;
+    padding: 14px 10px 14px 10px;
+  }
+
+  .distill-site-header .title {
+    font-size: 18px;
+    min-width: 150px;
+  }
+
+  .distill-site-header .logo {
+    padding: 0;
+  }
+
+  .distill-site-header .logo img {
+    display: none;
+    max-height: 20px;
+    width: auto;
+    margin-bottom: -4px;
+  }
+
+  .distill-site-header .nav-image img {
+    max-height: 18px;
+    width: auto;
+    display: inline-block;
+    margin-bottom: -3px;
+  }
+
+
+
+  @media screen and (min-width: 1000px) {
+    .distill-site-header .logo img {
+      display: inline-block;
+    }
+    .distill-site-header .nav-left {
+      margin-left: 20px;
+    }
+    .distill-site-header .nav-right {
+      margin-right: 20px;
+    }
+    .distill-site-header .title {
+      padding-left: 12px;
+    }
+  }
+
+
+  .distill-site-header .nav-toggle {
+    display: none;
+  }
+
+  .nav-dropdown {
+    display: inline-block;
+    position: relative;
+  }
+
+  .nav-dropdown .nav-dropbtn {
+    border: none;
+    outline: none;
+    color: rgba(255, 255, 255, 0.8);
+    padding: 16px 10px;
+    background-color: transparent;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    margin: 0;
+    margin-top: 1px;
+    z-index: 2;
+  }
+
+  .nav-dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 200px;
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 4px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.1);
+    z-index: 1;
+    margin-top: 2px;
+    white-space: nowrap;
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+
+  .nav-dropdown-content hr {
+    margin-top: 4px;
+    margin-bottom: 4px;
+    border: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .nav-dropdown-active {
+    display: block;
+  }
+
+  .nav-dropdown-content a, .nav-dropdown-content .nav-dropdown-header {
+    color: black;
+    padding: 6px 24px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+  }
+
+  .nav-dropdown-content .nav-dropdown-header {
+    display: block;
+    padding: 5px 24px;
+    padding-bottom: 0;
+    text-transform: uppercase;
+    font-size: 14px;
+    color: #999999;
+    white-space: nowrap;
+  }
+
+  .nav-dropdown:hover .nav-dropbtn {
+    color: white;
+  }
+
+  .nav-dropdown-content a:hover {
+    background-color: #ddd;
+    color: black;
+  }
+
+  .nav-right .nav-dropdown-content {
+    margin-left: -45%;
+    right: 0;
+  }
+
+  @media screen and (max-width: 768px) {
+    .distill-site-header a, .distill-site-header .nav-dropdown  {display: none;}
+    .distill-site-header a.nav-toggle {
+      float: right;
+      display: block;
+    }
+    .distill-site-header .title {
+      margin-left: 0;
+    }
+    .distill-site-header .nav-right {
+      margin-right: 0;
+    }
+    .distill-site-header {
+      overflow: hidden;
+    }
+    .nav-right .nav-dropdown-content {
+      margin-left: 0;
+    }
+  }
+
+
+  @media screen and (max-width: 768px) {
+    .distill-site-header.responsive {position: relative; min-height: 500px; }
+    .distill-site-header.responsive a.nav-toggle {
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+    .distill-site-header.responsive a,
+    .distill-site-header.responsive .nav-dropdown {
+      display: block;
+      text-align: left;
+    }
+    .distill-site-header.responsive .nav-left,
+    .distill-site-header.responsive .nav-right {
+      width: 100%;
+    }
+    .distill-site-header.responsive .nav-dropdown {float: none;}
+    .distill-site-header.responsive .nav-dropdown-content {position: relative;}
+    .distill-site-header.responsive .nav-dropdown .nav-dropbtn {
+      display: block;
+      width: 100%;
+      text-align: left;
+    }
+  }
+
+  /* Site Footer */
+
+  .distill-site-footer {
+    width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+    z-index: 3;
+    margin-top: 30px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    text-align: center;
+  }
+
+  /* Headroom */
+
+  d-title {
+    padding-top: 6rem;
+  }
+
+  @media print {
+    d-title {
+      padding-top: 4rem;
+    }
+  }
+
+  .headroom {
+    z-index: 1000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+  }
+
+  .headroom--transition {
+    transition: all .4s ease-in-out;
+  }
+
+  .headroom--unpinned {
+    top: -100px;
+  }
+
+  .headroom--pinned {
+    top: 0;
+  }
+
+  /* adjust viewport for navbar height */
+  /* helps vertically center bootstrap (non-distill) content */
+  .min-vh-100 {
+    min-height: calc(100vh - 100px) !important;
+  }
+
+  </style>
+
+  <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+  <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet"/>
+  <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet"/>
+  <script src="site_libs/headroom-0.9.4/headroom.min.js"></script>
+  <script src="site_libs/autocomplete-0.37.1/autocomplete.min.js"></script>
+  <script src="site_libs/fuse-6.4.1/fuse.min.js"></script>
+
+  <script type="application/javascript">
+
+  function getMeta(metaName) {
+    var metas = document.getElementsByTagName('meta');
+    for (let i = 0; i < metas.length; i++) {
+      if (metas[i].getAttribute('name') === metaName) {
+        return metas[i].getAttribute('content');
+      }
+    }
+    return '';
+  }
+
+  function offsetURL(url) {
+    var offset = getMeta('distill:offset');
+    return offset ? offset + '/' + url : url;
+  }
+
+  function createFuseIndex() {
+
+    // create fuse index
+    var options = {
+      keys: [
+        { name: 'title', weight: 20 },
+        { name: 'categories', weight: 15 },
+        { name: 'description', weight: 10 },
+        { name: 'contents', weight: 5 },
+      ],
+      ignoreLocation: true,
+      threshold: 0
+    };
+    var fuse = new window.Fuse([], options);
+
+    // fetch the main search.json
+    return fetch(offsetURL('search.json'))
+      .then(function(response) {
+        if (response.status == 200) {
+          return response.json().then(function(json) {
+            // index main articles
+            json.articles.forEach(function(article) {
+              fuse.add(article);
+            });
+            // download collections and index their articles
+            return Promise.all(json.collections.map(function(collection) {
+              return fetch(offsetURL(collection)).then(function(response) {
+                if (response.status === 200) {
+                  return response.json().then(function(articles) {
+                    articles.forEach(function(article) {
+                      fuse.add(article);
+                    });
+                  })
+                } else {
+                  return Promise.reject(
+                    new Error('Unexpected status from search index request: ' +
+                              response.status)
+                  );
+                }
+              });
+            })).then(function() {
+              return fuse;
+            });
+          });
+
+        } else {
+          return Promise.reject(
+            new Error('Unexpected status from search index request: ' +
+                        response.status)
+          );
+        }
+      });
+  }
+
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+
+    // get search element (bail if we don't have one)
+    var searchEl = window.document.getElementById('distill-search');
+    if (!searchEl)
+      return;
+
+    createFuseIndex()
+      .then(function(fuse) {
+
+        // make search box visible
+        searchEl.classList.remove('hidden');
+
+        // initialize autocomplete
+        var options = {
+          autoselect: true,
+          hint: false,
+          minLength: 2,
+        };
+        window.autocomplete(searchEl, options, [{
+          source: function(query, callback) {
+            const searchOptions = {
+              isCaseSensitive: false,
+              shouldSort: true,
+              minMatchCharLength: 2,
+              limit: 10,
+            };
+            var results = fuse.search(query, searchOptions);
+            callback(results
+              .map(function(result) { return result.item; })
+              .filter(function(item) { return !!item.description; })
+            );
+          },
+          templates: {
+            suggestion: function(suggestion) {
+              var img = suggestion.preview && Object.keys(suggestion.preview).length > 0
+                ? `<img src="${offsetURL(suggestion.preview)}"</img>`
+                : '';
+              var html = `
+                <div class="search-item">
+                  <h3>${suggestion.title}</h3>
+                  <div class="search-item-description">
+                    ${suggestion.description}
+                  </div>
+                  <div class="search-item-preview">
+                    ${img}
+                  </div>
+                </div>
+              `;
+              return html;
+            }
+          }
+        }]).on('autocomplete:selected', function(event, suggestion) {
+          window.location.href = offsetURL(suggestion.path);
+        });
+        // remove inline display style on autocompleter (we want to
+        // manage responsive display via css)
+        $('.algolia-autocomplete').css("display", "");
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+
+  });
+
+  </script>
+
+  <style type="text/css">
+
+  .nav-search {
+    font-size: x-small;
+  }
+
+  /* Algolioa Autocomplete */
+
+  .algolia-autocomplete {
+    display: inline-block;
+    margin-left: 10px;
+    vertical-align: sub;
+    background-color: white;
+    color: black;
+    padding: 6px;
+    padding-top: 8px;
+    padding-bottom: 0;
+    border-radius: 6px;
+    border: 1px #0F2E3D solid;
+    width: 180px;
+  }
+
+
+  @media screen and (max-width: 768px) {
+    .distill-site-nav .algolia-autocomplete {
+      display: none;
+      visibility: hidden;
+    }
+    .distill-site-nav.responsive .algolia-autocomplete {
+      display: inline-block;
+      visibility: visible;
+    }
+    .distill-site-nav.responsive .algolia-autocomplete .aa-dropdown-menu {
+      margin-left: 0;
+      width: 400px;
+      max-height: 400px;
+    }
+  }
+
+  .algolia-autocomplete .aa-input, .algolia-autocomplete .aa-hint {
+    width: 90%;
+    outline: none;
+    border: none;
+  }
+
+  .algolia-autocomplete .aa-hint {
+    color: #999;
+  }
+  .algolia-autocomplete .aa-dropdown-menu {
+    width: 550px;
+    max-height: 70vh;
+    overflow-x: visible;
+    overflow-y: scroll;
+    padding: 5px;
+    margin-top: 3px;
+    margin-left: -150px;
+    background-color: #fff;
+    border-radius: 5px;
+    border: 1px solid #999;
+    border-top: none;
+  }
+
+  .algolia-autocomplete .aa-dropdown-menu .aa-suggestion {
+    cursor: pointer;
+    padding: 5px 4px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .algolia-autocomplete .aa-dropdown-menu .aa-suggestion:last-of-type {
+    border-bottom: none;
+    margin-bottom: 2px;
+  }
+
+  .algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item {
+    overflow: hidden;
+    font-size: 0.8em;
+    line-height: 1.4em;
+  }
+
+  .algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item h3 {
+    margin-block-start: 0;
+    margin-block-end: 5px;
+  }
+
+  .algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-description {
+    display: inline-block;
+    overflow: hidden;
+    height: 2.8em;
+    width: 80%;
+    margin-right: 4%;
+  }
+
+  .algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-preview {
+    display: inline-block;
+    width: 15%;
+  }
+
+  .algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-preview img {
+    height: 3em;
+    width: auto;
+    display: none;
+  }
+
+  .algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-preview img[src] {
+    display: initial;
+  }
+
+  .algolia-autocomplete .aa-dropdown-menu .aa-suggestion.aa-cursor {
+    background-color: #eee;
+  }
+  .algolia-autocomplete .aa-dropdown-menu .aa-suggestion em {
+    font-weight: bold;
+    font-style: normal;
+  }
+
+  </style>
+
+
+  <!--/radix_placeholder_navigation_in_header-->
+  <!--radix_placeholder_distill-->
+
+  <style type="text/css">
+
+  body {
+    background-color: white;
+  }
+
+  .pandoc-table {
+    width: 100%;
+  }
+
+  .pandoc-table>caption {
+    margin-bottom: 10px;
+  }
+
+  .pandoc-table th:not([align]) {
+    text-align: left;
+  }
+
+  .pagedtable-footer {
+    font-size: 15px;
+  }
+
+  d-byline .byline {
+    grid-template-columns: 2fr 2fr;
+  }
+
+  d-byline .byline h3 {
+    margin-block-start: 1.5em;
+  }
+
+  d-byline .byline .authors-affiliations h3 {
+    margin-block-start: 0.5em;
+  }
+
+  .authors-affiliations .orcid-id {
+    width: 16px;
+    height:16px;
+    margin-left: 4px;
+    margin-right: 4px;
+    vertical-align: middle;
+    padding-bottom: 2px;
+  }
+
+  d-title .dt-tags {
+    margin-top: 1em;
+    grid-column: text;
+  }
+
+  .dt-tags .dt-tag {
+    text-decoration: none;
+    display: inline-block;
+    color: rgba(0,0,0,0.6);
+    padding: 0em 0.4em;
+    margin-right: 0.5em;
+    margin-bottom: 0.4em;
+    font-size: 70%;
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: 3px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  d-article table.gt_table td,
+  d-article table.gt_table th {
+    border-bottom: none;
+  }
+
+  .html-widget {
+    margin-bottom: 2.0em;
+  }
+
+  .l-screen-inset {
+    padding-right: 16px;
+  }
+
+  .l-screen .caption {
+    margin-left: 10px;
+  }
+
+  .shaded {
+    background: rgb(247, 247, 247);
+    padding-top: 20px;
+    padding-bottom: 20px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .shaded .html-widget {
+    margin-bottom: 0;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .shaded .shaded-content {
+    background: white;
+  }
+
+  .text-output {
+    margin-top: 0;
+    line-height: 1.5em;
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  d-article {
+    padding-top: 2.5rem;
+    padding-bottom: 30px;
+  }
+
+  d-appendix {
+    padding-top: 30px;
+  }
+
+  d-article>p>img {
+    width: 100%;
+  }
+
+  d-article h2 {
+    margin: 1rem 0 1.5rem 0;
+  }
+
+  d-article h3 {
+    margin-top: 1.5rem;
+  }
+
+  d-article iframe {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    margin-bottom: 2.0em;
+    width: 100%;
+  }
+
+  /* Tweak code blocks */
+
+  d-article div.sourceCode code,
+  d-article pre code {
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  }
+
+  d-article pre,
+  d-article div.sourceCode,
+  d-article div.sourceCode pre {
+    overflow: auto;
+  }
+
+  d-article div.sourceCode {
+    background-color: white;
+  }
+
+  d-article div.sourceCode pre {
+    padding-left: 10px;
+    font-size: 12px;
+    border-left: 2px solid rgba(0,0,0,0.1);
+  }
+
+  d-article pre {
+    font-size: 12px;
+    color: black;
+    background: none;
+    margin-top: 0;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    word-wrap: normal;
+    line-height: 1.5;
+
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+  }
+
+  d-article pre a {
+    border-bottom: none;
+  }
+
+  d-article pre a:hover {
+    border-bottom: none;
+    text-decoration: underline;
+  }
+
+  @media(min-width: 768px) {
+
+  d-article pre,
+  d-article div.sourceCode,
+  d-article div.sourceCode pre {
+    overflow: visible !important;
+  }
+
+  d-article div.sourceCode pre {
+    padding-left: 18px;
+    font-size: 14px;
+  }
+
+  d-article pre {
+    font-size: 14px;
+  }
+
+  }
+
+  figure img.external {
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
+    padding: 18px;
+    box-sizing: border-box;
+  }
+
+  /* CSS for d-contents */
+
+  .d-contents {
+    grid-column: text;
+    color: rgba(0,0,0,0.8);
+    font-size: 0.9em;
+    padding-bottom: 1em;
+    margin-bottom: 1em;
+    padding-bottom: 0.5em;
+    margin-bottom: 1em;
+    padding-left: 0.25em;
+    justify-self: start;
+  }
+
+  @media(min-width: 1000px) {
+    .d-contents.d-contents-float {
+      height: 0;
+      grid-column-start: 1;
+      grid-column-end: 4;
+      justify-self: center;
+      padding-right: 3em;
+      padding-left: 2em;
+    }
+  }
+
+  .d-contents nav h3 {
+    font-size: 18px;
+    margin-top: 0;
+    margin-bottom: 1em;
+  }
+
+  .d-contents li {
+    list-style-type: none
+  }
+
+  .d-contents nav > ul {
+    padding-left: 0;
+  }
+
+  .d-contents ul {
+    padding-left: 1em
+  }
+
+  .d-contents nav ul li {
+    margin-top: 0.6em;
+    margin-bottom: 0.2em;
+  }
+
+  .d-contents nav a {
+    font-size: 13px;
+    border-bottom: none;
+    text-decoration: none
+    color: rgba(0, 0, 0, 0.8);
+  }
+
+  .d-contents nav a:hover {
+    text-decoration: underline solid rgba(0, 0, 0, 0.6)
+  }
+
+  .d-contents nav > ul > li > a {
+    font-weight: 600;
+  }
+
+  .d-contents nav > ul > li > ul {
+    font-weight: inherit;
+  }
+
+  .d-contents nav > ul > li > ul > li {
+    margin-top: 0.2em;
+  }
+
+
+  .d-contents nav ul {
+    margin-top: 0;
+    margin-bottom: 0.25em;
+  }
+
+  .d-article-with-toc h2:nth-child(2) {
+    margin-top: 0;
+  }
+
+
+  /* Figure */
+
+  .figure {
+    position: relative;
+    margin-bottom: 2.5em;
+    margin-top: 1.5em;
+  }
+
+  .figure img {
+    width: 100%;
+  }
+
+  .figure .caption {
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 12px;
+    line-height: 1.5em;
+  }
+
+  .figure img.external {
+    background: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
+    padding: 18px;
+    box-sizing: border-box;
+  }
+
+  .figure .caption a {
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  .figure .caption b,
+  .figure .caption strong, {
+    font-weight: 600;
+    color: rgba(0, 0, 0, 1.0);
+  }
+
+  /* Citations */
+
+  d-article .citation {
+    color: inherit;
+    cursor: inherit;
+  }
+
+  div.hanging-indent{
+    margin-left: 1em; text-indent: -1em;
+  }
+
+
+  /* Tweak 1000px media break to show more text */
+
+  @media(min-width: 1000px) {
+    .base-grid,
+    distill-header,
+    d-title,
+    d-abstract,
+    d-article,
+    d-appendix,
+    distill-appendix,
+    d-byline,
+    d-footnote-list,
+    d-citation-list,
+    distill-footer {
+      grid-template-columns: [screen-start] 1fr [page-start kicker-start] 80px [middle-start] 50px [text-start kicker-end] 65px 65px 65px 65px 65px 65px 65px 65px [text-end gutter-start] 65px [middle-end] 65px [page-end gutter-end] 1fr [screen-end];
+      grid-column-gap: 16px;
+    }
+
+    .grid {
+      grid-column-gap: 16px;
+    }
+
+    d-article {
+      font-size: 1.06rem;
+      line-height: 1.7em;
+    }
+    figure .caption, .figure .caption, figure figcaption {
+      font-size: 13px;
+    }
+  }
+
+  @media(min-width: 1180px) {
+    .base-grid,
+    distill-header,
+    d-title,
+    d-abstract,
+    d-article,
+    d-appendix,
+    distill-appendix,
+    d-byline,
+    d-footnote-list,
+    d-citation-list,
+    distill-footer {
+      grid-template-columns: [screen-start] 1fr [page-start kicker-start] 60px [middle-start] 60px [text-start kicker-end] 60px 60px 60px 60px 60px 60px 60px 60px [text-end gutter-start] 60px [middle-end] 60px [page-end gutter-end] 1fr [screen-end];
+      grid-column-gap: 32px;
+    }
+
+    .grid {
+      grid-column-gap: 32px;
+    }
+  }
+
+
+  /* Get the citation styles for the appendix (not auto-injected on render since
+     we do our own rendering of the citation appendix) */
+
+  d-appendix .citation-appendix,
+  .d-appendix .citation-appendix {
+    font-size: 11px;
+    line-height: 15px;
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    padding-left: 18px;
+    border: 1px solid rgba(0,0,0,0.1);
+    background: rgba(0, 0, 0, 0.02);
+    padding: 10px 18px;
+    border-radius: 3px;
+    color: rgba(150, 150, 150, 1);
+    overflow: hidden;
+    margin-top: -12px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  /* Include appendix styles here so they can be overridden */
+
+  d-appendix {
+    contain: layout style;
+    font-size: 0.8em;
+    line-height: 1.7em;
+    margin-top: 60px;
+    margin-bottom: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    color: rgba(0,0,0,0.5);
+    padding-top: 60px;
+    padding-bottom: 48px;
+  }
+
+  d-appendix h3 {
+    grid-column: page-start / text-start;
+    font-size: 15px;
+    font-weight: 500;
+    margin-top: 1em;
+    margin-bottom: 0;
+    color: rgba(0,0,0,0.65);
+  }
+
+  d-appendix h3 + * {
+    margin-top: 1em;
+  }
+
+  d-appendix ol {
+    padding: 0 0 0 15px;
+  }
+
+  @media (min-width: 768px) {
+    d-appendix ol {
+      padding: 0 0 0 30px;
+      margin-left: -30px;
+    }
+  }
+
+  d-appendix li {
+    margin-bottom: 1em;
+  }
+
+  d-appendix a {
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  d-appendix > * {
+    grid-column: text;
+  }
+
+  d-appendix > d-footnote-list,
+  d-appendix > d-citation-list,
+  d-appendix > distill-appendix {
+    grid-column: screen;
+  }
+
+  /* Include footnote styles here so they can be overridden */
+
+  d-footnote-list {
+    contain: layout style;
+  }
+
+  d-footnote-list > * {
+    grid-column: text;
+  }
+
+  d-footnote-list a.footnote-backlink {
+    color: rgba(0,0,0,0.3);
+    padding-left: 0.5em;
+  }
+
+
+
+  /* Anchor.js */
+
+  .anchorjs-link {
+    /*transition: all .25s linear; */
+    text-decoration: none;
+    border-bottom: none;
+  }
+  *:hover > .anchorjs-link {
+    margin-left: -1.125em !important;
+    text-decoration: none;
+    border-bottom: none;
+  }
+
+  /* Social footer */
+
+  .social_footer {
+    margin-top: 30px;
+    margin-bottom: 0;
+    color: rgba(0,0,0,0.67);
+  }
+
+  .disqus-comments {
+    margin-right: 30px;
+  }
+
+  .disqus-comment-count {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+  }
+
+  #disqus_thread {
+    margin-top: 30px;
+  }
+
+  .article-sharing a {
+    border-bottom: none;
+    margin-right: 8px;
+  }
+
+  .article-sharing a:hover {
+    border-bottom: none;
+  }
+
+  .sidebar-section.subscribe {
+    font-size: 12px;
+    line-height: 1.6em;
+  }
+
+  .subscribe p {
+    margin-bottom: 0.5em;
+  }
+
+
+  .article-footer .subscribe {
+    font-size: 15px;
+    margin-top: 45px;
+  }
+
+
+  .sidebar-section.custom {
+    font-size: 12px;
+    line-height: 1.6em;
+  }
+
+  .custom p {
+    margin-bottom: 0.5em;
+  }
+
+  /* Styles for listing layout (hide title) */
+  .layout-listing d-title, .layout-listing .d-title {
+    display: none;
+  }
+
+  /* Styles for posts lists (not auto-injected) */
+
+
+  .posts-with-sidebar {
+    padding-left: 45px;
+    padding-right: 45px;
+  }
+
+  .posts-list .description h2,
+  .posts-list .description p {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+  }
+
+  .posts-list .description h2 {
+    font-weight: 700;
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .posts-list h2.post-tag {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    padding-bottom: 12px;
+  }
+  .posts-list {
+    margin-top: 60px;
+    margin-bottom: 24px;
+  }
+
+  .posts-list .post-preview {
+    text-decoration: none;
+    overflow: hidden;
+    display: block;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 24px 0;
+  }
+
+  .post-preview-last {
+    border-bottom: none !important;
+  }
+
+  .posts-list .posts-list-caption {
+    grid-column: screen;
+    font-weight: 400;
+  }
+
+  .posts-list .post-preview h2 {
+    margin: 0 0 6px 0;
+    line-height: 1.2em;
+    font-style: normal;
+    font-size: 24px;
+  }
+
+  .posts-list .post-preview p {
+    margin: 0 0 12px 0;
+    line-height: 1.4em;
+    font-size: 16px;
+  }
+
+  .posts-list .post-preview .thumbnail {
+    box-sizing: border-box;
+    margin-bottom: 24px;
+    position: relative;
+    max-width: 500px;
+  }
+  .posts-list .post-preview img {
+    width: 100%;
+    display: block;
+  }
+
+  .posts-list .metadata {
+    font-size: 12px;
+    line-height: 1.4em;
+    margin-bottom: 18px;
+  }
+
+  .posts-list .metadata > * {
+    display: inline-block;
+  }
+
+  .posts-list .metadata .publishedDate {
+    margin-right: 2em;
+  }
+
+  .posts-list .metadata .dt-authors {
+    display: block;
+    margin-top: 0.3em;
+    margin-right: 2em;
+  }
+
+  .posts-list .dt-tags {
+    display: block;
+    line-height: 1em;
+  }
+
+  .posts-list .dt-tags .dt-tag {
+    display: inline-block;
+    color: rgba(0,0,0,0.6);
+    padding: 0.3em 0.4em;
+    margin-right: 0.2em;
+    margin-bottom: 0.4em;
+    font-size: 60%;
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: 3px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .posts-list img {
+    opacity: 1;
+  }
+
+  .posts-list img[data-src] {
+    opacity: 0;
+  }
+
+  .posts-more {
+    clear: both;
+  }
+
+
+  .posts-sidebar {
+    font-size: 16px;
+  }
+
+  .posts-sidebar h3 {
+    font-size: 16px;
+    margin-top: 0;
+    margin-bottom: 0.5em;
+    font-weight: 400;
+    text-transform: uppercase;
+  }
+
+  .sidebar-section {
+    margin-bottom: 30px;
+  }
+
+  .categories ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .categories li {
+    color: rgba(0, 0, 0, 0.8);
+    margin-bottom: 0;
+  }
+
+  .categories li>a {
+    border-bottom: none;
+  }
+
+  .categories li>a:hover {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+  }
+
+  .categories .active {
+    font-weight: 600;
+  }
+
+  .categories .category-count {
+    color: rgba(0, 0, 0, 0.4);
+  }
+
+
+  @media(min-width: 768px) {
+    .posts-list .post-preview h2 {
+      font-size: 26px;
+    }
+    .posts-list .post-preview .thumbnail {
+      float: right;
+      width: 30%;
+      margin-bottom: 0;
+    }
+    .posts-list .post-preview .description {
+      float: left;
+      width: 45%;
+    }
+    .posts-list .post-preview .metadata {
+      float: left;
+      width: 20%;
+      margin-top: 8px;
+    }
+    .posts-list .post-preview p {
+      margin: 0 0 12px 0;
+      line-height: 1.5em;
+      font-size: 16px;
+    }
+    .posts-with-sidebar .posts-list {
+      float: left;
+      width: 75%;
+    }
+    .posts-with-sidebar .posts-sidebar {
+      float: right;
+      width: 20%;
+      margin-top: 60px;
+      padding-top: 24px;
+      padding-bottom: 24px;
+    }
+  }
+
+
+  /* Improve display for browsers without grid (IE/Edge <= 15) */
+
+  .downlevel {
+    line-height: 1.6em;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+    margin: 0;
+  }
+
+  .downlevel .d-title {
+    padding-top: 6rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .downlevel .d-title h1 {
+    font-size: 50px;
+    font-weight: 700;
+    line-height: 1.1em;
+    margin: 0 0 0.5rem;
+  }
+
+  .downlevel .d-title p {
+    font-weight: 300;
+    font-size: 1.2rem;
+    line-height: 1.55em;
+    margin-top: 0;
+  }
+
+  .downlevel .d-byline {
+    padding-top: 0.8em;
+    padding-bottom: 0.8em;
+    font-size: 0.8rem;
+    line-height: 1.8em;
+  }
+
+  .downlevel .section-separator {
+    border: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .downlevel .d-article {
+    font-size: 1.06rem;
+    line-height: 1.7em;
+    padding-top: 1rem;
+    padding-bottom: 2rem;
+  }
+
+
+  .downlevel .d-appendix {
+    padding-left: 0;
+    padding-right: 0;
+    max-width: none;
+    font-size: 0.8em;
+    line-height: 1.7em;
+    margin-bottom: 0;
+    color: rgba(0,0,0,0.5);
+    padding-top: 40px;
+    padding-bottom: 48px;
+  }
+
+  .downlevel .footnotes ol {
+    padding-left: 13px;
+  }
+
+  .downlevel .base-grid,
+  .downlevel .distill-header,
+  .downlevel .d-title,
+  .downlevel .d-abstract,
+  .downlevel .d-article,
+  .downlevel .d-appendix,
+  .downlevel .distill-appendix,
+  .downlevel .d-byline,
+  .downlevel .d-footnote-list,
+  .downlevel .d-citation-list,
+  .downlevel .distill-footer,
+  .downlevel .appendix-bottom,
+  .downlevel .posts-container {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+
+  @media(min-width: 768px) {
+    .downlevel .base-grid,
+    .downlevel .distill-header,
+    .downlevel .d-title,
+    .downlevel .d-abstract,
+    .downlevel .d-article,
+    .downlevel .d-appendix,
+    .downlevel .distill-appendix,
+    .downlevel .d-byline,
+    .downlevel .d-footnote-list,
+    .downlevel .d-citation-list,
+    .downlevel .distill-footer,
+    .downlevel .appendix-bottom,
+    .downlevel .posts-container {
+    padding-left: 150px;
+    padding-right: 150px;
+    max-width: 900px;
+  }
+  }
+
+  .downlevel pre code {
+    display: block;
+    border-left: 2px solid rgba(0, 0, 0, .1);
+    padding: 0 0 0 20px;
+    font-size: 14px;
+  }
+
+  .downlevel code, .downlevel pre {
+    color: black;
+    background: none;
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    word-wrap: normal;
+    line-height: 1.5;
+
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+  }
+
+  .downlevel .posts-list .post-preview {
+    color: inherit;
+  }
+
+
+
+  </style>
+
+  <script type="application/javascript">
+
+  function is_downlevel_browser() {
+    if (bowser.isUnsupportedBrowser({ msie: "12", msedge: "16"},
+                                   window.navigator.userAgent)) {
+      return true;
+    } else {
+      return window.load_distill_framework === undefined;
+    }
+  }
+
+  // show body when load is complete
+  function on_load_complete() {
+
+    // add anchors
+    if (window.anchors) {
+      window.anchors.options.placement = 'left';
+      window.anchors.add('d-article > h2, d-article > h3, d-article > h4, d-article > h5');
+    }
+
+
+    // set body to visible
+    document.body.style.visibility = 'visible';
+
+    // force redraw for leaflet widgets
+    if (window.HTMLWidgets) {
+      var maps = window.HTMLWidgets.findAll(".leaflet");
+      $.each(maps, function(i, el) {
+        var map = this.getMap();
+        map.invalidateSize();
+        map.eachLayer(function(layer) {
+          if (layer instanceof L.TileLayer)
+            layer.redraw();
+        });
+      });
+    }
+
+    // trigger 'shown' so htmlwidgets resize
+    $('d-article').trigger('shown');
+  }
+
+  function init_distill() {
+
+    init_common();
+
+    // create front matter
+    var front_matter = $('<d-front-matter></d-front-matter>');
+    $('#distill-front-matter').wrap(front_matter);
+
+    // create d-title
+    $('.d-title').changeElementType('d-title');
+
+    // create d-byline
+    var byline = $('<d-byline></d-byline>');
+    $('.d-byline').replaceWith(byline);
+
+    // create d-article
+    var article = $('<d-article></d-article>');
+    $('.d-article').wrap(article).children().unwrap();
+
+    // move posts container into article
+    $('.posts-container').appendTo($('d-article'));
+
+    // create d-appendix
+    $('.d-appendix').changeElementType('d-appendix');
+
+    // flag indicating that we have appendix items
+    var appendix = $('.appendix-bottom').children('h3').length > 0;
+
+    // replace footnotes with <d-footnote>
+    $('.footnote-ref').each(function(i, val) {
+      appendix = true;
+      var href = $(this).attr('href');
+      var id = href.replace('#', '');
+      var fn = $('#' + id);
+      var fn_p = $('#' + id + '>p');
+      fn_p.find('.footnote-back').remove();
+      var text = fn_p.html();
+      var dtfn = $('<d-footnote></d-footnote>');
+      dtfn.html(text);
+      $(this).replaceWith(dtfn);
+    });
+    // remove footnotes
+    $('.footnotes').remove();
+
+    // move refs into #references-listing
+    $('#references-listing').replaceWith($('#refs'));
+
+    $('h1.appendix, h2.appendix').each(function(i, val) {
+      $(this).changeElementType('h3');
+    });
+    $('h3.appendix').each(function(i, val) {
+      var id = $(this).attr('id');
+      $('.d-contents a[href="#' + id + '"]').parent().remove();
+      appendix = true;
+      $(this).nextUntil($('h1, h2, h3')).addBack().appendTo($('d-appendix'));
+    });
+
+    // show d-appendix if we have appendix content
+    $("d-appendix").css('display', appendix ? 'grid' : 'none');
+
+    // localize layout chunks to just output
+    $('.layout-chunk').each(function(i, val) {
+
+      // capture layout
+      var layout = $(this).attr('data-layout');
+
+      // apply layout to markdown level block elements
+      var elements = $(this).children().not('div.sourceCode, pre, script');
+      elements.each(function(i, el) {
+        var layout_div = $('<div class="' + layout + '"></div>');
+        if (layout_div.hasClass('shaded')) {
+          var shaded_content = $('<div class="shaded-content"></div>');
+          $(this).wrap(shaded_content);
+          $(this).parent().wrap(layout_div);
+        } else {
+          $(this).wrap(layout_div);
+        }
+      });
+
+
+      // unwrap the layout-chunk div
+      $(this).children().unwrap();
+    });
+
+    // remove code block used to force  highlighting css
+    $('.distill-force-highlighting-css').parent().remove();
+
+    // remove empty line numbers inserted by pandoc when using a
+    // custom syntax highlighting theme
+    $('code.sourceCode a:empty').remove();
+
+    // load distill framework
+    load_distill_framework();
+
+    // wait for window.distillRunlevel == 4 to do post processing
+    function distill_post_process() {
+
+      if (!window.distillRunlevel || window.distillRunlevel < 4)
+        return;
+
+      // hide author/affiliations entirely if we have no authors
+      var front_matter = JSON.parse($("#distill-front-matter").html());
+      var have_authors = front_matter.authors && front_matter.authors.length > 0;
+      if (!have_authors)
+        $('d-byline').addClass('hidden');
+
+      // article with toc class
+      $('.d-contents').parent().addClass('d-article-with-toc');
+
+      // strip links that point to #
+      $('.authors-affiliations').find('a[href="#"]').removeAttr('href');
+
+      // add orcid ids
+      $('.authors-affiliations').find('.author').each(function(i, el) {
+        var orcid_id = front_matter.authors[i].orcidID;
+        if (orcid_id) {
+          var a = $('<a></a>');
+          a.attr('href', 'https://orcid.org/' + orcid_id);
+          var img = $('<img></img>');
+          img.addClass('orcid-id');
+          img.attr('alt', 'ORCID ID');
+          img.attr('src','data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg==');
+          a.append(img);
+          $(this).append(a);
+        }
+      });
+
+      // hide elements of author/affiliations grid that have no value
+      function hide_byline_column(caption) {
+        $('d-byline').find('h3:contains("' + caption + '")').parent().css('visibility', 'hidden');
+      }
+
+      // affiliations
+      var have_affiliations = false;
+      for (var i = 0; i<front_matter.authors.length; ++i) {
+        var author = front_matter.authors[i];
+        if (author.affiliation !== "&nbsp;") {
+          have_affiliations = true;
+          break;
+        }
+      }
+      if (!have_affiliations)
+        $('d-byline').find('h3:contains("Affiliations")').css('visibility', 'hidden');
+
+      // published date
+      if (!front_matter.publishedDate)
+        hide_byline_column("Published");
+
+      // document object identifier
+      var doi = $('d-byline').find('h3:contains("DOI")');
+      var doi_p = doi.next().empty();
+      if (!front_matter.doi) {
+        // if we have a citation and valid citationText then link to that
+        if ($('#citation').length > 0 && front_matter.citationText) {
+          doi.html('Citation');
+          $('<a href="#citation"></a>')
+            .text(front_matter.citationText)
+            .appendTo(doi_p);
+        } else {
+          hide_byline_column("DOI");
+        }
+      } else {
+        $('<a></a>')
+           .attr('href', "https://doi.org/" + front_matter.doi)
+           .html(front_matter.doi)
+           .appendTo(doi_p);
+      }
+
+       // change plural form of authors/affiliations
+      if (front_matter.authors.length === 1) {
+        var grid = $('.authors-affiliations');
+        grid.children('h3:contains("Authors")').text('Author');
+        grid.children('h3:contains("Affiliations")').text('Affiliation');
+      }
+
+      // remove d-appendix and d-footnote-list local styles
+      $('d-appendix > style:first-child').remove();
+      $('d-footnote-list > style:first-child').remove();
+
+      // move appendix-bottom entries to the bottom
+      $('.appendix-bottom').appendTo('d-appendix').children().unwrap();
+      $('.appendix-bottom').remove();
+
+      // clear polling timer
+      clearInterval(tid);
+
+      // show body now that everything is ready
+      on_load_complete();
+    }
+
+    var tid = setInterval(distill_post_process, 50);
+    distill_post_process();
+
+  }
+
+  function init_downlevel() {
+
+    init_common();
+
+     // insert hr after d-title
+    $('.d-title').after($('<hr class="section-separator"/>'));
+
+    // check if we have authors
+    var front_matter = JSON.parse($("#distill-front-matter").html());
+    var have_authors = front_matter.authors && front_matter.authors.length > 0;
+
+    // manage byline/border
+    if (!have_authors)
+      $('.d-byline').remove();
+    $('.d-byline').after($('<hr class="section-separator"/>'));
+    $('.d-byline a').remove();
+
+    // remove toc
+    $('.d-contents').remove();
+
+    // move appendix elements
+    $('h1.appendix, h2.appendix').each(function(i, val) {
+      $(this).changeElementType('h3');
+    });
+    $('h3.appendix').each(function(i, val) {
+      $(this).nextUntil($('h1, h2, h3')).addBack().appendTo($('.d-appendix'));
+    });
+
+
+    // inject headers into references and footnotes
+    var refs_header = $('<h3></h3>');
+    refs_header.text('References');
+    $('#refs').prepend(refs_header);
+
+    var footnotes_header = $('<h3></h3');
+    footnotes_header.text('Footnotes');
+    $('.footnotes').children('hr').first().replaceWith(footnotes_header);
+
+    // move appendix-bottom entries to the bottom
+    $('.appendix-bottom').appendTo('.d-appendix').children().unwrap();
+    $('.appendix-bottom').remove();
+
+    // remove appendix if it's empty
+    if ($('.d-appendix').children().length === 0)
+      $('.d-appendix').remove();
+
+    // prepend separator above appendix
+    $('.d-appendix').before($('<hr class="section-separator" style="clear: both"/>'));
+
+    // trim code
+    $('pre>code').each(function(i, val) {
+      $(this).html($.trim($(this).html()));
+    });
+
+    // move posts-container right before article
+    $('.posts-container').insertBefore($('.d-article'));
+
+    $('body').addClass('downlevel');
+
+    on_load_complete();
+  }
+
+
+  function init_common() {
+
+    // jquery plugin to change element types
+    (function($) {
+      $.fn.changeElementType = function(newType) {
+        var attrs = {};
+
+        $.each(this[0].attributes, function(idx, attr) {
+          attrs[attr.nodeName] = attr.nodeValue;
+        });
+
+        this.replaceWith(function() {
+          return $("<" + newType + "/>", attrs).append($(this).contents());
+        });
+      };
+    })(jQuery);
+
+    // prevent underline for linked images
+    $('a > img').parent().css({'border-bottom' : 'none'});
+
+    // mark non-body figures created by knitr chunks as 100% width
+    $('.layout-chunk').each(function(i, val) {
+      var figures = $(this).find('img, .html-widget');
+      if ($(this).attr('data-layout') !== "l-body") {
+        figures.css('width', '100%');
+      } else {
+        figures.css('max-width', '100%');
+        figures.filter("[width]").each(function(i, val) {
+          var fig = $(this);
+          fig.css('width', fig.attr('width') + 'px');
+        });
+
+      }
+    });
+
+    // auto-append index.html to post-preview links in file: protocol
+    // and in rstudio ide preview
+    $('.post-preview').each(function(i, val) {
+      if (window.location.protocol === "file:")
+        $(this).attr('href', $(this).attr('href') + "index.html");
+    });
+
+    // get rid of index.html references in header
+    if (window.location.protocol !== "file:") {
+      $('.distill-site-header a[href]').each(function(i,val) {
+        $(this).attr('href', $(this).attr('href').replace("index.html", "./"));
+      });
+    }
+
+    // add class to pandoc style tables
+    $('tr.header').parent('thead').parent('table').addClass('pandoc-table');
+    $('.kable-table').children('table').addClass('pandoc-table');
+
+    // add figcaption style to table captions
+    $('caption').parent('table').addClass("figcaption");
+
+    // initialize posts list
+    if (window.init_posts_list)
+      window.init_posts_list();
+
+    // implmement disqus comment link
+    $('.disqus-comment-count').click(function() {
+      window.headroom_prevent_pin = true;
+      $('#disqus_thread').toggleClass('hidden');
+      if (!$('#disqus_thread').hasClass('hidden')) {
+        var offset = $(this).offset();
+        $(window).resize();
+        $('html, body').animate({
+          scrollTop: offset.top - 35
+        });
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    if (is_downlevel_browser())
+      init_downlevel();
+    else
+      window.addEventListener('WebComponentsReady', init_distill);
+  });
+
+  </script>
+
+  <style type="text/css">
+  /* base variables */
+
+  /* Edit the CSS properties in this file to create a custom
+     Distill theme. Only edit values in the right column
+     for each row; values shown are the CSS defaults.
+     To return any property to the default,
+     you may set its value to: unset
+     All rows must end with a semi-colon.                      */
+
+  /* Optional: embed custom fonts here with `@import`          */
+  /* This must remain at the top of this file.                 */
+
+
+
+  html {
+    /*-- Main font sizes --*/
+    --title-size:      50px;
+    --body-size:       1.06rem;
+    --code-size:       14px;
+    --aside-size:      12px;
+    --fig-cap-size:    13px;
+    /*-- Main font colors --*/
+    --title-color:     #000000;
+    --header-color:    rgba(0, 0, 0, 0.8);
+    --body-color:      rgba(0, 0, 0, 0.8);
+    --aside-color:     rgba(0, 0, 0, 0.6);
+    --fig-cap-color:   rgba(0, 0, 0, 0.6);
+    /*-- Specify custom fonts ~~~ must be imported above   --*/
+    --heading-font:    sans-serif;
+    --mono-font:       monospace;
+    --body-font:       sans-serif;
+    --navbar-font:     sans-serif;  /* websites + blogs only */
+  }
+
+  /*-- ARTICLE METADATA --*/
+  d-byline {
+    --heading-size:    0.6rem;
+    --heading-color:   rgba(0, 0, 0, 0.5);
+    --body-size:       0.8rem;
+    --body-color:      rgba(0, 0, 0, 0.8);
+  }
+
+  /*-- ARTICLE TABLE OF CONTENTS --*/
+  .d-contents {
+    --heading-size:    18px;
+    --contents-size:   13px;
+  }
+
+  /*-- ARTICLE APPENDIX --*/
+  d-appendix {
+    --heading-size:    15px;
+    --heading-color:   rgba(0, 0, 0, 0.65);
+    --text-size:       0.8em;
+    --text-color:      rgba(0, 0, 0, 0.5);
+  }
+
+  /*-- WEBSITE HEADER + FOOTER --*/
+  /* These properties only apply to Distill sites and blogs  */
+
+  .distill-site-header {
+    --title-size:       18px;
+    --text-color:       rgba(255, 255, 255, 0.8);
+    --text-size:        15px;
+    --hover-color:      white;
+    --bkgd-color:       #0F2E3D;
+  }
+
+  .distill-site-footer {
+    --text-color:       rgba(255, 255, 255, 0.8);
+    --text-size:        15px;
+    --hover-color:      white;
+    --bkgd-color:       #0F2E3D;
+  }
+
+  /*-- Additional custom styles --*/
+  /* Add any additional CSS rules below                      */
+  </style>
+  <style type="text/css">
+  /* base variables */
+
+  /* Edit the CSS properties in this file to create a custom
+     Distill theme. Only edit values in the right column
+     for each row; values shown are the CSS defaults.
+     To return any property to the default,
+     you may set its value to: unset
+     All rows must end with a semi-colon.                      */
+
+  /* Optional: embed custom fonts here with `@import`          */
+  /* This must remain at the top of this file.                 */
+  @import url('https://fonts.googleapis.com/css2?family=Amiri');
+  @import url('https://fonts.googleapis.com/css2?family=Bitter');
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono');
+
+
+
+  html {
+    /*-- Main font sizes --*/
+    --title-size:      50px;
+    --body-size:       1.06rem;
+    --code-size:       14px;
+    --aside-size:      12px;
+    --fig-cap-size:    13px;
+    /*-- Main font colors --*/
+    --title-color:     #000000;
+    --header-color:    rgba(0, 0, 0, 0.8);
+    --body-color:      rgba(0, 0, 0, 0.8);
+    --aside-color:     rgba(0, 0, 0, 0.6);
+    --fig-cap-color:   rgba(0, 0, 0, 0.6);
+    /*-- Specify custom fonts ~~~ must be imported above   --*/
+    --heading-font:    "Amiri", serif;
+    --mono-font:       "DM Mono", monospace;
+    --body-font:       "Bitter", sans-serif;
+    --navbar-font:     "Amiri", sans-serif;  /* websites + blogs only */
+  }
+
+  /*-- ARTICLE METADATA --*/
+  d-byline {
+    --heading-size:    0.6rem;
+    --heading-color:   rgba(0, 0, 0, 0.5);
+    --body-size:       0.8rem;
+    --body-color:      rgba(0, 0, 0, 0.8);
+  }
+
+  /*-- ARTICLE TABLE OF CONTENTS --*/
+  .d-contents {
+    --heading-size:    18px;
+    --contents-size:   13px;
+  }
+
+  /*-- ARTICLE APPENDIX --*/
+  d-appendix {
+    --heading-size:    15px;
+    --heading-color:   rgba(0, 0, 0, 0.65);
+    --text-size:       0.8em;
+    --text-color:      rgba(0, 0, 0, 0.5);
+  }
+
+  /*-- WEBSITE HEADER + FOOTER --*/
+  /* These properties only apply to Distill sites and blogs  */
+
+  .distill-site-header {
+    --title-size:       18px;
+    --text-color:       rgba(255, 255, 255, 0.8);
+    --text-size:        15px;
+    --hover-color:      white;
+    --bkgd-color:       #0F2E3D;
+  }
+
+  .distill-site-footer {
+    --text-color:       rgba(255, 255, 255, 0.8);
+    --text-size:        15px;
+    --hover-color:      white;
+    --bkgd-color:       #0F2E3D;
+  }
+
+  /*-- Additional custom styles --*/
+  /* Add any additional CSS rules below                      */
+  </style>
+  <style type="text/css">
+  /* base style */
+
+  /* FONT FAMILIES */
+
+  :root {
+    --heading-default: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+    --mono-default: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    --body-default: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+  }
+
+  body,
+  .posts-list .post-preview p,
+  .posts-list .description p {
+    font-family: var(--body-font), var(--body-default);
+  }
+
+  h1, h2, h3, h4, h5, h6,
+  .posts-list .post-preview h2,
+  .posts-list .description h2 {
+    font-family: var(--heading-font), var(--heading-default);
+  }
+
+  d-article div.sourceCode code,
+  d-article pre code {
+    font-family: var(--mono-font), var(--mono-default);
+  }
+
+
+  /*-- TITLE --*/
+  d-title h1,
+  .posts-list > h1 {
+    color: var(--title-color, black);
+  }
+
+  d-title h1 {
+    font-size: var(--title-size, 50px);
+  }
+
+  /*-- HEADERS --*/
+  d-article h1,
+  d-article h2,
+  d-article h3,
+  d-article h4,
+  d-article h5,
+  d-article h6 {
+    color: var(--header-color, rgba(0, 0, 0, 0.8));
+  }
+
+  /*-- BODY --*/
+  d-article > p,  /* only text inside of <p> tags */
+  d-article > ul, /* lists */
+  d-article > ol {
+    color: var(--body-color, rgba(0, 0, 0, 0.8));
+    font-size: var(--body-size, 1.06rem);
+  }
+
+
+  /*-- CODE --*/
+  d-article div.sourceCode code,
+  d-article pre code {
+    font-size: var(--code-size, 14px);
+  }
+
+  /*-- ASIDE --*/
+  d-article aside {
+    font-size: var(--aside-size, 12px);
+    color: var(--aside-color, rgba(0, 0, 0, 0.6));
+  }
+
+  /*-- FIGURE CAPTIONS --*/
+  figure .caption,
+  figure figcaption,
+  .figure .caption {
+    font-size: var(--fig-cap-size, 13px);
+    color: var(--fig-cap-color, rgba(0, 0, 0, 0.6));
+  }
+
+  /*-- METADATA --*/
+  d-byline h3 {
+    font-size: var(--heading-size, 0.6rem);
+    color: var(--heading-color, rgba(0, 0, 0, 0.5));
+  }
+
+  d-byline {
+    font-size: var(--body-size, 0.8rem);
+    color: var(--body-color, rgba(0, 0, 0, 0.8));
+  }
+
+  d-byline a,
+  d-article d-byline a {
+    color: var(--body-color, rgba(0, 0, 0, 0.8));
+  }
+
+  /*-- TABLE OF CONTENTS --*/
+  .d-contents nav h3 {
+    font-size: var(--heading-size, 18px);
+  }
+
+  .d-contents nav a {
+    font-size: var(--contents-size, 13px);
+  }
+
+  /*-- APPENDIX --*/
+  d-appendix h3 {
+    font-size: var(--heading-size, 15px);
+    color: var(--heading-color, rgba(0, 0, 0, 0.65));
+  }
+
+  d-appendix {
+    font-size: var(--text-size, 0.8em);
+    color: var(--text-color, rgba(0, 0, 0, 0.5));
+  }
+
+  d-appendix d-footnote-list a.footnote-backlink {
+    color: var(--text-color, rgba(0, 0, 0, 0.5));
+  }
+
+  /*-- WEBSITE HEADER + FOOTER --*/
+  .distill-site-header .title {
+    font-size: var(--title-size, 18px);
+    font-family: var(--navbar-font), var(--heading-default);
+  }
+
+  .distill-site-header a,
+  .nav-dropdown .nav-dropbtn {
+    font-family: var(--navbar-font), var(--heading-default);
+  }
+
+  .nav-dropdown .nav-dropbtn {
+    color: var(--text-color, rgba(255, 255, 255, 0.8));
+    font-size: var(--text-size, 15px);
+  }
+
+  .distill-site-header a:hover,
+  .nav-dropdown:hover .nav-dropbtn {
+    color: var(--hover-color, white);
+  }
+
+  .distill-site-header {
+    font-size: var(--text-size, 15px);
+    color: var(--text-color, rgba(255, 255, 255, 0.8));
+    background-color: var(--bkgd-color, #0F2E3D);
+  }
+
+  .distill-site-footer {
+    font-size: var(--text-size, 15px);
+    color: var(--text-color, rgba(255, 255, 255, 0.8));
+    background-color: var(--bkgd-color, #0F2E3D);
+  }
+
+  .distill-site-footer a:hover {
+    color: var(--hover-color, white);
+  }</style>
+  <!--/radix_placeholder_distill-->
+  <script src="site_libs/header-attrs-2.6.4/header-attrs.js"></script>
+  <script src="site_libs/anchor-4.2.2/anchor.min.js"></script>
+  <script src="site_libs/bowser-1.9.3/bowser.min.js"></script>
+  <script src="site_libs/webcomponents-2.0.0/webcomponents.js"></script>
+  <script src="site_libs/distill-2.2.21/template.v2.js"></script>
+  <!--radix_placeholder_site_in_header-->
+  <!--/radix_placeholder_site_in_header-->
+
+
+</head>
+
+<body>
+
+<!--radix_placeholder_front_matter-->
+
+<script id="distill-front-matter" type="text/json">
+{"title":"Working with data","authors":[]}
+</script>
+
+<!--/radix_placeholder_front_matter-->
+<!--radix_placeholder_navigation_before_body-->
+<header class="header header--fixed" role="banner">
+<nav class="distill-site-nav distill-site-header">
+<div class="nav-left">
+<a href="index.html" class="title">Applied Longitudinal Data Analysis</a>
+</div>
+<div class="nav-right">
+<a href="index.html">Home</a>
+<div class="nav-dropdown">
+<button class="nav-dropbtn">
+Lectures
+ 
+<span class="down-arrow">&#x25BE;</span>
+</button>
+<div class="nav-dropdown-content">
+<a href="intro-1.html">Intro to longitudinal</a>
+<a href="MLM.html">MLM growth models</a>
+</div>
+</div>
+<div class="nav-dropdown">
+<button class="nav-dropbtn">
+Workshops
+ 
+<span class="down-arrow">&#x25BE;</span>
+</button>
+<div class="nav-dropdown-content">
+<a href="data.html">data</a>
+<a href="lme4.html">lme4, nlme</a>
+<a href="workflow.html">workflow</a>
+<a href="plotting.html">plotting</a>
+<a href="simulation.html">simulation</a>
+<a href="purr.html">purr</a>
+<a href="brms.html">brms</a>
+<a href="lavaan.html">lavaan</a>
+<a href="mice.html">mice</a>
+</div>
+</div>
+<a href="syllabus.html">Syllabus</a>
+<a href="Homeworks.html">Homeworks</a>
+<a href="https://github.com/josh-jackson/bayes">
+<i class="fab fa-github" aria-hidden="true"></i>
+</a>
+<a href="javascript:void(0);" class="nav-toggle">&#9776;</a>
+</div>
+</nav>
+</header>
+<!--/radix_placeholder_navigation_before_body-->
+<!--radix_placeholder_site_before_body-->
+<!--/radix_placeholder_site_before_body-->
+
+<div class="d-title">
+<h1>Working with data</h1>
+<!--radix_placeholder_categories-->
+<!--/radix_placeholder_categories-->
+
+</div>
+
+
+<div class="d-article">
+<div class="d-contents d-contents-float">
+<nav class="l-text toc figcaption" id="TOC">
+<h3>Contents</h3>
+<ul>
+<li><a href="#what-are-data">What Are Data?</a></li>
+<li><a href="#wide-vs-long">Wide vs long</a></li>
+<li><a href="#tidyr">tidyr</a>
+<ul>
+<li><a href="#pivot_wider">pivot_wider</a></li>
+<li><a href="#pivot_longer">pivot_longer</a></li>
+<li><a href="#seperate-and-unite">Seperate and Unite</a></li>
+<li><a href="#date-time-metrics">date time metrics</a></li>
+</ul></li>
+<li><a href="#projects-and-rmarkdown">Projects and Rmarkdown</a>
+<ul>
+<li><a href="#packages">Packages</a></li>
+<li><a href="#codebook">Codebook</a></li>
+<li><a href="#data">Data</a></li>
+</ul></li>
+<li><a href="#clean-data">Clean Data</a>
+<ul>
+<li><a href="#recode-variables">Recode Variables</a></li>
+<li><a href="#reverse-scoring">Reverse-Scoring</a></li>
+<li><a href="#create-composites">Create Composites</a></li>
+</ul></li>
+<li><a href="#descriptives">Descriptives</a>
+<ul>
+<li><a href="#metric-variables">metric variables</a></li>
+<li><a href="#count-variables">count variables</a></li>
+<li><a href="#zero-order-correlations">Zero-Order Correlations</a></li>
+</ul></li>
+</ul>
+</nav>
+</div>
+<h1 id="what-are-data">What Are Data?</h1>
+<p>Data are the core of everything that we do in statistical analysis. Data come in many forms, and I don’t just mean <code>.csv</code>, <code>.xls</code>, <code>.sav</code>, etc. Data can be wide, long, documented, fragmented, messy, and about anything else that you can imagine.</p>
+<p>Although data could arguably be more means than end in psychology, the importance of understanding the structure and format of your data cannot overstated. Failure to understand your data could end in improper techniques and flagrantly wrong inferences at worst. This is especially important for longitudinal data. We will discuss many aspects of data handling. One thing to note is that this is just <em>ONE WAY</em> to do it. There are many equivalent.</p>
+<h1 id="wide-vs-long">Wide vs long</h1>
+<p>Aka multivariate vs stacked; person vs person period untidy vs tidy*</p>
+<p>Long is what MLM, ggplot2 and tidyverse packages expect whereas SEM and a lot of descriptive are calculated using wide dataframes.</p>
+<p><img src="tidyr.gif" /></p>
+<p>In this figure X, Y, and Z could represent different waves of collection. For each wave we have some value for each of the two people in the dataset. In the long format each person has each wave as a separate row. In the wide each person has their data on a single row.</p>
+<p>We will be working with long data for the first half of the class and wide data the second. However, even during the first half we will need to switch back and forth to make sure we can calculate certain values.</p>
+<h1 id="tidyr">tidyr</h1>
+<p>The best package to go back and forth between long and wide is the tidyr package, which is part of the tidyverse. Here we will walk through some examples of the primary functions, pivot_wider and pivot_longer</p>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<p>For longitudinal/repeated measures data, each row is an observation. Each person will have multiple rows. You can grab some example data from the class’s github</p>
+<div class="layout-chunk" data-layout="l-body">
+<pre><code>     ID wave group    DAN
+1     6    1    PD 0.1619
+2     6    2    PD 0.1677
+3     6    3    PD 0.2153
+4    29    1    PD 0.1749
+5    29    2    PD 0.1356
+6    34    1  CTRL 0.1659
+7    34    2  CTRL 0.1403
+8    36    1  CTRL 0.1522
+9    36    2  CTRL 0.2053
+10   37    1    PD 0.2194
+11   37    2    PD 0.1579
+12   37    3    PD 0.2586
+13   48    1    PD 0.1302
+14   48    2    PD 0.2703
+15   48    3    PD 0.2478
+16   53    1  CTRL 0.2112
+17   53    2  CTRL 0.1521
+18   54    1    PD 0.2205
+19   54    2    PD 0.1521
+20   54    3    PD 0.1920
+21   58    1    PD 0.3801
+22   58    2    PD 0.2148
+23   58    3    PD 0.2036
+24   61    1    PD 0.0818
+25   61    2    PD 0.0628
+26   66    1  CTRL 0.1879
+27   66    2  CTRL 0.1476
+28   66    3  CTRL 0.1975
+29   67    1    PD 0.1759
+30   67    2    PD 0.1418
+31   67    3    PD 0.1834
+32   67    4    PD 0.1464
+33   69    1  CTRL 0.1775
+34   69    2  CTRL 0.1479
+35   71    1    PD 0.0902
+36   71    2    PD 0.1852
+37   71    3    PD 0.0733
+38   74    1  CTRL 0.2094
+39   74    2  CTRL 0.2185
+40   74    3  CTRL 0.2015
+41   75    1  CTRL 0.2396
+42   75    2  CTRL 0.1872
+43   76    1    PD 0.2393
+44   76    2    PD 0.1656
+45   76    3    PD 0.2584
+46   78    1  CTRL 0.1557
+47   78    2  CTRL 0.2599
+48   78    3  CTRL 0.1434
+49   79    1    PD 0.2288
+50   79    2    PD 0.2267
+51   80    1    PD 0.1893
+52   80    2    PD 0.1930
+53   81    1  CTRL 0.1103
+54   81    2  CTRL 0.1196
+55   81    3  CTRL 0.1051
+56   82    1    PD 0.2272
+57   82    2    PD 0.2124
+58   82    3    PD 0.2547
+59   82    4    PD 0.2063
+60   85    1    PD 0.2566
+61   85    2    PD 0.2079
+62   86    1    PD 0.1778
+63   86    2    PD 0.1943
+64   87    1    PD 0.1417
+65   87    2    PD 0.0803
+66   89    1    PD 0.2306
+67   89    2    PD 0.3029
+68   89    3    PD 0.1503
+69   91    1    PD 0.2962
+70   91    2    PD 0.1438
+71   91    3    PD 0.1464
+72   92    1    PD 0.2347
+73   92    2    PD 0.1677
+74   92    3    PD 0.1046
+75   93    1  CTRL 0.1657
+76   93    2  CTRL 0.1549
+77   93    3  CTRL 0.2212
+78   94    1    PD 0.1813
+79   94    2    PD 0.1235
+80   94    3    PD 0.1161
+81   96    1    PD 0.1249
+82   96    2    PD 0.1663
+83   97    1    PD 0.1575
+84   97    2    PD 0.1304
+85   97    3    PD 0.1579
+86   97    4    PD 0.1013
+87   98    1    PD 0.1980
+88   98    2    PD 0.2489
+89   98    3    PD 0.1549
+90   98    4    PD 0.0226
+91   99    1    PD 0.1383
+92   99    2    PD 0.1492
+93   99    3    PD 0.1687
+94   99    4    PD 0.1647
+95  101    1  CTRL 0.1089
+96  101    2  CTRL 0.1304
+97  101    3  CTRL 0.1174
+98  102    1    PD 0.2487
+99  102    2    PD 0.1620
+100 102    3    PD 0.1879
+101 102    4    PD 0.1719
+102 103    1    PD 0.2010
+103 103    2    PD 0.2284
+104 104    1    PD 0.1803
+105 104    2    PD 0.1699
+106 105    1    PD 0.2600
+107 105    2    PD 0.2527
+108 105    3    PD 0.2004
+109 106    1  CTRL 0.2083
+110 106    2  CTRL 0.2291
+111 106    3  CTRL 0.2996
+112 110    1    PD 0.2003
+113 110    2    PD 0.2601
+114 110    3    PD 0.2064
+115 112    1    PD 0.1480
+116 112    2    PD 0.1692
+117 112    3    PD 0.1173
+118 114    1  CTRL 0.1837
+119 114    2  CTRL 0.2439
+120 114    3  CTRL 0.2347
+121 115    1    PD 0.3499
+122 115    2    PD 0.1403
+123 115    3    PD 0.1079
+124 116    1    PD 0.2918
+125 116    2    PD 0.2381
+126 116    3    PD 0.1116
+127 120    1  CTRL 0.2246
+128 120    2  CTRL 0.3014
+129 122    1  CTRL 0.1899
+130 122    2  CTRL 0.2336
+131 122    3  CTRL 0.2829
+132 125    1    PD 0.1919
+133 125    2    PD 0.2513
+134 125    3    PD 0.2356
+135 127    1    PD 0.1732
+136 127    2    PD 0.1581
+137 127    3    PD 0.1552
+138 129    1    PD 0.1715
+139 129    2    PD 0.1550
+140 135    1    PD 0.2354
+141 135    2    PD 0.2128
+142 135    3    PD 0.1605
+143 136    1    PD 0.2952
+144 136    2    PD 0.3557
+145 136    3    PD 0.3414
+146 137    1    PD 0.2623
+147 137    2    PD 0.2815
+148 140    1    PD 0.2156
+149 140    2    PD 0.1495
+150 141    1  CTRL 0.2814
+151 141    2  CTRL 0.1975
+152 142    1  CTRL 0.2492
+153 142    2  CTRL 0.2348
+154 143    1    PD 0.3227
+155 143    2    PD 0.2401
+156 144    1  CTRL 0.2654
+157 144    2  CTRL 0.1684
+158 146    1    PD 0.2406
+159 146    2    PD 0.1947
+160 149    1  CTRL 0.3243
+161 149    2  CTRL 0.2345
+162 150    1  CTRL 0.1844
+163 150    2  CTRL 0.1644
+164 152    1    PD 0.2613
+165 152    2    PD 0.2944
+166 153    1  CTRL 0.2268
+167 153    2  CTRL 0.2117
+168 155    1    PD 0.1867
+169 155    2    PD 0.1588
+170 156    1    PD 0.2256
+171 156    2    PD 0.2887
+172 156    3    PD 0.2348
+173 159    1    PD 0.1554
+174 159    2    PD 0.0797
+175 160    1    PD 0.2001
+176 160    2    PD 0.2147
+177 162    1    PD 0.2374
+178 162    2    PD 0.2286
+179 162    3    PD 0.2794
+180 163    1  CTRL 0.1707
+181 163    2  CTRL 0.2192
+182 165    1    PD 0.2086
+183 165    2    PD 0.1367
+184 167    1    PD 0.3820
+185 167    2    PD 0.3491
+186 169    1  CTRL 0.2033
+187 169    2  CTRL 0.2925
+188 171    1    PD 0.2175
+189 171    2    PD 0.2671
+190 174    1    PD 0.2515
+191 174    2    PD 0.1912
+192 182    1    PD 0.1082
+193 182    2    PD 0.0860
+194 187    1    PD 0.0771
+195 187    2    PD 0.0665
+196 189    1    PD 0.1257
+197 189    2    PD 0.1837
+198 190    1    PD 0.1208
+199 190    2    PD 0.1008
+200 193    1    PD 0.2546
+201 193    2    PD 0.2372
+202 194    1  CTRL 0.2013
+203 194    2  CTRL 0.2298
+204 201    1    PD 0.1082
+205 201    2    PD 0.0919
+206 204    1    PD 0.1997
+207 204    2    PD 0.1913
+208 205    1  CTRL 0.1993
+209 205    2  CTRL 0.1017
+210 208    1    PD 0.0694
+211 208    2    PD 0.2629
+212 209    1    PD 0.1420
+213 209    2    PD 0.1933
+214 211    1    PD 0.1165
+215 211    2    PD 0.1632
+216 214    1    PD 0.1847
+217 214    2    PD 0.2078
+218 219    1  CTRL 0.2555
+219 219    2  CTRL 0.2970
+220 222    1    PD 0.2180
+221 222    2    PD 0.0967
+222 223    1    PD 0.2216
+223 223    2    PD 0.2817
+224 229    1    PD 0.1267
+225 229    2    PD 0.1553</code></pre>
+</div>
+<h2 id="pivot_wider">pivot_wider</h2>
+The <code>pivot_wider()</code> function takes two arguments: <code>names_from</code> which is the variable whose values will be converted to column names and <code>values_from</code> whose values will be cell values.
+<div class="layout-chunk" data-layout="l-body">
+<pre><code># A tibble: 91 x 6
+      ID group    `1`    `2`    `3`   `4`
+   &lt;int&gt; &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+ 1     6 PD    0.162  0.168   0.215    NA
+ 2    29 PD    0.175  0.136  NA        NA
+ 3    34 CTRL  0.166  0.140  NA        NA
+ 4    36 CTRL  0.152  0.205  NA        NA
+ 5    37 PD    0.219  0.158   0.259    NA
+ 6    48 PD    0.130  0.270   0.248    NA
+ 7    53 CTRL  0.211  0.152  NA        NA
+ 8    54 PD    0.220  0.152   0.192    NA
+ 9    58 PD    0.380  0.215   0.204    NA
+10    61 PD    0.0818 0.0628 NA        NA
+# … with 81 more rows</code></pre>
+</div>
+<h2 id="pivot_longer">pivot_longer</h2>
+<p>Going back to long:</p>
+<p>The <code>pivot_longer</code> function takes three arguments: <code>cols</code> is a list of columns that are to be collapsed. The columns can be referenced by column number or column name. <code>names_to</code> is the name of the new column which will combine all column names. This is up to you to decide what the name is. <code>values_to</code> is the name of the new column which will combine all column values associated with each variable combination.</p>
+<div class="layout-chunk" data-layout="l-body">
+<pre><code># A tibble: 364 x 4
+      ID group wave     DAN
+   &lt;int&gt; &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt;
+ 1     6 PD    1      0.162
+ 2     6 PD    2      0.168
+ 3     6 PD    3      0.215
+ 4     6 PD    4     NA    
+ 5    29 PD    1      0.175
+ 6    29 PD    2      0.136
+ 7    29 PD    3     NA    
+ 8    29 PD    4     NA    
+ 9    34 CTRL  1      0.166
+10    34 CTRL  2      0.140
+# … with 354 more rows</code></pre>
+</div>
+<h2 id="seperate-and-unite">Seperate and Unite</h2>
+<p>Many times datasets are, for a lack of a better term, messy. We will talk more about the upfront work later to make sure you dont have messy data. However, if you do have messy data there are a number of helpful functions to tidy-up your data.</p>
+<p>One common way to represent longitudinal data is to name the variable with a wave signifier.</p>
+<div class="layout-chunk" data-layout="l-body">
+<pre><code># A tibble: 3 x 4
+     ID ext_1 ext_2 ext_3
+  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1     1     4     4     4
+2     2     6     5     4
+3     3     4     5     6</code></pre>
+</div>
+If we went and tried to pivot_longer we’d end up with
+<div class="layout-chunk" data-layout="l-body">
+<pre><code># A tibble: 9 x 3
+     ID time    EXT
+  &lt;dbl&gt; &lt;chr&gt; &lt;dbl&gt;
+1     1 ext_1     4
+2     1 ext_2     4
+3     1 ext_3     4
+4     2 ext_1     6
+5     2 ext_2     5
+6     2 ext_3     4
+7     3 ext_1     4
+8     3 ext_2     5
+9     3 ext_3     6</code></pre>
+</div>
+<p>The time column is now specific to ext, which is a problem if I have more than one variable that I am pivoting. But, we will end up using wave as our time variable in our model, and time will have to be numeric. So how can we go ahead and separate out the ext part?</p>
+One way is to use the separate function
+<div class="layout-chunk" data-layout="l-body">
+<pre><code># A tibble: 9 x 4
+     ID variable time    EXT
+  &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt; &lt;dbl&gt;
+1     1 ext      1         4
+2     1 ext      2         4
+3     1 ext      3         4
+4     2 ext      1         6
+5     2 ext      2         5
+6     2 ext      3         4
+7     3 ext      1         4
+8     3 ext      2         5
+9     3 ext      3         6</code></pre>
+</div>
+<p>In terms of setting up your data, it is often helpful to include markers that separate parts of the variable eg "_" or “.” A variable that is ext_1 is easier to separate than ext1.</p>
+<p>Note, also that the time column is a character rather than numeric. We need to change this so as to use time continuously in our models. There are a few ways to do it, but this is perhaps the most straightforward.</p>
+<div class="layout-chunk" data-layout="l-body">
+<pre><code># A tibble: 9 x 4
+     ID variable  time   EXT
+  &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt;
+1     1 ext          1     4
+2     1 ext          2     4
+3     1 ext          3     4
+4     2 ext          1     6
+5     2 ext          2     5
+6     2 ext          3     4
+7     3 ext          1     4
+8     3 ext          2     5
+9     3 ext          3     6</code></pre>
+</div>
+<p>However, something that is a little more elegant is to do both the separating AND the making into numeric in the original pivot_longer function</p>
+names_prefix omits what is in there from the new cell names. Previously we had ext_1, ext_2, etc, which we had to seperate with a different function, but this does it within pivot_longer
+<div class="layout-chunk" data-layout="l-body">
+<pre><code># A tibble: 9 x 3
+     ID time    EXT
+  &lt;dbl&gt; &lt;chr&gt; &lt;dbl&gt;
+1     1 1         4
+2     1 2         4
+3     1 3         4
+4     2 1         6
+5     2 2         5
+6     2 3         4
+7     3 1         4
+8     3 2         5
+9     3 3         6</code></pre>
+</div>
+<p>names_transform does any transformations within the variables. Here instead of a separate call, we can make our variables numeric.</p>
+<div class="layout-chunk" data-layout="l-body">
+<pre><code># A tibble: 9 x 3
+     ID  time   EXT
+  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1     1     1     4
+2     1     2     4
+3     1     3     4
+4     2     1     6
+5     2     2     5
+6     2     3     4
+7     3     1     4
+8     3     2     5
+9     3     3     6</code></pre>
+</div>
+<p>Another common problem that we often face is the need to unite two variables into one. Enter, the creatively titled unite function. Sometimes this happens when our time metric is entered in seperate columns.</p>
+<div class="layout-chunk" data-layout="l-body">
+<pre><code># A tibble: 3 x 6
+     ID  year month   day  hour   min
+  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1     1  2020     1     1     4    55
+2     2  2020     1     1     2    17
+3     3  2020     1     1     5    23</code></pre>
+</div>
+To combine them into one time metric
+<div class="layout-chunk" data-layout="l-body">
+<pre><code># A tibble: 3 x 5
+     ID  year month   day time 
+  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;
+1     1  2020     1     1 4:55 
+2     2  2020     1     1 2:17 
+3     3  2020     1     1 5:23 </code></pre>
+</div>
+<h2 id="date-time-metrics">date time metrics</h2>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+A date-time is a date plus a time: it uniquely identifies an instant in time (typically to the nearest second). These are called POSIXct in R.
+<div class="layout-chunk" data-layout="l-body">
+<pre><code>[1] &quot;2021-01-13&quot;</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<pre><code>[1] &quot;2021-01-13 13:45:43 CST&quot;</code></pre>
+</div>
+Bringing these into R from some outside place (excel, spss) can lead to confusion, as they can be formatted differently
+<div class="layout-chunk" data-layout="l-body">
+<pre><code>[1] &quot;2017-01-31&quot;</code></pre>
+<pre><code>[1] &quot;2017-01-31&quot;</code></pre>
+<pre><code>[1] &quot;2017-01-31&quot;</code></pre>
+</div>
+You can create these relatively straight forwardly…by hand
+<div class="layout-chunk" data-layout="l-body">
+<pre><code>[1] &quot;2017-01-31 20:11:59 UTC&quot;</code></pre>
+<pre><code>[1] &quot;2017-01-31 08:01:00 UTC&quot;</code></pre>
+</div>
+<p>Or you can use existing columns variables. This is where the <code>lubridate</code> package comes in handy</p>
+<div class="layout-chunk" data-layout="l-body">
+<pre><code># A tibble: 3 x 7
+     ID  year month   day  hour   min t_1                
+  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dttm&gt;             
+1     1  2020     1     1     4    55 2020-01-01 04:55:00
+2     2  2020     1     1     2    17 2020-01-01 02:17:00
+3     3  2020     1     1     5    23 2020-01-01 05:23:00</code></pre>
+</div>
+<p>Note the t_1 variable is a POSIXct variable type. Once in this format it is much easier to manipulate and work with dates and times.</p>
+<h1 id="projects-and-rmarkdown">Projects and Rmarkdown</h1>
+<p>As with any project, but especially for longitudinal data, one of the most important aspects of data analysis is A. not losing track of what you did and B. being organized. This is much much much harder than said. I find using a combination of 1. rstudio projects 2. git and 3. codebooks are helpful in accomplishing these two goals. We will talk about #1 and #2 but I also encourage you to read about git. These are not the only way to do these sorts of analyses but I feel that exposure to them is helpful, as often in the social sciences these sort of decisions are not discussed.</p>
+<p>When I create an <code>rmarkdown</code> document for my own research projects, I always start by setting up 3 components:</p>
+<ol type="1">
+<li>Packages<br />
+</li>
+<li>Codebook(s)<br />
+</li>
+<li>Data</li>
+</ol>
+<p>Below, we will step through each of these separately, setting ourselves up to (hopefully) flawlessly communicate with <code>R</code> and our data. Note that you do not need to use rmarkdown but I think rmarkdown is much more useful than standard .R syntax.</p>
+<h2 id="packages">Packages</h2>
+<p>Packages seems like the most basic step, but it is actually very important. Depending on what gets loaded you might overwrite functions from other packages.(Note: I will often reload or not follow this advice within lectures for didactic reasons, choosing to put library calls above the code)</p>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<h2 id="codebook">Codebook</h2>
+<p>The second step is a codebook. Arguably, this is the first step because you should <em>create</em> the codebook long before you open <code>R</code> and load your data.</p>
+<p>Why a codebook? Well, because you typically have a lot of variables and you will not be able to remember all the details that go into each one of them (rating scale, what the actual item was, was it coded someway, etc). This is especially true now that data are being collected online, which often provides placeholder variable names that then need to be processed somehow. This codebook will serve as a means to document RAW code. It will also allow us to automate some tasks that are somewhat cumbersome, facilitate open data practices, and efficiently see what variables are available. Ultimately, we want to be able to show how we got from the start, with the messy raw data, to our analyses and results at the end? A codebook makes this easier.</p>
+<p>To illistrate, we are going to using some data from the <a href="https://www.diw.de/en/soep/">German Socioeconomic Panel Study (GSOEP)</a>, which is an ongoing Panel Study in Germany. Note that these data are for teaching purposes only, shared under the license for the Comprehensive SOEP teaching dataset, which I, as a contracted SOEP user, can use for teaching purposes. These data represent select cases from the full data set and should not be used for the purpose of publication. The full data are available for free at <a href="https://www.diw.de/en/diw_02.c.222829.en/access_and_ordering.html" class="uri">https://www.diw.de/en/diw_02.c.222829.en/access_and_ordering.html</a>.</p>
+<p>For this tutorial, I created the codebook for you, and included what I believe are the core columns you may need. Some of these columns will not be particularly helpful for this dataset. For example, many of you likely work with datasets that have only a single file while others work with datasetsspread across many files (e.g., different waves, different sources). As a result, the “dataset” column of the codebook may only have a single value whereas for others it may have multiple.</p>
+<p>Here are my core columns that are based on the original data:</p>
+<ol type="1">
+<li><p><strong>dataset</strong>: this column indexes the <strong>name</strong> of the dataset that you will be pulling the data from. This is important because we will use this info later on (see <code>purrr</code> tutorial) to load and clean specific data files. Even if you don’t have multiple data sets, I believe consistency is more important and suggest using this.</p></li>
+<li><p><strong>old_name</strong>: this column is the name of the variable in the data you are pulling it from. This should be exact. The goal of this column is that it will allow us to <code>select()</code> variables from the original data file and rename them something that is more useful to us. If you have worked with qualtrics (really any data) you know why this is important.</p></li>
+<li><p><strong>item_text</strong>: this column is the original text that participants saw or a description of the item.</p></li>
+<li><p><strong>scale</strong>: this column tells you what the scale of the variable is. Is it a numeric variable, a text variable, etc. This is helpful for knowing the plausible range.</p></li>
+<li><p><strong>reverse</strong>: this column tells you whether items in a scale need to be reverse coded. I recommend coding this as 1 (leave alone) and -1 (reverse) for reasons that will become clear later.</p></li>
+<li><p><strong>mini</strong>: this column represents the minimum value of scales that are numeric. Leave blank otherwise.</p></li>
+<li><p><strong>maxi</strong>: this column represents the maximumv alue of scales that are numeric. Leave blank otherwise.</p></li>
+<li><p><strong>recode</strong>: sometimes, we want to recode variables for analyses (e.g. for categorical variables with many levels where sample sizes for some levels are too small to actually do anything with it). I use this column to note the kind of recoding I’ll do to a variable for transparency.</p></li>
+</ol>
+<p>Here are additional columns that will make our lives easier or are applicable to some but not all data sets:</p>
+<ol start="9" type="1">
+<li><p><strong>category</strong>: broad categories that different variables can be put into. I’m a fan of naming them things like “outcome”, “predictor”, “moderator”, “demographic”, “procedural”, etc. but sometimes use more descriptive labels like “Big 5” to indicate the model from which the measures are derived.</p></li>
+<li><p><strong>label</strong>: label is basically one level lower than category. So if the category is Big 5, the label would be, or example, “A” for Agreeableness, “SWB” for subjective well-being, etc. This column is most important and useful when you have multiple items in a scales, so I’ll typically leave this blank when something is a standalone variable (e.g. sex, single-item scales, etc.).</p></li>
+<li><p><strong>item_name</strong>: This is the lowest level and most descriptive variable. It indicates which item in scale something is. So it may be “kind” for Agreebleness or “sex” for the demographic biological sex variable.</p></li>
+<li><p><strong>year</strong>: for longitudinal data, we have several waves of data and the name of the same item across waves is often different, so it’s important to note to which wave an item belongs. You can do this by noting the wave (e.g. 1, 2, 3), but I prefer the actual year the data were collected (e.g. 2005, 2009, etc.) if that is appropriate. See Lecture #1 on discussion of meaningful time metrics. Note that this differs from that discussion in your codebook you want to describe how you collected the data, not necessarily how you want to analyze the data.</p></li>
+<li><p><strong>new_name</strong>: This is a column that brings together much of the information we’ve already collected. It’s purpose is to be the new name that we will give to the variable that is more useful and descriptive to us. This is a constructed variable that brings together others. I like to make it a combination of “category”, “label”, “item_name”, and year using varying combos of "_" and “.” that we can use later with tidyverse functions. I typically construct this variable in Excel using the <code>CONCATENATE()</code> function, but it could also be done in <code>R</code>. The reason I do it in Excel is that it makes it easier for someone who may be reviewing my codebook.</p></li>
+</ol>
+<p>There is a separate discussion to be had on naming conventions for your variables, but the important idea to remember is that names convey important information and we want to use this information later on to make our life easier. By coding these variables using this information AND systematically using different separators we can accomplish this goal.</p>
+<ol start="14" type="1">
+<li><strong>meta</strong>: Some datasets have a meta name, which essentially means a name that variable has across all waves to make it clear which variables are the same. They are not always useful as some data sets have meta names but no great way of extracting variables using them. But they’re still typically useful to include in your codebook regardless.</li>
+</ol>
+<p>These are just suggestions, but after working with many longitudinal datasets I will say all of them are horrible in some way. Doing this makes them less horrible. Is it some upfront work? Yes. Will it ultimately save you time? Yes. Also, if you know this prior to runnign a study you are making some sort of code book anyways, right, right? Might as well kill two birds with one stone.</p>
+<p>You can make the codebook anyway you want, but the two best options are miscrosoft excel and google pages. Not because they are necessarily the best functioning but because they are relatively ubiquitous and are easy to share.</p>
+<p>We will create a codebook but then bring the codebook into R via turning it into a csv. You can rethink the codebook as a way of coding prior to putting anything into R.</p>
+<p>Below, I’ll load in the codebook we will use for this study, which will include all of the above columns.</p>
+<div class="layout-chunk" data-layout="l-body">
+<pre><code># A tibble: 153 x 13
+   dataset old_name item_text scale category label item_name  year
+   &lt;chr&gt;   &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;     &lt;dbl&gt;
+ 1 &lt;NA&gt;    persnr   Never Ch…  &lt;NA&gt; Procedu… &lt;NA&gt;  SID           0
+ 2 &lt;NA&gt;    hhnr     househol…  &lt;NA&gt; Procedu… &lt;NA&gt;  household     0
+ 3 ppfad   gebjahr  Year of … &quot;num… Demogra… &lt;NA&gt;  DOB           0
+ 4 ppfad   sex      Sex       &quot;\n1… Demogra… &lt;NA&gt;  Sex           0
+ 5 vp      vp12501  Thorough…  &lt;NA&gt; Big 5    C     thorough   2005
+ 6 zp      zp12001  Thorough…  &lt;NA&gt; Big 5    C     thorough   2009
+ 7 bdp     bdp15101 Thorough…  &lt;NA&gt; Big 5    C     thorough   2013
+ 8 vp      vp12502  Am commu…  &lt;NA&gt; Big 5    E     communic   2005
+ 9 zp      zp12002  Am commu…  &lt;NA&gt; Big 5    E     communic   2009
+10 bdp     bdp15102 Am commu…  &lt;NA&gt; Big 5    E     communic   2013
+# … with 143 more rows, and 5 more variables: new_name &lt;chr&gt;,
+#   reverse &lt;dbl&gt;, mini &lt;dbl&gt;, maxi &lt;dbl&gt;, recode &lt;chr&gt;</code></pre>
+</div>
+<h2 id="data">Data</h2>
+<p>First, we need to load in the data. We’re going to use three waves of data from the German Socioeconomic Panel Study, which is a longitudinal study of German households that has been conducted since 1984. We’re going to use more recent data from three waves of personality data collected between 2005 and 2013.</p>
+<p><em>Note</em>: we will be using the teaching set of the GSOEP data set. I will not be pulling from the raw files as a result of this. I will also not be mirroring the format that you would usually load the GSOEP from because that is slightly more complicated and somethng we will return to in a later tutorial after we have more skills. I’ve left that code for now, but it won’t make a lot of sense right now.</p>
+<p>This code below shows how I would read in and rename a wide-format data set using the codebook I created.</p>
+<div class="layout-chunk" data-layout="l-body">
+<pre><code># A tibble: 28,290 x 153
+   Procedural__SID Procedural__hou… Demographic__DOB Demographic__Sex
+             &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+ 1             901               94             1951                2
+ 2            1202              124             1913                2
+ 3            2301              230             1946                1
+ 4            2302              230             1946                2
+ 5            2304              230             1978                1
+ 6            2305              230             1946                2
+ 7            4601              469             1933                2
+ 8            4701              477             1919                2
+ 9            4901              493             1925                2
+10            5201              523             1955                1
+# … with 28,280 more rows, and 149 more variables: `Big
+#   5__C_thorough.2005` &lt;dbl&gt;, `Big 5__C_thorough.2009` &lt;dbl&gt;, `Big
+#   5__C_thorough.2013` &lt;dbl&gt;, `Big 5__E_communic.2005` &lt;dbl&gt;, `Big
+#   5__E_communic.2009` &lt;dbl&gt;, `Big 5__E_communic.2013` &lt;dbl&gt;, `Big
+#   5__A_coarse.2005` &lt;dbl&gt;, `Big 5__A_coarse.2009` &lt;dbl&gt;, `Big
+#   5__A_coarse.2013` &lt;dbl&gt;, `Big 5__O_original.2005` &lt;dbl&gt;, `Big
+#   5__O_original.2009` &lt;dbl&gt;, `Big 5__O_original.2013` &lt;dbl&gt;, `Big
+#   5__N_worry.2005` &lt;dbl&gt;, `Big 5__N_worry.2009` &lt;dbl&gt;, `Big
+#   5__N_worry.2013` &lt;dbl&gt;, `Big 5__A_forgive.2005` &lt;dbl&gt;, `Big
+#   5__A_forgive.2009` &lt;dbl&gt;, `Big 5__A_forgive.2013` &lt;dbl&gt;, `Big
+#   5__C_lazy.2005` &lt;dbl&gt;, `Big 5__C_lazy.2009` &lt;dbl&gt;, `Big
+#   5__C_lazy.2013` &lt;dbl&gt;, `Big 5__E_sociable.2005` &lt;dbl&gt;, `Big
+#   5__E_sociable.2009` &lt;dbl&gt;, `Big 5__E_sociable.2013` &lt;dbl&gt;, `Big
+#   5__O_artistic.2005` &lt;dbl&gt;, `Big 5__O_artistic.2009` &lt;dbl&gt;, `Big
+#   5__O_artistic.2013` &lt;dbl&gt;, `Big 5__N_nervous.2005` &lt;dbl&gt;, `Big
+#   5__N_nervous.2009` &lt;dbl&gt;, `Big 5__N_nervous.2013` &lt;dbl&gt;, `Big
+#   5__C_efficient.2005` &lt;dbl&gt;, `Big 5__C_efficient.2009` &lt;dbl&gt;, `Big
+#   5__C_efficient.2013` &lt;dbl&gt;, `Big 5__E_reserved.2005` &lt;dbl&gt;, `Big
+#   5__E_reserved.2009` &lt;dbl&gt;, `Big 5__E_reserved.2013` &lt;dbl&gt;, `Big
+#   5__A_friendly.2005` &lt;dbl&gt;, `Big 5__A_friendly.2009` &lt;dbl&gt;, `Big
+#   5__A_friendly.2013` &lt;dbl&gt;, `Big 5__O_imagin.2005` &lt;dbl&gt;, `Big
+#   5__O_imagin.2009` &lt;dbl&gt;, `Big 5__O_imagin.2013` &lt;dbl&gt;, `Big
+#   5__N_dealStress.2005` &lt;dbl&gt;, `Big 5__N_dealStress.2009` &lt;dbl&gt;,
+#   `Big 5__N_dealStress.2013` &lt;dbl&gt;, `Life
+#   Event__ChldBrth.2005` &lt;dbl&gt;, `Life Event__ChldBrth.2006` &lt;dbl&gt;,
+#   `Life Event__ChldBrth.2007` &lt;dbl&gt;, `Life
+#   Event__ChldBrth.2008` &lt;dbl&gt;, `Life Event__ChldBrth.2009` &lt;dbl&gt;,
+#   `Life Event__ChldBrth.2010` &lt;dbl&gt;, `Life
+#   Event__ChldBrth.2011` &lt;dbl&gt;, `Life Event__ChldBrth.2012` &lt;dbl&gt;,
+#   `Life Event__ChldBrth.2013` &lt;dbl&gt;, `Life
+#   Event__ChldBrth.2014` &lt;dbl&gt;, `Life Event__ChldBrth.2015` &lt;dbl&gt;,
+#   `Life Event__ChldMvOut.2005` &lt;dbl&gt;, `Life
+#   Event__ChldMvOut.2006` &lt;dbl&gt;, `Life Event__ChldMvOut.2007` &lt;dbl&gt;,
+#   `Life Event__ChldMvOut.2008` &lt;dbl&gt;, `Life
+#   Event__ChldMvOut.2009` &lt;dbl&gt;, `Life Event__ChldMvOut.2010` &lt;dbl&gt;,
+#   `Life Event__ChldMvOut.2011` &lt;dbl&gt;, `Life
+#   Event__ChldMvOut.2012` &lt;dbl&gt;, `Life Event__ChldMvOut.2013` &lt;dbl&gt;,
+#   `Life Event__ChldMvOut.2014` &lt;dbl&gt;, `Life
+#   Event__ChldMvOut.2015` &lt;dbl&gt;, `Life Event__Divorce.2005` &lt;dbl&gt;,
+#   `Life Event__Divorce.2006` &lt;dbl&gt;, `Life
+#   Event__Divorce.2007` &lt;dbl&gt;, `Life Event__Divorce.2008` &lt;dbl&gt;,
+#   `Life Event__Divorce.2009` &lt;dbl&gt;, `Life
+#   Event__Divorce.2010` &lt;dbl&gt;, `Life Event__Divorce.2011` &lt;dbl&gt;,
+#   `Life Event__Divorce.2012` &lt;dbl&gt;, `Life
+#   Event__Divorce.2013` &lt;dbl&gt;, `Life Event__Divorce.2014` &lt;dbl&gt;,
+#   `Life Event__Divorce.2015` &lt;dbl&gt;, `Life
+#   Event__DadDied.2005` &lt;dbl&gt;, `Life Event__DadDied.2006` &lt;dbl&gt;,
+#   `Life Event__DadDied.2007` &lt;dbl&gt;, `Life
+#   Event__DadDied.2008` &lt;dbl&gt;, `Life Event__DadDied.2009` &lt;dbl&gt;,
+#   `Life Event__DadDied.2010` &lt;dbl&gt;, `Life
+#   Event__DadDied.2011` &lt;dbl&gt;, `Life Event__DadDied.2012` &lt;dbl&gt;,
+#   `Life Event__DadDied.2013` &lt;dbl&gt;, `Life
+#   Event__DadDied.2014` &lt;dbl&gt;, `Life Event__DadDied.2015` &lt;dbl&gt;,
+#   `Life Event__NewPart.2011` &lt;dbl&gt;, `Life
+#   Event__NewPart.2012` &lt;dbl&gt;, `Life Event__NewPart.2013` &lt;dbl&gt;,
+#   `Life Event__NewPart.2014` &lt;dbl&gt;, `Life
+#   Event__NewPart.2015` &lt;dbl&gt;, `Life Event__Married.2005` &lt;dbl&gt;,
+#   `Life Event__Married.2006` &lt;dbl&gt;, `Life
+#   Event__Married.2007` &lt;dbl&gt;, `Life Event__Married.2008` &lt;dbl&gt;,
+#   `Life Event__Married.2009` &lt;dbl&gt;, `Life
+#   Event__Married.2010` &lt;dbl&gt;, …</code></pre>
+</div>
+<h1 id="clean-data">Clean Data</h1>
+<h2 id="recode-variables">Recode Variables</h2>
+<p>Many of the data we work with have observations that are missing for a variety of reasons. In <code>R</code>, we treat missing values as <code>NA</code>, but many other programs from which you may be importing your data may use other codes (e.g. 999, -999, etc.). Large panel studies tend to use small negative values to indicate different types of missingness. This is why it is important to note down the scale in your codebook. That way you can check which values may need to be recoded to explicit <code>NA</code> values.</p>
+<p>In the GSOEP, <code>-1</code> to <code>-7</code> indicate various types of missing values, so we will recode these to <code>NA</code>. To do this, we will use <code>mapvalues()</code>, from the <code>plyr</code> package. In later tutorials where we read in and manipulate more complex data sets, we will use <code>mapvalues()</code> a lot.</p>
+<p>Below we are taking the dataset soep and saying we are going to mutate all of our variables, making sure they are all numeric (as the code expects numeric), then we get to the mapvalues function:</p>
+<p><code>mapvalues</code> takes 3 key arguments: (1) the variable you are recoding. Below that is indicated by “.” which is shorthand for the data that was piped in.</p>
+<ol start="2" type="1">
+<li><p>a vector of initial values <code>from</code> which you want to change. Here we indicae a sequence of values from -1 to -7, which correspond to the missing values used by GSOEP. Other datasets may use -999, for example.</p></li>
+<li><p>recode your values in (2) <code>to</code> new values in the same order as the old values. Here we have NA (the way R treats missing data) repeated 7 times (to correspond to -1, -2,…)</p></li>
+</ol>
+<p>It is also helpful to turn off warnings if some levels are not in your data (<code>warn_missing = F</code>).</p>
+<div class="layout-chunk" data-layout="l-body">
+<pre><code># A tibble: 28,290 x 153
+   Procedural__SID Procedural__hou… Demographic__DOB Demographic__Sex
+             &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+ 1             901               94             1951                2
+ 2            1202              124             1913                2
+ 3            2301              230             1946                1
+ 4            2302              230             1946                2
+ 5            2304              230             1978                1
+ 6            2305              230             1946                2
+ 7            4601              469             1933                2
+ 8            4701              477             1919                2
+ 9            4901              493             1925                2
+10            5201              523             1955                1
+# … with 28,280 more rows, and 149 more variables: `Big
+#   5__C_thorough.2005` &lt;dbl&gt;, `Big 5__C_thorough.2009` &lt;dbl&gt;, `Big
+#   5__C_thorough.2013` &lt;dbl&gt;, `Big 5__E_communic.2005` &lt;dbl&gt;, `Big
+#   5__E_communic.2009` &lt;dbl&gt;, `Big 5__E_communic.2013` &lt;dbl&gt;, `Big
+#   5__A_coarse.2005` &lt;dbl&gt;, `Big 5__A_coarse.2009` &lt;dbl&gt;, `Big
+#   5__A_coarse.2013` &lt;dbl&gt;, `Big 5__O_original.2005` &lt;dbl&gt;, `Big
+#   5__O_original.2009` &lt;dbl&gt;, `Big 5__O_original.2013` &lt;dbl&gt;, `Big
+#   5__N_worry.2005` &lt;dbl&gt;, `Big 5__N_worry.2009` &lt;dbl&gt;, `Big
+#   5__N_worry.2013` &lt;dbl&gt;, `Big 5__A_forgive.2005` &lt;dbl&gt;, `Big
+#   5__A_forgive.2009` &lt;dbl&gt;, `Big 5__A_forgive.2013` &lt;dbl&gt;, `Big
+#   5__C_lazy.2005` &lt;dbl&gt;, `Big 5__C_lazy.2009` &lt;dbl&gt;, `Big
+#   5__C_lazy.2013` &lt;dbl&gt;, `Big 5__E_sociable.2005` &lt;dbl&gt;, `Big
+#   5__E_sociable.2009` &lt;dbl&gt;, `Big 5__E_sociable.2013` &lt;dbl&gt;, `Big
+#   5__O_artistic.2005` &lt;dbl&gt;, `Big 5__O_artistic.2009` &lt;dbl&gt;, `Big
+#   5__O_artistic.2013` &lt;dbl&gt;, `Big 5__N_nervous.2005` &lt;dbl&gt;, `Big
+#   5__N_nervous.2009` &lt;dbl&gt;, `Big 5__N_nervous.2013` &lt;dbl&gt;, `Big
+#   5__C_efficient.2005` &lt;dbl&gt;, `Big 5__C_efficient.2009` &lt;dbl&gt;, `Big
+#   5__C_efficient.2013` &lt;dbl&gt;, `Big 5__E_reserved.2005` &lt;dbl&gt;, `Big
+#   5__E_reserved.2009` &lt;dbl&gt;, `Big 5__E_reserved.2013` &lt;dbl&gt;, `Big
+#   5__A_friendly.2005` &lt;dbl&gt;, `Big 5__A_friendly.2009` &lt;dbl&gt;, `Big
+#   5__A_friendly.2013` &lt;dbl&gt;, `Big 5__O_imagin.2005` &lt;dbl&gt;, `Big
+#   5__O_imagin.2009` &lt;dbl&gt;, `Big 5__O_imagin.2013` &lt;dbl&gt;, `Big
+#   5__N_dealStress.2005` &lt;dbl&gt;, `Big 5__N_dealStress.2009` &lt;dbl&gt;,
+#   `Big 5__N_dealStress.2013` &lt;dbl&gt;, `Life
+#   Event__ChldBrth.2005` &lt;dbl&gt;, `Life Event__ChldBrth.2006` &lt;dbl&gt;,
+#   `Life Event__ChldBrth.2007` &lt;dbl&gt;, `Life
+#   Event__ChldBrth.2008` &lt;dbl&gt;, `Life Event__ChldBrth.2009` &lt;dbl&gt;,
+#   `Life Event__ChldBrth.2010` &lt;dbl&gt;, `Life
+#   Event__ChldBrth.2011` &lt;dbl&gt;, `Life Event__ChldBrth.2012` &lt;dbl&gt;,
+#   `Life Event__ChldBrth.2013` &lt;dbl&gt;, `Life
+#   Event__ChldBrth.2014` &lt;dbl&gt;, `Life Event__ChldBrth.2015` &lt;dbl&gt;,
+#   `Life Event__ChldMvOut.2005` &lt;dbl&gt;, `Life
+#   Event__ChldMvOut.2006` &lt;dbl&gt;, `Life Event__ChldMvOut.2007` &lt;dbl&gt;,
+#   `Life Event__ChldMvOut.2008` &lt;dbl&gt;, `Life
+#   Event__ChldMvOut.2009` &lt;dbl&gt;, `Life Event__ChldMvOut.2010` &lt;dbl&gt;,
+#   `Life Event__ChldMvOut.2011` &lt;dbl&gt;, `Life
+#   Event__ChldMvOut.2012` &lt;dbl&gt;, `Life Event__ChldMvOut.2013` &lt;dbl&gt;,
+#   `Life Event__ChldMvOut.2014` &lt;dbl&gt;, `Life
+#   Event__ChldMvOut.2015` &lt;dbl&gt;, `Life Event__Divorce.2005` &lt;dbl&gt;,
+#   `Life Event__Divorce.2006` &lt;dbl&gt;, `Life
+#   Event__Divorce.2007` &lt;dbl&gt;, `Life Event__Divorce.2008` &lt;dbl&gt;,
+#   `Life Event__Divorce.2009` &lt;dbl&gt;, `Life
+#   Event__Divorce.2010` &lt;dbl&gt;, `Life Event__Divorce.2011` &lt;dbl&gt;,
+#   `Life Event__Divorce.2012` &lt;dbl&gt;, `Life
+#   Event__Divorce.2013` &lt;dbl&gt;, `Life Event__Divorce.2014` &lt;dbl&gt;,
+#   `Life Event__Divorce.2015` &lt;dbl&gt;, `Life
+#   Event__DadDied.2005` &lt;dbl&gt;, `Life Event__DadDied.2006` &lt;dbl&gt;,
+#   `Life Event__DadDied.2007` &lt;dbl&gt;, `Life
+#   Event__DadDied.2008` &lt;dbl&gt;, `Life Event__DadDied.2009` &lt;dbl&gt;,
+#   `Life Event__DadDied.2010` &lt;dbl&gt;, `Life
+#   Event__DadDied.2011` &lt;dbl&gt;, `Life Event__DadDied.2012` &lt;dbl&gt;,
+#   `Life Event__DadDied.2013` &lt;dbl&gt;, `Life
+#   Event__DadDied.2014` &lt;dbl&gt;, `Life Event__DadDied.2015` &lt;dbl&gt;,
+#   `Life Event__NewPart.2011` &lt;dbl&gt;, `Life
+#   Event__NewPart.2012` &lt;dbl&gt;, `Life Event__NewPart.2013` &lt;dbl&gt;,
+#   `Life Event__NewPart.2014` &lt;dbl&gt;, `Life
+#   Event__NewPart.2015` &lt;dbl&gt;, `Life Event__Married.2005` &lt;dbl&gt;,
+#   `Life Event__Married.2006` &lt;dbl&gt;, `Life
+#   Event__Married.2007` &lt;dbl&gt;, `Life Event__Married.2008` &lt;dbl&gt;,
+#   `Life Event__Married.2009` &lt;dbl&gt;, `Life
+#   Event__Married.2010` &lt;dbl&gt;, …</code></pre>
+</div>
+<h2 id="reverse-scoring">Reverse-Scoring</h2>
+<p>Many scales we use have items that are positively or negatively keyed. High ratings on positively keyed items are indicative of being high on a construct. In contrast, high ratings on negatively keyed items are indicative of being low on a construct. Thus, to create the composite scores of constructs we often use, we must first “reverse” the negatively keyed items so that high scores indicate being higher on the construct.</p>
+<p>There are a few ways to do this in <code>R</code>. Below, I’ll demonstrate how to do so using the <code>reverse.code()</code> function in the <code>psych</code> package in <code>R</code>. This function was built to make reverse coding more efficient (i.e. please don’t run every item that needs to be recoded with separate lines of code!!).</p>
+<p>Before we can do that, though, we need to restructure the data a bit in order to bring in the reverse coding information from our codebook.</p>
+<div class="layout-chunk" data-layout="l-body">
+<pre><code># A tibble: 28,290 x 153
+   Procedural__SID Procedural__hou… Demographic__DOB Demographic__Sex
+             &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+ 1             901               94             1951                2
+ 2            1202              124             1913                2
+ 3            2301              230             1946                1
+ 4            2302              230             1946                2
+ 5            2304              230             1978                1
+ 6            2305              230             1946                2
+ 7            4601              469             1933                2
+ 8            4701              477             1919                2
+ 9            4901              493             1925                2
+10            5201              523             1955                1
+# … with 28,280 more rows, and 149 more variables: `Big
+#   5__C_thorough.2005` &lt;dbl&gt;, `Big 5__C_thorough.2009` &lt;dbl&gt;, `Big
+#   5__C_thorough.2013` &lt;dbl&gt;, `Big 5__E_communic.2005` &lt;dbl&gt;, `Big
+#   5__E_communic.2009` &lt;dbl&gt;, `Big 5__E_communic.2013` &lt;dbl&gt;, `Big
+#   5__A_coarse.2005` &lt;dbl&gt;, `Big 5__A_coarse.2009` &lt;dbl&gt;, `Big
+#   5__A_coarse.2013` &lt;dbl&gt;, `Big 5__O_original.2005` &lt;dbl&gt;, `Big
+#   5__O_original.2009` &lt;dbl&gt;, `Big 5__O_original.2013` &lt;dbl&gt;, `Big
+#   5__N_worry.2005` &lt;dbl&gt;, `Big 5__N_worry.2009` &lt;dbl&gt;, `Big
+#   5__N_worry.2013` &lt;dbl&gt;, `Big 5__A_forgive.2005` &lt;dbl&gt;, `Big
+#   5__A_forgive.2009` &lt;dbl&gt;, `Big 5__A_forgive.2013` &lt;dbl&gt;, `Big
+#   5__C_lazy.2005` &lt;dbl&gt;, `Big 5__C_lazy.2009` &lt;dbl&gt;, `Big
+#   5__C_lazy.2013` &lt;dbl&gt;, `Big 5__E_sociable.2005` &lt;dbl&gt;, `Big
+#   5__E_sociable.2009` &lt;dbl&gt;, `Big 5__E_sociable.2013` &lt;dbl&gt;, `Big
+#   5__O_artistic.2005` &lt;dbl&gt;, `Big 5__O_artistic.2009` &lt;dbl&gt;, `Big
+#   5__O_artistic.2013` &lt;dbl&gt;, `Big 5__N_nervous.2005` &lt;dbl&gt;, `Big
+#   5__N_nervous.2009` &lt;dbl&gt;, `Big 5__N_nervous.2013` &lt;dbl&gt;, `Big
+#   5__C_efficient.2005` &lt;dbl&gt;, `Big 5__C_efficient.2009` &lt;dbl&gt;, `Big
+#   5__C_efficient.2013` &lt;dbl&gt;, `Big 5__E_reserved.2005` &lt;dbl&gt;, `Big
+#   5__E_reserved.2009` &lt;dbl&gt;, `Big 5__E_reserved.2013` &lt;dbl&gt;, `Big
+#   5__A_friendly.2005` &lt;dbl&gt;, `Big 5__A_friendly.2009` &lt;dbl&gt;, `Big
+#   5__A_friendly.2013` &lt;dbl&gt;, `Big 5__O_imagin.2005` &lt;dbl&gt;, `Big
+#   5__O_imagin.2009` &lt;dbl&gt;, `Big 5__O_imagin.2013` &lt;dbl&gt;, `Big
+#   5__N_dealStress.2005` &lt;dbl&gt;, `Big 5__N_dealStress.2009` &lt;dbl&gt;,
+#   `Big 5__N_dealStress.2013` &lt;dbl&gt;, `Life
+#   Event__ChldBrth.2005` &lt;dbl&gt;, `Life Event__ChldBrth.2006` &lt;dbl&gt;,
+#   `Life Event__ChldBrth.2007` &lt;dbl&gt;, `Life
+#   Event__ChldBrth.2008` &lt;dbl&gt;, `Life Event__ChldBrth.2009` &lt;dbl&gt;,
+#   `Life Event__ChldBrth.2010` &lt;dbl&gt;, `Life
+#   Event__ChldBrth.2011` &lt;dbl&gt;, `Life Event__ChldBrth.2012` &lt;dbl&gt;,
+#   `Life Event__ChldBrth.2013` &lt;dbl&gt;, `Life
+#   Event__ChldBrth.2014` &lt;dbl&gt;, `Life Event__ChldBrth.2015` &lt;dbl&gt;,
+#   `Life Event__ChldMvOut.2005` &lt;dbl&gt;, `Life
+#   Event__ChldMvOut.2006` &lt;dbl&gt;, `Life Event__ChldMvOut.2007` &lt;dbl&gt;,
+#   `Life Event__ChldMvOut.2008` &lt;dbl&gt;, `Life
+#   Event__ChldMvOut.2009` &lt;dbl&gt;, `Life Event__ChldMvOut.2010` &lt;dbl&gt;,
+#   `Life Event__ChldMvOut.2011` &lt;dbl&gt;, `Life
+#   Event__ChldMvOut.2012` &lt;dbl&gt;, `Life Event__ChldMvOut.2013` &lt;dbl&gt;,
+#   `Life Event__ChldMvOut.2014` &lt;dbl&gt;, `Life
+#   Event__ChldMvOut.2015` &lt;dbl&gt;, `Life Event__Divorce.2005` &lt;dbl&gt;,
+#   `Life Event__Divorce.2006` &lt;dbl&gt;, `Life
+#   Event__Divorce.2007` &lt;dbl&gt;, `Life Event__Divorce.2008` &lt;dbl&gt;,
+#   `Life Event__Divorce.2009` &lt;dbl&gt;, `Life
+#   Event__Divorce.2010` &lt;dbl&gt;, `Life Event__Divorce.2011` &lt;dbl&gt;,
+#   `Life Event__Divorce.2012` &lt;dbl&gt;, `Life
+#   Event__Divorce.2013` &lt;dbl&gt;, `Life Event__Divorce.2014` &lt;dbl&gt;,
+#   `Life Event__Divorce.2015` &lt;dbl&gt;, `Life
+#   Event__DadDied.2005` &lt;dbl&gt;, `Life Event__DadDied.2006` &lt;dbl&gt;,
+#   `Life Event__DadDied.2007` &lt;dbl&gt;, `Life
+#   Event__DadDied.2008` &lt;dbl&gt;, `Life Event__DadDied.2009` &lt;dbl&gt;,
+#   `Life Event__DadDied.2010` &lt;dbl&gt;, `Life
+#   Event__DadDied.2011` &lt;dbl&gt;, `Life Event__DadDied.2012` &lt;dbl&gt;,
+#   `Life Event__DadDied.2013` &lt;dbl&gt;, `Life
+#   Event__DadDied.2014` &lt;dbl&gt;, `Life Event__DadDied.2015` &lt;dbl&gt;,
+#   `Life Event__NewPart.2011` &lt;dbl&gt;, `Life
+#   Event__NewPart.2012` &lt;dbl&gt;, `Life Event__NewPart.2013` &lt;dbl&gt;,
+#   `Life Event__NewPart.2014` &lt;dbl&gt;, `Life
+#   Event__NewPart.2015` &lt;dbl&gt;, `Life Event__Married.2005` &lt;dbl&gt;,
+#   `Life Event__Married.2006` &lt;dbl&gt;, `Life
+#   Event__Married.2007` &lt;dbl&gt;, `Life Event__Married.2008` &lt;dbl&gt;,
+#   `Life Event__Married.2009` &lt;dbl&gt;, `Life
+#   Event__Married.2010` &lt;dbl&gt;, …</code></pre>
+</div>
+Bring the wide dataset to long
+<div class="layout-chunk" data-layout="l-body">
+<pre><code># A tibble: 471,722 x 6
+   Procedural__SID Procedural__hou… Demographic__DOB Demographic__Sex
+             &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+ 1             901               94             1951                2
+ 2             901               94             1951                2
+ 3             901               94             1951                2
+ 4             901               94             1951                2
+ 5             901               94             1951                2
+ 6             901               94             1951                2
+ 7             901               94             1951                2
+ 8             901               94             1951                2
+ 9             901               94             1951                2
+10             901               94             1951                2
+# … with 471,712 more rows, and 2 more variables: item &lt;chr&gt;,
+#   value &lt;dbl&gt;</code></pre>
+</div>
+Bring in the codebook relevent items for reverse coding
+<div class="layout-chunk" data-layout="l-body">
+<pre><code># A tibble: 471,722 x 9
+   Procedural__SID Procedural__hou… Demographic__DOB Demographic__Sex
+             &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+ 1             901               94             1951                2
+ 2             901               94             1951                2
+ 3             901               94             1951                2
+ 4             901               94             1951                2
+ 5             901               94             1951                2
+ 6             901               94             1951                2
+ 7             901               94             1951                2
+ 8             901               94             1951                2
+ 9             901               94             1951                2
+10             901               94             1951                2
+# … with 471,712 more rows, and 5 more variables: item &lt;chr&gt;,
+#   value &lt;dbl&gt;, reverse &lt;dbl&gt;, mini &lt;dbl&gt;, maxi &lt;dbl&gt;</code></pre>
+</div>
+<p>Here we want to break our item column up into different components to assist with different calculations. Often you will have some sort of heirachy of variables where items are nested within scales which are nested within questionnaires. This is where you can code that information.</p>
+<div class="layout-chunk" data-layout="l-body">
+<pre><code># A tibble: 471,722 x 12
+   Procedural__SID Procedural__hou… Demographic__DOB Demographic__Sex
+             &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+ 1             901               94             1951                2
+ 2             901               94             1951                2
+ 3             901               94             1951                2
+ 4             901               94             1951                2
+ 5             901               94             1951                2
+ 6             901               94             1951                2
+ 7             901               94             1951                2
+ 8             901               94             1951                2
+ 9             901               94             1951                2
+10             901               94             1951                2
+# … with 471,712 more rows, and 8 more variables: type &lt;chr&gt;,
+#   trait &lt;chr&gt;, item &lt;chr&gt;, year &lt;chr&gt;, value &lt;dbl&gt;, reverse &lt;dbl&gt;,
+#   mini &lt;dbl&gt;, maxi &lt;dbl&gt;</code></pre>
+</div>
+now it is ready to reverse code!
+<div class="layout-chunk" data-layout="l-body">
+<pre><code># A tibble: 471,722 x 12
+   Procedural__SID Procedural__hou… Demographic__DOB Demographic__Sex
+             &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+ 1             901               94             1951                2
+ 2             901               94             1951                2
+ 3             901               94             1951                2
+ 4             901               94             1951                2
+ 5             901               94             1951                2
+ 6             901               94             1951                2
+ 7             901               94             1951                2
+ 8             901               94             1951                2
+ 9             901               94             1951                2
+10             901               94             1951                2
+# … with 471,712 more rows, and 8 more variables: type &lt;chr&gt;,
+#   trait &lt;chr&gt;, item &lt;chr&gt;, year &lt;chr&gt;, value &lt;dbl&gt;, reverse &lt;dbl&gt;,
+#   mini &lt;dbl&gt;, maxi &lt;dbl&gt;</code></pre>
+</div>
+<h2 id="create-composites">Create Composites</h2>
+<p>Now that we have reverse coded our items, we can create composites.</p>
+<h3 id="bfi-s">BFI-S</h3>
+<p>We’ll start with our scale – in this case, the Big 5 from the German translation of the BFI-S.</p>
+<p>Here’s the simplest way, which is also the long way because you’d have to do it for each scale, in each year, which I don’t recommend as that will be MANY MANY lines of code.</p>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
+<p>We can use our codebook and <code>dplyr</code> to make our lives a whole lot easier. In general, trying to run everything simultanously saves from copy-paste errors, makes your code more readable, and reduces the total amount of code. So while the below code may not make intuiative sense immediately, it is nonetheless what we are working towards. Also, going through line by line will help you see that</p>
+First, make sure we are only working with Big Five rows. Notice how once we filter the row size decreases.
+<div class="layout-chunk" data-layout="l-body">
+<pre><code># A tibble: 452,104 x 12
+   Procedural__SID Procedural__hou… Demographic__DOB Demographic__Sex
+             &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+ 1             901               94             1951                2
+ 2             901               94             1951                2
+ 3             901               94             1951                2
+ 4             901               94             1951                2
+ 5             901               94             1951                2
+ 6             901               94             1951                2
+ 7             901               94             1951                2
+ 8             901               94             1951                2
+ 9             901               94             1951                2
+10             901               94             1951                2
+# … with 452,094 more rows, and 8 more variables: type &lt;chr&gt;,
+#   trait &lt;chr&gt;, item &lt;chr&gt;, year &lt;chr&gt;, value &lt;dbl&gt;, reverse &lt;dbl&gt;,
+#   mini &lt;dbl&gt;, maxi &lt;dbl&gt;</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<pre><code># A tibble: 151,186 x 4
+# Groups:   Procedural__SID, trait [83,572]
+   Procedural__SID trait year  value
+             &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt; &lt;dbl&gt;
+ 1             901 A     2005   4.67
+ 2             901 A     2009   5   
+ 3             901 A     2013   4.67
+ 4             901 C     2005   5   
+ 5             901 C     2009   5   
+ 6             901 C     2013   5.67
+ 7             901 E     2005   3.67
+ 8             901 E     2009   3.67
+ 9             901 E     2013   3.67
+10             901 N     2005   3.33
+# … with 151,176 more rows</code></pre>
+</div>
+Now that we have our means we can bring the demographic info back into the dataframe…or whatever else you would want to bring in.
+<div class="layout-chunk" data-layout="l-body">
+<pre><code># A tibble: 151,186 x 6
+   Procedural__SID trait year  value   DOB   Sex
+             &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1             901 A     2005   4.67  1951     2
+ 2             901 A     2009   5     1951     2
+ 3             901 A     2013   4.67  1951     2
+ 4             901 C     2005   5     1951     2
+ 5             901 C     2009   5     1951     2
+ 6             901 C     2013   5.67  1951     2
+ 7             901 E     2005   3.67  1951     2
+ 8             901 E     2009   3.67  1951     2
+ 9             901 E     2013   3.67  1951     2
+10             901 N     2005   3.33  1951     2
+# … with 151,176 more rows</code></pre>
+</div>
+<h1 id="descriptives">Descriptives</h1>
+<p>Descriptives of your data are incredibly important. They are your first line of defense against things that could go wrong later on when you run inferential stats. They help you check the distribution of your variables (e.g. non-normally distributed), look for implausible values made through coding or participant error, and allow you to anticipate what your findings will look like.</p>
+<p>There are lots of ways to create great tables of descriptives. My favorite way is using <code>dplyr</code>, but we will save that for a later lesson on creating great APA style tables in <code>R</code>. For now, we’ll use a wonderfully helpful function from the <code>psych</code> package called <code>describe()</code> in conjunction with a small amount of <code>tidyr</code> to reshape the data.</p>
+<h2 id="metric-variables">metric variables</h2>
+<div class="layout-chunk" data-layout="l-body">
+<pre><code># A tibble: 151,186 x 6
+   Procedural__SID trait year  value   DOB   Sex
+             &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1             901 A     2005   4.67  1951     2
+ 2             901 A     2009   5     1951     2
+ 3             901 A     2013   4.67  1951     2
+ 4             901 C     2005   5     1951     2
+ 5             901 C     2009   5     1951     2
+ 6             901 C     2013   5.67  1951     2
+ 7             901 E     2005   3.67  1951     2
+ 8             901 E     2009   3.67  1951     2
+ 9             901 E     2013   3.67  1951     2
+10             901 N     2005   3.33  1951     2
+# … with 151,176 more rows</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<pre><code># A tibble: 151,186 x 5
+   Procedural__SID tmp    value   DOB   Sex
+             &lt;dbl&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1             901 A_2005  4.67  1951     2
+ 2             901 A_2009  5     1951     2
+ 3             901 A_2013  4.67  1951     2
+ 4             901 C_2005  5     1951     2
+ 5             901 C_2009  5     1951     2
+ 6             901 C_2013  5.67  1951     2
+ 7             901 E_2005  3.67  1951     2
+ 8             901 E_2009  3.67  1951     2
+ 9             901 E_2013  3.67  1951     2
+10             901 N_2005  3.33  1951     2
+# … with 151,176 more rows</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<pre><code># A tibble: 16,719 x 18
+   Procedural__SID   DOB   Sex A_2005 A_2009 A_2013 C_2005 C_2009
+             &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+ 1             901  1951     2   4.67   5      4.67   5      5   
+ 2            1202  1913     2   7     NA     NA      6     NA   
+ 3            2301  1946     1   5      5.67   6      5.67   6.33
+ 4            2302  1946     2   3.33   3.33   2.67   6      6   
+ 5            2304  1978     1   5.67  NA     NA      4.33  NA   
+ 6            4601  1933     2   6.33  NA     NA      6.5   NA   
+ 7            4701  1919     2   6      5.67  NA      6.33   5.67
+ 8            4901  1925     2   5.33   4      4.67   5.33   6   
+ 9            5201  1955     1   6.33   4.67   5.33   7      5   
+10            5202  1956     2   5      5      6      5.67   5.33
+# … with 16,709 more rows, and 10 more variables: C_2013 &lt;dbl&gt;,
+#   E_2005 &lt;dbl&gt;, E_2009 &lt;dbl&gt;, E_2013 &lt;dbl&gt;, N_2005 &lt;dbl&gt;,
+#   N_2009 &lt;dbl&gt;, N_2013 &lt;dbl&gt;, O_2005 &lt;dbl&gt;, O_2009 &lt;dbl&gt;,
+#   O_2013 &lt;dbl&gt;</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<pre><code>                vars     n       mean          sd     median
+Procedural__SID    1 16719 8321022.91 10677731.19 3105002.00
+DOB                2 16719    1960.03       18.48    1960.00
+Sex                3 16719       1.52        0.50       2.00
+A_2005             4 10419       5.46        0.98       5.67
+A_2009             5 10294       5.35        0.99       5.33
+A_2013             6  9535       5.41        0.95       5.33
+C_2005             7 10412       5.90        0.96       6.00
+C_2009             8 10290       5.82        0.95       6.00
+C_2013             9  9530       5.84        0.91       6.00
+E_2005            10 10416       4.82        1.15       5.00
+E_2009            11 10291       4.77        1.15       4.67
+E_2013            12  9533       4.87        1.11       5.00
+N_2005            13 10413       4.05        1.23       4.00
+N_2009            14 10294       4.18        1.22       4.33
+N_2013            15  9534       4.25        1.21       4.33
+O_2005            16 10408       4.51        1.22       4.67
+O_2009            17 10287       4.40        1.22       4.33
+O_2013            18  9530       4.60        1.18       4.67
+                   trimmed        mad  min      max    range  skew
+Procedural__SID 6487615.30 3735541.17  901 35022002 35021101  1.50
+DOB                1960.22      20.76 1909     1995       86 -0.08
+Sex                   1.53       0.00    1        2        1 -0.10
+A_2005                5.50       0.99    1        7        6 -0.40
+A_2009                5.38       0.99    1        7        6 -0.37
+A_2013                5.45       0.99    1        7        6 -0.42
+C_2005                6.01       0.99    1        7        6 -0.96
+C_2009                5.92       0.99    1        7        6 -0.82
+C_2013                5.92       0.99    1        7        6 -0.72
+E_2005                4.85       0.99    1        7        6 -0.27
+E_2009                4.80       0.99    1        7        6 -0.24
+E_2013                4.90       0.99    1        7        6 -0.29
+N_2005                4.06       1.48    1        7        6 -0.07
+N_2009                4.20       0.99    1        7        6 -0.17
+N_2013                4.27       1.24    1        7        6 -0.15
+O_2005                4.53       1.48    1        7        6 -0.23
+O_2009                4.41       1.48    1        7        6 -0.10
+O_2013                4.62       0.99    1        7        6 -0.21
+                kurtosis       se
+Procedural__SID     0.56 82579.80
+DOB                -0.84     0.14
+Sex                -1.99     0.00
+A_2005             -0.16     0.01
+A_2009             -0.19     0.01
+A_2013              0.04     0.01
+C_2005              0.87     0.01
+C_2009              0.49     0.01
+C_2013              0.18     0.01
+E_2005             -0.16     0.01
+E_2009             -0.17     0.01
+E_2013             -0.18     0.01
+N_2005             -0.32     0.01
+N_2009             -0.30     0.01
+N_2013             -0.30     0.01
+O_2005             -0.18     0.01
+O_2009             -0.30     0.01
+O_2013             -0.20     0.01</code></pre>
+</div>
+<h2 id="count-variables">count variables</h2>
+We have life event variable in the dataset that is a count variable. It asks did someone experience a life event during the previous year. also want to create a variable that indexes whether our participants experienced any of the life events during the years of interest (2005-2015).<br />
+
+<div class="layout-chunk" data-layout="l-body">
+<pre><code># A tibble: 19,618 x 12
+   Procedural__SID Procedural__hou… Demographic__DOB Demographic__Sex
+             &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+ 1             901               94             1951                2
+ 2             901               94             1951                2
+ 3            2301              230             1946                1
+ 4            2301              230             1946                1
+ 5            2301              230             1946                1
+ 6            2305              230             1946                2
+ 7            4601              469             1933                2
+ 8            5201              523             1955                1
+ 9            5201              523             1955                1
+10            5201              523             1955                1
+# … with 19,608 more rows, and 8 more variables: type &lt;chr&gt;,
+#   trait &lt;chr&gt;, item &lt;chr&gt;, year &lt;chr&gt;, value &lt;dbl&gt;, reverse &lt;dbl&gt;,
+#   mini &lt;dbl&gt;, maxi &lt;dbl&gt;</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<pre><code># A tibble: 15,061 x 3
+# Groups:   Procedural__SID [10,019]
+   Procedural__SID trait     value
+             &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;
+ 1             901 MomDied       1
+ 2            2301 MoveIn        0
+ 3            2301 PartDied      1
+ 4            2305 MoveIn        0
+ 5            4601 PartDied      0
+ 6            5201 ChldMvOut     1
+ 7            5201 DadDied       0
+ 8            5202 ChldMvOut     1
+ 9            5203 MoveIn        1
+10            5303 MomDied       0
+# … with 15,051 more rows</code></pre>
+</div>
+<p>For count variables, like life events, we need to use something slightly different. We’re typically more interested in counts – in this case, how many people experienced each life event in the 10 years we’re considering?</p>
+<p>To do this, we’ll use a little bit of <code>dplyr</code> rather than the base <code>R</code> function <code>table()</code> that is often used for count data. Instead, we’ll use a combination of <code>group_by()</code> and <code>n()</code> to get the counts by group. In the end, we’re left with a nice little table of counts.</p>
+<div class="layout-chunk" data-layout="l-body">
+<pre><code># A tibble: 20 x 3
+# Groups:   trait [10]
+   trait     value     N
+   &lt;chr&gt;     &lt;dbl&gt; &lt;int&gt;
+ 1 ChldBrth      0  1600
+ 2 ChldBrth      1   735
+ 3 ChldMvOut     0  1555
+ 4 ChldMvOut     1   830
+ 5 DadDied       0   953
+ 6 DadDied       1   213
+ 7 Divorce       0   414
+ 8 Divorce       1   122
+ 9 Married       0  1646
+10 Married       1   331
+11 MomDied       0   929
+12 MomDied       1   219
+13 MoveIn        0  1403
+14 MoveIn        1   419
+15 NewPart       0  1207
+16 NewPart       1   420
+17 PartDied      0   402
+18 PartDied      1    76
+19 SepPart       0  1172
+20 SepPart       1   415</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<pre><code># A tibble: 10 x 3
+   trait       `0`   `1`
+   &lt;chr&gt;     &lt;int&gt; &lt;int&gt;
+ 1 ChldBrth   1600   735
+ 2 ChldMvOut  1555   830
+ 3 DadDied     953   213
+ 4 Divorce     414   122
+ 5 Married    1646   331
+ 6 MomDied     929   219
+ 7 MoveIn     1403   419
+ 8 NewPart    1207   420
+ 9 PartDied    402    76
+10 SepPart    1172   415</code></pre>
+</div>
+<h2 id="zero-order-correlations">Zero-Order Correlations</h2>
+<p>Finally, we often want to look at the zero-order correlation among study variables to make sure they are performing as we think they should.</p>
+<p>To run the correlations, we will need to have our data in wide format, so we’re going to do a little bit of reshaping before we do.</p>
+<div class="layout-chunk" data-layout="l-body">
+<pre><code>         DOB   Sex A_2005 A_2009 A_2013 C_2005 C_2009 C_2013 E_2005
+DOB     1.00  0.00  -0.08  -0.07  -0.06  -0.13  -0.12  -0.14   0.10
+Sex     0.00  1.00   0.18   0.17   0.18   0.05   0.07   0.09   0.08
+A_2005 -0.08  0.18   1.00   0.50   0.50   0.32   0.20   0.19   0.10
+A_2009 -0.07  0.17   0.50   1.00   0.55   0.19   0.28   0.18   0.05
+A_2013 -0.06  0.18   0.50   0.55   1.00   0.18   0.19   0.29   0.04
+C_2005 -0.13  0.05   0.32   0.19   0.18   1.00   0.52   0.48   0.19
+C_2009 -0.12  0.07   0.20   0.28   0.19   0.52   1.00   0.55   0.12
+C_2013 -0.14  0.09   0.19   0.18   0.29   0.48   0.55   1.00   0.13
+E_2005  0.10  0.08   0.10   0.05   0.04   0.19   0.12   0.13   1.00
+E_2009  0.12  0.08   0.06   0.08   0.06   0.10   0.16   0.14   0.61
+E_2013  0.10  0.11   0.04   0.04   0.07   0.10   0.10   0.18   0.59
+N_2005  0.06 -0.18   0.10   0.06   0.02   0.09   0.06   0.03   0.18
+N_2009  0.03 -0.22   0.07   0.09   0.03   0.06   0.08   0.05   0.13
+N_2013  0.02 -0.21   0.06   0.06   0.10   0.04   0.06   0.08   0.10
+O_2005  0.11  0.06   0.12   0.09   0.07   0.17   0.12   0.08   0.40
+O_2009  0.10  0.05   0.05   0.11   0.07   0.06   0.14   0.08   0.26
+O_2013  0.05  0.07   0.08   0.09   0.13   0.07   0.08   0.15   0.24
+       E_2009 E_2013 N_2005 N_2009 N_2013 O_2005 O_2009 O_2013
+DOB      0.12   0.10   0.06   0.03   0.02   0.11   0.10   0.05
+Sex      0.08   0.11  -0.18  -0.22  -0.21   0.06   0.05   0.07
+A_2005   0.06   0.04   0.10   0.07   0.06   0.12   0.05   0.08
+A_2009   0.08   0.04   0.06   0.09   0.06   0.09   0.11   0.09
+A_2013   0.06   0.07   0.02   0.03   0.10   0.07   0.07   0.13
+C_2005   0.10   0.10   0.09   0.06   0.04   0.17   0.06   0.07
+C_2009   0.16   0.10   0.06   0.08   0.06   0.12   0.14   0.08
+C_2013   0.14   0.18   0.03   0.05   0.08   0.08   0.08   0.15
+E_2005   0.61   0.59   0.18   0.13   0.10   0.40   0.26   0.24
+E_2009   1.00   0.65   0.10   0.16   0.10   0.29   0.36   0.28
+E_2013   0.65   1.00   0.11   0.13   0.15   0.26   0.28   0.35
+N_2005   0.10   0.11   1.00   0.55   0.53   0.09   0.08   0.06
+N_2009   0.16   0.13   0.55   1.00   0.60   0.06   0.07   0.07
+N_2013   0.10   0.15   0.53   0.60   1.00   0.05   0.05   0.05
+O_2005   0.29   0.26   0.09   0.06   0.05   1.00   0.58   0.55
+O_2009   0.36   0.28   0.08   0.07   0.05   0.58   1.00   0.61
+O_2013   0.28   0.35   0.06   0.07   0.05   0.55   0.61   1.00</code></pre>
+</div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<!--radix_placeholder_article_footer-->
+<!--/radix_placeholder_article_footer-->
+</div>
+
+<div class="d-appendix">
+</div>
+
+
+<!--radix_placeholder_site_after_body-->
+<!--/radix_placeholder_site_after_body-->
+<!--radix_placeholder_appendices-->
+<div class="appendix-bottom"></div>
+<!--/radix_placeholder_appendices-->
+<!--radix_placeholder_navigation_after_body-->
+<!--/radix_placeholder_navigation_after_body-->
+
+</body>
+
+</html>

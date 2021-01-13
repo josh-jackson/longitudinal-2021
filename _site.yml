@@ -2,6 +2,7 @@ name: "Longitudinal-2021"
 title: "Applied Longitudinal Data Analysis"
 description: 
 output_dir: "_site"
+theme: theme.css
 navbar:
   right:
     - text: "Home"
@@ -9,17 +10,31 @@ navbar:
     - text: "Lectures"
       menu:
         - text: "Intro to longitudinal"
-          href: intro.html
-        - text: "MLM refresher"
+          href: intro-1.html
+        - text: "MLM growth models"
           href: MLM.html
     - text: "Workshops"
       menu:
-        - text: "ggplot"
-          href: ggplot.html
-        - text: "lme4"
-          href: lme4.html     
+        - text: "data"
+          href: data.html
+        - text: "lme4, nlme"
+          href: lme4.html  
+        - text: "workflow"
+          href: workflow.html  
+        - text: "plotting"
+          href: plotting.html 
+        - text: "simulation"
+          href: simulation.html 
+        - text: "purr"
+          href: purr.html 
+        - text: "brms"
+          href: brms.html 
+        - text: "lavaan"
+          href: lavaan.html 
+        - text: "mice"
+          href: mice.html
     - text: "Syllabus"
-      href: Syllabus.html
+      href: syllabus.html
     - text: "Homeworks"
       href: Homeworks.html
     - icon: fab fa-github
