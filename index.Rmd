@@ -4,6 +4,4 @@ description: Updates and Announcements
 site: distill::distill_website
 ---
 
-1. test 
-2. Test again. 
-3. Thrice for good luck. 
+Jan 18th. Welcome to the website! 
