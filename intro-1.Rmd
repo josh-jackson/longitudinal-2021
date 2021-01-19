@@ -1,7 +1,35 @@
 ---
 title: "Intro to longitudinal thinking"
-output: xaringan::moon_reader
+output:
+  xaringan::moon_reader:
+    mathjax: "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML"
+    css: xaringan-themer.css
+    seal: false
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      ratio: "16:9"
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r xaringan-themer, include = FALSE}
+library(xaringanthemer)
+mono_light(
+  base_color = "#23395b",
+  header_font_google = google_font("Josefin Sans"),
+  text_font_google   = google_font("Montserrat", "300", "300i"),
+  code_font_google   = google_font("Droid Mono"),
+)
+
+library(tidyverse)
+library(broom)
+library(tidybayes)
+library(modelr)
+```
+
 ```{r, echo=FALSE}
 library(tidyverse)
 ```
@@ -96,7 +124,7 @@ Ipsative
 ---
 ## Be precise about change and stability
 
-(Usually) it clearer to refer to the type of change in terms of an equation or pictorially. Putting a word onto it usually causes some confusion, which is why there are a lot of redundant terms in the literature. 
+(Usually) it is clearer to refer to the type of change in terms of an equation or pictorially. Putting a word onto it usually causes some confusion, which is why there are a lot of redundant terms in the literature. 
 
 ---
 ## Thought example

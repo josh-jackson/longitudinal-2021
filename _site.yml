@@ -12,15 +12,13 @@ navbar:
         - text: "Intro to longitudinal"
           href: intro-1.html
         - text: "MLM growth models"
-          href: MLM.html
+          href: mlm.html
     - text: "Workshops"
       menu:
         - text: "data"
           href: data.html
         - text: "lme4, nlme"
           href: lme4.html  
-        - text: "workflow"
-          href: workflow.html  
         - text: "plotting"
           href: plotting.html 
         - text: "simulation"
