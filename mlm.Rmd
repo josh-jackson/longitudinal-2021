@@ -1,32 +1,402 @@
 ---
-title: "Growth models"
-output: xaringan::moon_reader
+title: "mlm"
+output:
+  xaringan::moon_reader:
+    mathjax: "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML"
+    css: xaringan-themer.css
+    seal: false
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      ratio: "16:9"
 ---
 
-These regressions and plots are how you should begin to think about longitudinal data analysis. These growth models (the simplest form of longitudinal data analysis) are just a bunch of regressions for each person plus a little extra stuff. MLM is just a fancy regression equation. We want to create a line for everyone. Does someone go up? Does someone go down? On average, do people's lines indciate that this construct increases or decreases? That is it. Seriously. 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
-What is different from normal regression? Extra error terms, mostly. For regression, we think of error as existing in one big bucket. For MLMs (and other longitudinal models) we will be breaking up unexplained variance (error) into multiple buckets. 
+```{r xaringan-themer, include = FALSE}
+library(xaringanthemer)
+mono_light(
+  base_color = "#23395b",
+  header_font_google = google_font("Josefin Sans"),
+  text_font_google   = google_font("Montserrat", "300", "300i"),
+  code_font_google   = google_font("Droid Mono"),
+)
 
-This is where fixed effects and random effects come into play. We will discuss this more next class, but the gist is that fixed effects are the regression coefficients you are used to. Fixed effects index group level change. Do people decline in memory across time, on average? Random effects vary among individuals (in the longitudinal models we are talking about) and index variation from the group. While most people decline in their memory, does everyone? In other words, an average trajectory will be termed a fixed effect and the random effect indexes how much variability there is around that group level effect. This extra variability we measure through random effects means that we are explaining more variance and thus there is less unexplained variance. 
+library(tidyverse)
+library(broom)
+library(tidybayes)
+library(modelr)
+```
 
-### Modeling frameworks: MLM & SEM
-In this class (and in the field) two primary techniques are used with longitudinal models: MLM and SEM. At some levels they are completely equivalent. At others, one is better than the other and vice versa. 
+How are we going to think about longitudinal models?
 
-We will start with MLM/HLM is a simple extension of standard regression models. As a result it is easy to interpret and implement. In terms of longitudinal data it is best suited to run models when the time of measurement differs from person to person (compared to equal intervals). For this class we will use lme4 and brms as our MLM program but there are many others we could use e.g., nlme. 
+1. lines/trajectories 
+2. variance decomposition 
 
-SEM is related to regression in that regression is a subset of SEM techniques. In other words, an SEM program could run a simple regression analysis. 
-
-The primary advantage of MLM is that you may have assessment waves that vary in length between participants. An assumption of SEM models is that everyone has the same amount of time between assessment waves (though this assumption can be relaxed). MLM is also better suited for complex error structures and complex nesting above and beyond assessments within person. It is also easier to model interactions. Currently, it is easier to do MLM within a Bayesian framework too. 
-
-SEM primary advantage is the ability to account for measurement error via latent assessment of the repeated measures. Other advantages include the ability to model multiple DVs at once, and do so in a flexible manner to look at, for example, the associations between change in one construct and change in the another (though these are also possible with MLMs). Another major advantage is the ability to look at latent groups via latent class or mixture models. 
-
-Bottom line: MLM is probably best suited for "basic" or "standard" growth models. More complex analyses of change with multiple variables would benefit from an SEM approach. This is also an oversimplification. 
+These are easily done with multilevel models. Luckily for you, you have already have some mlm experience. 
 
 
 ---
-# Conditional models
-Some things don’t change over time time-invariant
-Some things do change over time time-varying
+## mlm review
+
+
+$${Y}_{i} = b_{0} + b_{1}X_{1} + b_{2}X_{2} + b_{3}X_{3}+... +\epsilon_{i}$$
+
+$$\hat{Y}_{i} = b_{0} + b_{1}X_{1} + b_{2}X_{2} + b_{3}X_{3}+...$$
+
+Parameters are considered fixed where one regression value corresponds to everyone. I.e., that association between X1 and Y is the same for everyone. 
+
+Each person has a Y, denoted by the subscript i, and each has a residual associated with them, also designated by i. 
 
 ---
-## Time varying models
+## Handling multiple DVs? 
+
+But what if people had more than 1 DV, like we do with time? What do you do with multiple items, multiple trials, multiple ____ ? 
+
+Two options: 1. Collapse and average across. 
+
+
+---
+## Example
+```{r, message = FALSE}
+library(tidyverse)
+
+simp<- tribble(
+  ~ID, ~group,  ~test.score, ~study,
+1,1,5,1,
+2,1,7,3,
+3,2,4,2,
+4,2,6,4,
+5,3,3,3,
+6,3,5,5,
+7,4,2,4,
+8,4,4,6,
+9,5,1,5,
+10,5,3,7)
+```
+
+---
+```{r, echo=FALSE}
+simp %>% 
+ggplot(aes(x=study, y=test.score)) +
+    geom_point(aes(colour = factor(group)))
+```
+
+---
+## could aggragate across group
+```{r, echo = FALSE}
+simp.1<- tribble(
+  ~ID, ~group,  ~test.score, ~study,
+  1,1,6,2,
+  2,2,5,3,
+  3,3,4,4,
+  4,4,3,5,
+  5,5,2,6)
+```
+
+
+```{r, echo=FALSE}
+simp.1 %>% 
+ggplot(aes(x=study, y=test.score)) +
+    geom_point() +    
+    geom_smooth(method=lm, se=FALSE) +
+  geom_point(data = simp, aes(colour = factor(group)))
+```
+
+---
+
+## Handling multiple DVs? 
+
+But what if people had more than 1 DV, like we do with time? What do you do with multiple items, multiple trials, multiple ____ ?  
+
+Two options: 1. Collapse and average across.  
+2. use all available information
+
+---
+
+```{r, echo = FALSE}
+simp %>% 
+ggplot(aes(x=study, y=test.score, group = group)) +
+    geom_point(aes(colour = factor(group))) +   
+    geom_smooth(aes(colour = factor(group)),method=lm,se=FALSE)
+```
+
+---
+## Aggregation obscures hypotheses
+
+Between person H1: Do students who study more get better grades?   
+
+Within person H2: When a student studies, do they get better grades?
+			        	
+H1 and H2 are independent from one another!
+
+
+---
+## Stroop example
+
+We calculate stroop scores by looking at repeated trials of congruent vs not congruent. This is dummy coded such that the $\beta_{1}$ reflects the average stroop effect. How much slower are people in incongruent trials? 
+
+$$Y_{i} = \beta_{0} + \beta_{1}X_{1} + \varepsilon_i$$
+
+What if we ran a separate regression for everyone? We can then think of $\beta_{1}$ as a PERSON SPECIFIC EFFECT. What is the stoop effect for you? 
+
+We could think of $\beta_{1}$ as a random variable where people deviate on stroop effect from the average (ie fixed effect). You can then treat this as a regression, complete with a residual. 
+
+$$\beta_{1} = \gamma_{10} +\gamma_{11}Z_i+ U_{1i}$$
+
+---
+## 4 ways to think about MLMs
+
+The stroop example reflects 4 conceptualizations of MLMs. 
+1. Different levels of analysis (average/person specific or between/within)
+2. Regressions within regressions (ie coefficients as outcomes)
+3. Variance decomposition
+4. Learning from other data through pooling/shrinkage
+
+---
+### regressions within regressions 
+Helps to take multilevel and split it into the different levels. 
+
+Level 1 is the smallest unit of analysis (students, waves, trials, family members)
+    
+Level 2 variables are what level 1 variables are “nested” in (people, schools, counties, families, dyads)
+
+We are going to use level one components to run a regression, all the while level 1 is also estimating a regression
+
+
+---
+L1
+$$Y_{trials, i} = \beta_{0i} + \beta_{1i}X_{trial,i} + \varepsilon_{trial}$$
+      
+L2
+$$\beta_{0} = \gamma_{00} + U_{0i}$$
+$$\beta_{1} = \gamma_{10} +\gamma_{11}Age_i+ U_{1i}$$
+Our B1 coefficient indexes the stroop effect. However, people differ on this stroop effect. There is some average effect (fixed effect) that people vary around. Each person has some personal $\beta_1$, which we find using Level 1 data. From there we can also ask questions (with regressions) about that random variable. Is age associated with stroop scores, for example.
+
+---
+People differ on the stroop. 
+```{r, echo = FALSE, message=FALSE, warning = FALSE}
+example <- read_csv("~/Box/5165 Applied Longitudinal Data Analysis/Longitudinal/example.csv")
+example$year <- example$week
+set.seed(11)
+ex.random <- example %>% 
+  dplyr::select(ID) %>% 
+  distinct %>% 
+  sample_n(3) 
+
+example2 <-
+  left_join(ex.random, example)  
+  
+g2<- ggplot(example2,
+   aes(x = week, y = SMN7, group = ID)) +  geom_point() + stat_smooth(method="lm", formula=y~1, se = FALSE) + facet_wrap( ~ID) +
+  geom_hline(yintercept = .13) +  ylab("stroop effect") + xlab("trials") +
+  geom_label(label="Grand mean ",  x=1,y=.13,
+    label.size = 0.15) 
+g2
+```
+
+```{r, echo=FALSE}
+example %>% group_by(ID) %>%
+  do(avg = tidy(lm(SMN7 ~ 1, data = .))) %>% 
+  unnest(avg) %>% 
+  ggplot(aes(x = estimate)) +
+  stat_dotsinterval() + ylab("density")
+```
+
+---
+### diferent levels and regressions within regressions 
+
+To sum up the first two ways to think about regression, we take a relationship that could be simplified by aggregation, but instead we ask regression questions at different levels of analysis.  
+
+At level 1 we can ask lower-unit questions e.g., if trials are nested within person, what predicts lengthier trials? 
+
+At level 2 we can ask broader-unit questions. E.g., is age associated with stroop differences
+
+Both levels are simple regressions. Level 2 uses coefficients from level 1 as DVs. 
+
+
+---
+### variance decomposition
+
+For standard regression, we think of error as existing in one big bucket called $\varepsilon$ . Everything that we do not know goes into that bucket, from measurement error to unmeasured important factors. 
+
+For MLMs we will be breaking up unexplained variance ($\varepsilon$) into multiple buckets. Some of these buckets will be useful variance.  
+
+These useful "buckets" (Us) are what we refer to as random/varying effects. 
+
+
+$$Y_{trials, i} = \beta_{0i} + \beta_{1i}X_{trial,i} + \varepsilon_{trial}$$
+ $$\beta_{0} = \gamma_{00} + U_{0i}$$     
+$$\beta_{1} = \gamma_{10} +\gamma_{11}Z_i+ U_{1i}$$
+
+
+---
+
+.pull-left[
+
+![]btw.png)
+
+]
+
+.pull-right[
+
+
+![](win.png)
+
+
+]
+ 
+---
+Random effects used to be error, but they are going to be useful going forward. 
+
+1. We will treat them as variables themselves e.g. individual differences in how people change
+
+2. They index how much people DIFFER on some effect. e.g. does everyone change the same, or are there differences in how people change? 
+
+3. We can relate the random effects to other random effects e.g., do people who increase on X also start higher on X. 
+ 
+ 
+---
+### shrinkage/partial pooling
+
+We treat our group variable as coming from a population. All groups are alike (because they are from the same population), but different in their own way. Because of this it is helpful to use information from other groups to help make predictions. 
+
+We do this in standard regression where we make predictions based on values not only using data from X but from the whole dataset. A similar analogy for MLM is running a regression for each group. We want to pool as this leads to better predictions as we are not overfitting our data! 
+
+---
+
+If we take our simplified stroop effect model, where we are only looking at reaction time as a DV (ignoring the different types of trials) we could fit a model like this (an empty model)
+
+L1
+$$Y_{trials, i} = \beta_{0i} +  \varepsilon_{trial}$$
+L2
+$$\beta_{0} = \gamma_{00} + U_{0i}$$
+ 
+Where does $U_{0i}$ come from? If we calculated each by hand, through taking the average rection time for a person i and subtracting that from the grand mean reaction time, would that equal $U_{0i}$ ?
+ 
+---
+# Basic Models
+
+To keep with the book, we are going to discuss DVs that take on different values at each timepoint t, for individual i ${Y}_{ti}$ Other naming schemes are equivalent such as the same ${Y}_{ij}$ where i's are nested in j groups. 
+
+
+---
+### Empty model
+
+Level 1
+$${Y}_{ti} = \beta_{0i}  + \varepsilon_{ti}$$
+
+Level 2
+$${\beta}_{0i} = \gamma_{00} + U_{0i}$$
+ 
+
+$${e}_{ti} \sim \mathcal{N}(0, \sigma^{2})$$
+
+$${U}_{0i} \sim \mathcal{N}(0, \tau_{00}^{2})$$
+
+---
+
+```{r, echo = FALSE}
+library(tidyverse)
+sample_n_of <- function(data, size, ...) {
+  dots <- quos(...)
+  
+  group_ids <- data %>% 
+    group_by(!!! dots) %>% 
+    group_indices()
+  
+  sampled_groups <- sample(unique(group_ids), size)
+  data %>% 
+    filter(group_ids %in% sampled_groups)
+}
+```
+
+```{r, echo = FALSE, warning = FALSE}
+set.seed(24)
+
+
+example %>%
+  sample_n_of(8, ID) %>% 
+ggplot(aes(x = week, y = CON, group = ID)) + geom_point(aes(color = factor(ID))) + stat_smooth(aes(color = factor(ID)), method = "lm", formula=y~1, se = FALSE) + xlab("We dont have a predictor") + ylab("Y") + theme(legend.position = "none") + geom_hline(yintercept = .22, size = 1.5)
+```
+
+---
+combined equation
+
+$${Y}_{ti} = \gamma_{00} + U_{0i}  + \varepsilon_{ti}$$
+
+Akin to ANOVA if we treat $U_{0i}$ as between subjects variance & $\varepsilon_{ti}$ as within subjects variance.
+
+
+$\gamma_{00} + U_{0i}$ is fixed or constant across people
+$U_{0i}$ is random or varies across people
+
+---
+## ICC
+
+Between version variance over total variance. If the ICC is greater than zero, we are breaking standard regression assumptions as this is an index of dependency. 
+
+$$\frac{U_{0i}}{U_{0i}+ \varepsilon_{ti}}$$
+
+
+ICC can also be interpreted as the average (or expected) correlation within a nested group, in this case a person. On other words, the ICC is the correlation between any person's repeated measures (technically residuals).
+
+
+---
+## Time in level 1 
+
+Level 1 is where you have data that repeats within your grouping or clustering data. Is your cluster classrooms? Then students are level 1. Is your cluster people? Then observations are level 1. 
+
+$${Y}_{ti} = \beta_{0i}  + \beta_{1i}X_{ti} + \varepsilon_{ti}$$
+
+Notice on the subscript of X that these predictors vary across group (i) and within the group (t) So if your grouping (i) is people, then t refers to different observations.
+
+
+---
+## Error Structure
+The residual structure, where the random effects are again normally distributed with a mean of zero, but this time one must also consider covariance in addition to variance. 
+
+$$\begin{pmatrix} {U}_{0j} \\ {U}_{1j} \end{pmatrix}
+\sim \mathcal{N} \begin{pmatrix} 
+  0,      \tau_{00}^{2} & \tau_{01}\\ 
+  0,  \tau_{01} & \tau_{10}^{2}
+\end{pmatrix}$$
+ 
+ 
+ 
+ 
+---
+## centering 
+
+
+
+---
+## Estimation 
+
+
+
+---
+## pseudo R2
+
+
+---
+## categorical estimation 
+
+---
+## transitioning to longitudinal applications
+
+
+
+---
+## between person 
+
+
+
+---
+## within person empty model
+
+
+---
+##

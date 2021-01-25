@@ -19,6 +19,8 @@ Data are the core of everything that we do in statistical analysis. Data come in
 
 Although data could arguably be more means than end in psychology, the importance of understanding the structure and format of your data cannot overstated. Failure to understand your data could end in improper techniques and flagrantly wrong inferences at worst. This is especially important for longitudinal data. We will discuss many aspects of data handling. One thing to note is that this is just *ONE WAY* to do it. There are many equivalent. 
 
+Why are we thinking about data? Because 80%, maybe more, of your time spent with "analysis" is spent getting data in order and setting up your model of interest. 
+
 # Wide vs long
 
 Aka multivariate vs stacked; 
@@ -223,6 +225,10 @@ Note the t_1 variable is a POSIXct variable type. Once in this format it is much
 # Projects and Rmarkdown
 
 As with any project, but especially for longitudinal data, one of the most important aspects of data analysis is A. not losing track of what you did and B. being organized. This is much much much harder than said. I find using a combination of 1. rstudio projects 2. git and 3. codebooks are helpful in accomplishing these two goals. We will talk about #1 and #2 but I also encourage you to read about git. These are not the only way to do these sorts of analyses but I feel that exposure to them is helpful, as often in the social sciences these sort of decisions are not discussed.  
+
+What these help to do is create a chain of processing where you start with RAW data and end up with the cleaned data. Importantly you can always start over from the raw data. This is important for people wanting to reproduce your findings and or your future self figuring out where a certain variable came from. 
+
+We start creating the chain of processing by documenting all of your code, all of it inside. To do so we will be using rmarkdown documents, as the language is easier than LaTeX and more helpful than plaintext. 
 
 When I create an rmarkdown document for my own research projects, I always start by setting up 3 components:  
 

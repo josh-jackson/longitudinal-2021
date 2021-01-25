@@ -68,11 +68,12 @@ ggplot(simp, aes(x=time, y=Y)) +
 ]
 
 ---
-## Types of change (most common)
+## How can we think about "change"
 
-Differential / rank order consistency/rank order stability. 
+Types of change (most common)
 
-Mean level/ absolute change. 
+Differential / rank order consistency/rank order stability 
+Mean level/ absolute change
 
 ---
 .pull-left[
@@ -451,6 +452,18 @@ Magnitude or direction of change can be different across individuals. Can refer 
 Within-Person Fluctuation: No systematic change
 Outcome just varies/fluctuates over time (e.g., emotion, stress). Time is just a way to get lots of data per individual
 
+
+---
+## Terms to know
+
+
+
+Within person vs between person 
+time varying vs time invariant
+intra-individual vs inter-individual
+observation level vs person level variance
+
+(notice that there are often two levels to these)
 
 ---
 

@@ -11,7 +11,7 @@ navbar:
       menu:
         - text: "Intro to longitudinal"
           href: intro-1.html
-        - text: "MLM growth models"
+        - text: "MLM"
           href: mlm.html
     - text: "Workshops"
       menu:
