@@ -12,9 +12,9 @@ ppfad,sex,Sex,"
 -5 [-5] Not included in this version of the questionnaire
 -6 [-6] Version of questionnaire with modified filtering
 56186 57630 24 0 0 0 0 0",Demographic,,Sex,0,Demographic__Sex,1,,,
-vp,VP12501 ,Thorough Worker,,Big 5,C,thorough,2005,Big 5__C_thorough.2005,1,1,7,
-zp,ZP12001 ,Thorough Worker,,Big 5,C,thorough,2009,Big 5__C_thorough.2009,1,1,7,
-bdp,BDP15101 ,Thorough Worker,,Big 5,C,thorough,2013,Big 5__C_thorough.2013,1,1,7,
+vp,VP12501,Thorough Worker,,Big 5,C,thorough,2005,Big 5__C_thorough.2005,1,1,7,
+zp,ZP12001,Thorough Worker,,Big 5,C,thorough,2009,Big 5__C_thorough.2009,1,1,7,
+bdp,BDP15101,Thorough Worker,,Big 5,C,thorough,2013,Big 5__C_thorough.2013,1,1,7,
 vp,VP12502,Am communicative ,,Big 5,E,communic,2005,Big 5__E_communic.2005,1,1,7,
 zp,ZP12002,Am communicative ,,Big 5,E,communic,2009,Big 5__E_communic.2009,1,1,7,
 bdp,BDP15102,Am communicative ,,Big 5,E,communic,2013,Big 5__E_communic.2013,1,1,7,
