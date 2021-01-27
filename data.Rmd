@@ -53,7 +53,7 @@ For longitudinal/repeated measures data, each row is an observation. Each person
 data <- read.csv("https://raw.githubusercontent.com/josh-jackson/longitudinal-2021/master/example.csv")
 example <- data %>% 
   select(ID, wave, group, DAN)
-example
+head(example)
 ```
 
 
@@ -306,7 +306,7 @@ codebook <- read.csv("https://raw.githubusercontent.com/josh-jackson/longitudina
 codebook <- codebook %>% 
     mutate(old_name = str_to_lower(old_name))
 
-codebook
+head(codebook)
 ```
 
 
@@ -370,7 +370,7 @@ Before we can do that, though, we need to restructure the data a bit in order to
 
 
 ```{r reverse code 1 }
-soep 
+head(soep) 
 ```
 
 Bring the wide dataset to long
