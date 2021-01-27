@@ -34,7 +34,9 @@ navbar:
     - text: "Syllabus"
       href: syllabus.html
     - text: "Homeworks"
-      href: Homeworks.html
+      menu:
+        - text: "homework 1"
+          href: hw-1.html
     - icon: fab fa-github
       href: https://github.com/josh-jackson/bayes
 

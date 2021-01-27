@@ -1,0 +1,45 @@
+---
+title: "Homework 1"
+output:
+  distill::distill_article:
+    toc: true
+    toc_depth: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE)
+```
+
+Due 2/8
+
+ Answer the questions below using your own data (for question 1) and the HW1 dataset from github for the remaining.  
+
+Note that we are looking at depression across 5 waves during college. Waves are signified by a letter at the start of the variable name, starting with A, then B, then C, etcetera. Not all waves collected depression during college.  
+
+Please email your answers to me (j.jackson@wustl.edu) that includes a) an Rmd file,  b) a pdf/html of your output, and your codebook (in excel, csv, google pages, etc format).    
+
+
+1. Create a codebook with an actual dataset you are working with (it does not need to be longitudinal). Feed it into R to change variable names. 
+
+2. Take the wide depression dataset and turn it long format
+
+3. Run separate linear models on all of the participants subjects (a basic regression) with time as a predictor. What is the average intercept, the average slope? How would you interpet each of these?   
+
+4. Now run a mlm model with only a random intercept. What is the ICC? Interpret. 
+
+5. Introduce time as a fixed term to the mlm model. Interpret your findings. 
+
+6. What are there differences in this model vs the models you ran in #3 
+
+7. Run an additional model with a random slope. How does this change compare to the previous fixed slope model? Should you keep the random slope or not?  
+
+8. Interpret the correlation between the slope and the intercept. 
+
+9. Create a density plot of the random effects from your final model. 
+
+
+
+ 
