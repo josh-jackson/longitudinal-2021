@@ -50,10 +50,10 @@ library(rmarkdown)
 For longitudinal/repeated measures data, each row is an observation. Each person will have multiple rows. You can grab some example data from the class's github
 
 ```{r}
-data <- read.csv("~/Box/5165 Applied Longitudinal Data Analysis/Longitudinal/example.csv")
+data <- read.csv("https://raw.githubusercontent.com/josh-jackson/longitudinal-2021/master/example.csv")
 example <- data %>% 
   select(ID, wave, group, DAN)
-paged_table(example)
+example
 ```
 
 
@@ -300,13 +300,13 @@ We will create a codebook but then bring the codebook into R via turning it into
 Below, I'll load in the codebook we will use for this study, which will include all of the above columns. 
 
 ```{r codebook}
-# set the path
-wd <- "https://github.com/emoriebeck/R-tutorials/blob/master/ALDA/week_1_descriptives"
 
-# load the codebook
-(codebook <- url(sprintf("%s/codebook.csv?raw=true", wd)) %>% 
-    read_csv(.) %>%
-    mutate(old_name = str_to_lower(old_name)))
+codebook <- read.csv("https://raw.githubusercontent.com/josh-jackson/longitudinal-2021/master/codebook.csv")
+
+codebook <- codebook %>% 
+    mutate(old_name = str_to_lower(old_name))
+
+codebook
 ```
 
 
@@ -323,11 +323,13 @@ This code below shows how I would read in and rename a wide-format data set usin
 old.names <- codebook$old_name # get old column names
 new.names <- codebook$new_name # get new column names
 
-soep <- url(sprintf("%s/data/week_1_data.csv?raw=true", wd)) %>% # path to data
-  read_csv(.) %>% # read in data
-  select(old.names) %>% # select the columns from our codebook
+soep <- read.csv("https://raw.githubusercontent.com/josh-jackson/longitudinal-2021/master/soepdata.csv")
+
+ soep <-  soep %>% # read in data
+  dplyr::select(old.names) %>% # select the columns from our codebook
   setNames(new.names) # rename columns with our new names
 paged_table(soep)
+
 ```
 
 # Clean Data  
@@ -368,7 +370,7 @@ Before we can do that, though, we need to restructure the data a bit in order to
 
 
 ```{r reverse code 1 }
- paged_table(soep) 
+soep 
 ```
 
 Bring the wide dataset to long
@@ -384,7 +386,7 @@ paged_table(soep_long)
 ```
 
 
-Bring in the codebook relevent items for reverse coding
+Bring in the codebook relevant items for reverse coding
 
 ```{r reverse code 3 }
 soep_long <- soep %>%
@@ -393,7 +395,7 @@ soep_long <- soep %>%
                values_to = "value", 
                values_drop_na = TRUE) %>%
   left_join(codebook %>% select(item = new_name, reverse, mini, maxi)) 
-paged_table(soep_long)
+soep_long
 ```
 
 
@@ -439,9 +441,10 @@ Now that we have reverse coded our items, we can create composites.
 ### BFI-S 
 We'll start with our scale -- in this case, the Big 5 from the German translation of the BFI-S. 
 
-Here's the simplest way, which is also the long way because you'd have to do it for each scale, in each year, which I don't recommend as that will be MANY MANY lines of code. 
+The "simplest" way, which is also the longest way because you'd have to do it for each scale, in each year is to use a function like rowMeans which I don't recommend as that will be MANY MANY lines of code. 
 
 ```{r}
+
 soep$C.2005 <- with(soep, rowMeans(cbind(`Big 5__C_thorough.2005`, 
 `Big 5__C_lazy.2005`, 
 `Big 5__C_efficient.2005`), 

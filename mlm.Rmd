@@ -30,13 +30,119 @@ library(tidybayes)
 library(modelr)
 ```
 
-How are we going to think about longitudinal models?
+---
+## Using MLM to examine 
+aka HLM, aka mixed effects, aka random effects.  
 
-1. lines/trajectories 
-2. variance decomposition 
+Why? BC we would 1. violate standard regression assumptions. 2. because of the flexibility
 
-These are easily done with multilevel models. Luckily for you, you have already have some mlm experience. 
+Splits the model into two components:   
+mean and variance   
+location and scale  
+fixed and random  
+constant (across people) and varying (across people)  
 
+---
+## Terminology again
+
+General Linear Models  
+GeneralIZED Linear Models  
+General Linear Mixed Models  
+GeneralIZED Linear Mixed Models  
+  
+Mixed means both fixed and random effects   
+"...IZED" means gaussian and other data generating processes 
+
+
+---
+## Modeling dependency
+
+We have multiple DVs per person with longitudinal data. If we ignored the person aspect, the residuals would likely be related, violating standard regression assumption. MLM accounts for residuals for outcomes from the same person through modeling different "levels" (of random effects).
+
+To have a “level”, there must be random outcome variation left over. With longitudinal data we have people nested in observations. 
+
+Level 1: observation level (observation specific variance)  
+Level 2: person level (person specific variance)  
+
+---
+### Person specific variance
+.pull-left[
+Some people start at different levels and some people change at different rates
+]
+
+.pull-right[
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+
+example <- read_csv("~/Box/5165 Applied Longitudinal Data Analysis/Longitudinal/example.csv")
+example$year <- example$week
+
+
+ggplot(example, aes(x = year, y = SMN7, group = ID, colour = ID)) + stat_smooth(method = "lm", se = FALSE, alpha = .5) +scale_color_viridis()
+```
+]
+
+---
+### Observation level variance
+.pull-left[
+After account for a person starting level and their slope, there is still residual variance left over. 
+]
+
+.pull-right[
+```{r, echo = FALSE, message= FALSE, warning=FALSE}
+ob.var <- example %>% 
+  filter(ID %in% c("67","82", "110")) 
+
+example3 <-
+  left_join(ob.var, example)  
+  
+ggplot(example3,
+   aes(x = week, y = SMN7, group = ID)) +  geom_point() + stat_smooth(method="lm") + facet_wrap( ~ID)
+```
+]
+
+
+---
+## Thinking about variation 
+A goal of longitudinal data analysis (and all other data analysis) is to explain this variation. We will fit models that are more constrained (makes assumptions about the shape of change across people) to see if that increases or reduces variation at the two levels. 
+
+To the extent that we can put variance into different "piles" (eg people change at different rates) we will have more explained variance and less unexplained variance. Less unexplained variance means our model fits better ie it represents our data better
+
+---
+## Speaking of variation 
+
+Between-Person (BP) Variation:  
+Level-2 – “INTER-individual Differences” - Time-Invariant   
+BP = More/less than other people  
+
+
+Within-Person (WP) Variation:  
+Level-1 – “INTRA-individual Differences” – Time-Varying  
+WP = more/less than one’s average  
+
+Any variable measured over time usually has both BP and WP variation. People who vary in positive emotion may be higher in PE. If we did not separate the two and only looked at WP then we will introduce bias. 
+
+
+---
+### Within person focus
+
+Within-Person Change: Systematic change
+Magnitude or direction of change can be different across individuals. Can refer to between person (inter individual differences) in within person change (intra individual)
+
+Within-Person Fluctuation: No systematic change
+Outcome just varies/fluctuates over time (e.g., emotion, stress). Time is just a way to get lots of data per individual
+
+
+---
+## Terms to know
+
+
+
+Within person vs between person 
+time varying vs time invariant
+intra-individual vs inter-individual
+observation level vs person level variance
+
+(notice that there are often two levels to these)
 
 ---
 ## mlm review
@@ -178,8 +284,7 @@ Our B1 coefficient indexes the stroop effect. However, people differ on this str
 ---
 People differ on the stroop. 
 ```{r, echo = FALSE, message=FALSE, warning = FALSE}
-example <- read_csv("~/Box/5165 Applied Longitudinal Data Analysis/Longitudinal/example.csv")
-example$year <- example$week
+
 set.seed(11)
 ex.random <- example %>% 
   dplyr::select(ID) %>% 
