@@ -1000,11 +1000,13 @@ Homeworks
 
 
 
----
-## Using MLM to examine 
-aka HLM, aka mixed effects, aka random effects.  
 
-Why? BC we would 1. violate standard regression assumptions. 2. because of the flexibility
+## MLM 
+aka HLM, aka mixed effects, aka random effects   
+
+Why? BC we would  
+1. violate standard regression assumptions  
+2. because of the flexibility  
 
 Splits the model into two components:   
 mean and variance   
@@ -1013,7 +1015,7 @@ fixed and random
 constant (across people) and varying (across people)  
 
 ---
-## Terminology again
+## Terminology 
 
 General Linear Models  
 GeneralIZED Linear Models  
@@ -1088,8 +1090,6 @@ Outcome just varies/fluctuates over time (e.g., emotion, stress). Time is just a
 
 ---
 ## Terms to know
-
-
 
 Within person vs between person 
 time varying vs time invariant
@@ -1197,11 +1197,10 @@ We could think of `\(\beta_{1}\)` as a random variable where people deviate on s
 ---
 ## 4 ways to think about MLMs
 
-The stroop example reflects 4 conceptualizations of MLMs. 
-1. Different levels of analysis (average/person specific or between/within)
-2. Regressions within regressions (ie coefficients as outcomes)
-3. Variance decomposition
-4. Learning from other data through pooling/shrinkage
+1. Different levels of analysis (average/person specific or between/within)  
+2. Regressions within regressions (ie coefficients as outcomes)  
+3. Variance decomposition  
+4. Learning from other data through pooling/shrinkage  
 
 ---
 ### regressions within regressions 
@@ -1262,6 +1261,7 @@ These useful "buckets" (Us) are what we refer to as random/varying effects.
 
 ![]btw.png)
 
+
 ]
 
 .pull-right[
@@ -1269,17 +1269,16 @@ These useful "buckets" (Us) are what we refer to as random/varying effects.
 
 ![](win.png)
 
-
 ]
  
 ---
 Random effects used to be error, but they are going to be useful going forward. 
 
-1. We will treat them as variables themselves e.g. individual differences in how people change
+We will treat them as variables themselves e.g. individual differences in how people change  
 
-2. They index how much people DIFFER on some effect. e.g. does everyone change the same, or are there differences in how people change? 
+They index how much people DIFFER on some effect. e.g. does everyone change the same, or are there differences in how people change?  
 
-3. We can relate the random effects to other random effects e.g., do people who increase on X also start higher on X. 
+We can relate the random effects to other random effects e.g., do people who increase on X also start higher on X.   
  
  
 ---
@@ -1301,10 +1300,21 @@ L2
 Where does `\(U_{0i}\)` come from? If we calculated each by hand, through taking the average rection time for a person i and subtracting that from the grand mean reaction time, would that equal `\(U_{0i}\)` ?
  
 ---
+## Complete, partial and no pooling
+
+Complete assumes everyone is the same, with `\(U_{0i}\)` being zero for everyone. 
+
+No pooling is if we calculate every person's effect with a regression, subtracting out he grand mean average. 
+
+Partial pooling is in the middle, a weighted average between the two. For those with fewer trials there is less information for a particular individual, thus the complete pooling estimate will be given more weight. If someone has a lot of data, there weighted average is closer to no pooling. 
+
+Because of partial pooling these individual estimates are bettter as this procedure prevents over and under fitting of your data, leading to increased out of sample predictions. 
+
+ 
+---
 # Basic Models
 
 To keep with the book, we are going to discuss DVs that take on different values at each timepoint t, for individual i `\({Y}_{ti}\)` Other naming schemes are equivalent such as the same `\({Y}_{ij}\)` where i's are nested in j groups. 
-
 
 ---
 ### Empty model
@@ -1321,6 +1331,7 @@ Level 2
 `$${U}_{0i} \sim \mathcal{N}(0, \tau_{00}^{2})$$`
 
 ---
+What does this look like? 
 
 
 
@@ -1344,12 +1355,12 @@ Between version variance over total variance. If the ICC is greater than zero, w
 
 `$$\frac{U_{0i}}{U_{0i}+ \varepsilon_{ti}}$$`
 
-
 ICC can also be interpreted as the average (or expected) correlation within a nested group, in this case a person. On other words, the ICC is the correlation between any person's repeated measures (technically residuals).
 
 
 ---
 ## Time in level 1 
+
 
 Level 1 is where you have data that repeats within your grouping or clustering data. Is your cluster classrooms? Then students are level 1. Is your cluster people? Then observations are level 1. 
 
@@ -1357,20 +1368,70 @@ Level 1 is where you have data that repeats within your grouping or clustering d
 
 Notice on the subscript of X that these predictors vary across group (i) and within the group (t) So if your grouping (i) is people, then t refers to different observations.
 
+This is a simple growth curve model. It fits linear association for time
+
+
+---
+
+Level 2 takes the parameters at level 1 and decomposes them into a fixed component ($\gamma$) that reflects the average and, if desired, the individual deviations around that fixed effect (U).
+
+level 1
+`$${Y}_{ti} = \beta_{0i}  + \beta_{1i}X_{ti} + \varepsilon_{ti}$$`
+
+level 2
+`$${\beta}_{0i} = \gamma_{00} + U_{0i}$$`  
+`$${\beta}_{1i} = \gamma_{10}$$`  
+
+---
+
+What implied association between X and Y does this model fit for each person? What is constrained to be the same vs different? 
+
+---
+Including a random slope
+
+level 1
+`$${Y}_{ti} = \beta_{0i}  + \beta_{1i}X_{ti} + \varepsilon_{ti}$$`
+
+level 2
+`$${\beta}_{0i} = \gamma_{00} + U_{0i}$$`  
+`$${\beta}_{1i} = \gamma_{10}+ U_{1i}$$` 
+combined: 
+`$${Y}_{ti} = \gamma_{00} + \gamma_{10}(X_{ti})+ U_{0i} + U_{1i}(X_{ti}) + \varepsilon_{ti}$$`
+
+---
+
+
+By including random effects (U) you making a claim that every group/cluster does *not* have the same `\(\gamma\)` ie intercept/regression coefficient. 
+
+An advantage of MLM is to separate more "buckets" of variance that are unexplained. What was originally `\(e_ti\)` is now ( `\(U_0\)` + `\(U_1\)` + `\(e_ti\)` ). This additional decomposition of variance is beneficial because you are separating signal from noise, translating what was noise `\(e_ij\)` into meaningful signal ( `\(U_0\)` , `\(U_1\)` , `\(U_2\)` etc  ). 
+
+For example, multiple responses per person can identify individual differences (eg not everyone shows the stroop effect) that normally would be chalked up to error. If you parse out this error your signal becomes stronger.
+
+---
+## person predictions
+
+Can think of a persons score divided up into a fixed component as well as the random component. 
+
+`$${\beta}_{1.26} = \gamma_{10} \pm U_{26}$$` 
 
 ---
 ## Error Structure
 The residual structure, where the random effects are again normally distributed with a mean of zero, but this time one must also consider covariance in addition to variance. 
 
+G matrix (books term)
 `$$\begin{pmatrix} {U}_{0j} \\ {U}_{1j} \end{pmatrix}
 \sim \mathcal{N} \begin{pmatrix} 
   0,      \tau_{00}^{2} &amp; \tau_{01}\\ 
   0,  \tau_{01} &amp; \tau_{10}^{2}
 \end{pmatrix}$$`
  
+
+
+R matrix 
+`$${e}_{ij} \sim \mathcal{N}(0, \sigma^{2})$$`
  
- 
- 
+Note that it is possible to have a different error structure. Chapter 4 (optional talks about this, and we will go into more detail later in the semester)
+
 ---
 ## centering 
 
