@@ -4,4 +4,7 @@ description: Updates and Announcements
 site: distill::distill_website
 ---
 
+
+Feb 1. Homework 1 is posted. Due 
+
 Jan 13th. Welcome to the website! 

@@ -280,7 +280,9 @@ $$\beta_{0} = \gamma_{00} + U_{0i}$$
 $$\beta_{1} = \gamma_{10} +\gamma_{11}Age_i+ U_{1i}$$
 Our B1 coefficient indexes the stroop effect. However, people differ on this stroop effect. There is some average effect (fixed effect) that people vary around. Each person has some personal $\beta_1$, which we find using Level 1 data. From there we can also ask questions (with regressions) about that random variable. Is age associated with stroop scores, for example.
 
+
 ---
+
 People differ on the stroop. 
 ```{r, echo = FALSE, message=FALSE, warning = FALSE}
 
@@ -300,6 +302,8 @@ g2<- ggplot(example2,
     label.size = 0.15) 
 g2
 ```
+
+---
 
 ```{r, echo=FALSE}
 example %>% group_by(ID) %>%
