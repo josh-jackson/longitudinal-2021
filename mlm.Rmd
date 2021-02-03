@@ -28,6 +28,7 @@ library(tidyverse)
 library(broom)
 library(tidybayes)
 library(modelr)
+library(viridis)
 ```
 
 
@@ -358,6 +359,7 @@ $$\beta_{1} = \gamma_{10} +\gamma_{11}Z_i+ U_{1i}$$
 ]
  
 ---
+
 Random effects used to be error, but they are going to be useful going forward. 
 
 We will treat them as variables themselves e.g. individual differences in how people change  
@@ -398,7 +400,7 @@ Because of partial pooling these individual estimates are bettter as this proced
 
  
 ---
-# Basic Models
+## Basic Models
 
 To keep with the book, we are going to discuss DVs that take on different values at each timepoint t, for individual i ${Y}_{ti}$ Other naming schemes are equivalent such as the same ${Y}_{ij}$ where i's are nested in j groups. 
 
@@ -417,6 +419,7 @@ $${e}_{ti} \sim \mathcal{N}(0, \sigma^{2})$$
 $${U}_{0i} \sim \mathcal{N}(0, \tau_{00}^{2})$$
 
 ---
+
 What does this look like? 
 
 ```{r, echo = FALSE}
@@ -444,6 +447,7 @@ ggplot(aes(x = week, y = CON, group = ID)) + geom_point(aes(color = factor(ID)))
 ```
 
 ---
+
 combined equation
 
 $${Y}_{ti} = \gamma_{00} + U_{0i}  + \varepsilon_{ti}$$
@@ -656,7 +660,7 @@ REML maximizes the likelihood of the residuals, so models with different fixed e
 
 
 ---
-# transitioning to longitudinal applications
+## transitioning to longitudinal applications
 
 
 We are going to fit a simple longitudinal model: a growth model. Growth model is just a fancy term for creating lines for each person. 
@@ -724,7 +728,8 @@ Much like in normal regression models we often use $\sigma^{2}$ as a means to de
 
 ---
 
-![:scale 80%](5.3.png)
+
+![](5.3.png)
 
 
 
@@ -741,7 +746,7 @@ Usually 1 & 2 are explicitly tested whereas 3 is more theoretical
 
 ---
 
-![:scale 80%](5.1.png)
+![](5.1.png)
 
 ---
 ## centering redux
@@ -750,6 +755,6 @@ The correlation among random intercept and slopes is directly related to centeri
 
 
 
-![:scale 70%](5.4.png)
+![](5.4.png)
 
 

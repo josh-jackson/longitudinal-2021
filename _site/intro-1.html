@@ -455,7 +455,6 @@
               var results = fuse.search(query, searchOptions);
               callback(results
                 .map(function(result) { return result.item; })
-                .filter(function(item) { return !!item.description; })
               );
             },
             templates: {
@@ -467,7 +466,7 @@
                   <div class="search-item">
                     <h3>${suggestion.title}</h3>
                     <div class="search-item-description">
-                      ${suggestion.description}
+                      ${suggestion.description || ''}
                     </div>
                     <div class="search-item-preview">
                       ${img}
@@ -572,6 +571,7 @@
     }
 
     .algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item h3 {
+      font-size: 1rem;
       margin-block-start: 0;
       margin-block-end: 5px;
     }
@@ -932,7 +932,7 @@
     .distill-site-footer a:hover {
       color: var(--hover-color, white);
     }</style>
-    <script src="intro-1_files/header-attrs-2.6.4/header-attrs.js"></script>
+    <script src="intro-1_files/header-attrs-2.6.6/header-attrs.js"></script>
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
   </head>
   <body>
@@ -1226,13 +1226,9 @@ regressions %&gt;%
 ```
 
 ```
-## `summarise()` ungrouping output (override with `.groups` argument)
-```
-
-```
 ## # A tibble: 2 x 2
 ##   term        avg.reg
-##   &lt;chr&gt;         &lt;dbl&gt;
+## * &lt;chr&gt;         &lt;dbl&gt;
 ## 1 (Intercept) 0.102  
 ## 2 week        0.00244
 ```
@@ -1495,6 +1491,9 @@ Having people take the same survey, test or interview multiple times may lead th
 6. Selection 
 If you are looking at life events, know that life events are not distributed randomly. Moreover, people who stay in studies and even sign up for studies are different from those that do not. As a result, it is often hard to make internally valid inferences with longitudinal data. 
 
+---
+
+test
 
     </textarea>
 <!--radix_placeholder_site_after_body-->

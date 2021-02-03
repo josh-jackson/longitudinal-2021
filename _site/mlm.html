@@ -455,7 +455,6 @@
               var results = fuse.search(query, searchOptions);
               callback(results
                 .map(function(result) { return result.item; })
-                .filter(function(item) { return !!item.description; })
               );
             },
             templates: {
@@ -467,7 +466,7 @@
                   <div class="search-item">
                     <h3>${suggestion.title}</h3>
                     <div class="search-item-description">
-                      ${suggestion.description}
+                      ${suggestion.description || ''}
                     </div>
                     <div class="search-item-preview">
                       ${img}
@@ -572,6 +571,7 @@
     }
 
     .algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item h3 {
+      font-size: 1rem;
       margin-block-start: 0;
       margin-block-end: 5px;
     }
@@ -932,7 +932,7 @@
     .distill-site-footer a:hover {
       color: var(--hover-color, white);
     }</style>
-    <script src="mlm_files/header-attrs-2.6.4/header-attrs.js"></script>
+    <script src="mlm_files/header-attrs-2.6.6/header-attrs.js"></script>
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
   </head>
   <body>
@@ -1277,6 +1277,7 @@ These useful "buckets" (Us) are what we refer to as random/varying effects.
 ]
  
 ---
+
 Random effects used to be error, but they are going to be useful going forward. 
 
 We will treat them as variables themselves e.g. individual differences in how people change  
@@ -1317,7 +1318,7 @@ Because of partial pooling these individual estimates are bettter as this proced
 
  
 ---
-# Basic Models
+## Basic Models
 
 To keep with the book, we are going to discuss DVs that take on different values at each timepoint t, for individual i `\({Y}_{ti}\)` Other naming schemes are equivalent such as the same `\({Y}_{ij}\)` where i's are nested in j groups. 
 
@@ -1336,6 +1337,7 @@ Level 2
 `$${U}_{0i} \sim \mathcal{N}(0, \tau_{00}^{2})$$`
 
 ---
+
 What does this look like? 
 
 
@@ -1343,6 +1345,7 @@ What does this look like?
 ![](mlm_files/figure-html/unnamed-chunk-11-1.png)&lt;!-- --&gt;
 
 ---
+
 combined equation
 
 `$${Y}_{ti} = \gamma_{00} + U_{0i}  + \varepsilon_{ti}$$`
@@ -1555,7 +1558,7 @@ REML maximizes the likelihood of the residuals, so models with different fixed e
 
 
 ---
-# transitioning to longitudinal applications
+## transitioning to longitudinal applications
 
 
 We are going to fit a simple longitudinal model: a growth model. Growth model is just a fancy term for creating lines for each person. 
@@ -1623,7 +1626,8 @@ Much like in normal regression models we often use `\(\sigma^{2}\)` as a means t
 
 ---
 
-![:scale 80%](5.3.png)
+
+![](5.3.png)
 
 
 
@@ -1640,7 +1644,7 @@ Usually 1 &amp; 2 are explicitly tested whereas 3 is more theoretical
 
 ---
 
-![:scale 80%](5.1.png)
+![](5.1.png)
 
 ---
 ## centering redux
@@ -1649,7 +1653,7 @@ The correlation among random intercept and slopes is directly related to centeri
 
 
 
-![:scale 70%](5.4.png)
+![](5.4.png)
 
 
     </textarea>
