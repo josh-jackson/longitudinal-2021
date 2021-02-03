@@ -1378,7 +1378,7 @@ Notice on the subscript of X that these predictors vary across group (i) and wit
 
 ---
 
-Level 2 takes the parameters at level 1 and decomposes them into a fixed component ($\gamma$) that reflects the average and, if desired, the individual deviations around that fixed effect (U).
+Level 2 takes the parameters at level 1 and decomposes them into a fixed component ( `\(\gamma\)` ) that reflects the average and, if desired, the individual deviations around that fixed effect (U).
 
 level 1
 `$${Y}_{ti} = \beta_{0i}  + \beta_{1i}X_{ti} + \varepsilon_{ti}$$`
@@ -1389,7 +1389,8 @@ level 2
 
 ---
 
-What implied association between X and Y does this model fit for each person? What is constrained to be the same vs different? 
+What implied association between X and Y does this model fit for each person?  
+What is constrained to be the same vs different? 
 
 ---
 Including a random slope
@@ -1410,7 +1411,7 @@ combined:
 
 By including random effects (U) you making a claim that every group/cluster does *not* have the same `\(\gamma\)` ie intercept/regression coefficient. 
 
-An advantage of MLM is to separate more "buckets" of variance that are unexplained. What was originally `\(e_ti\)` is now ( `\(U_0\)` + `\(U_1\)` + `\(e_ti\)` ). This additional decomposition of variance is beneficial because you are separating signal from noise, translating what was noise `\(e_ij\)` into meaningful signal ( `\(U_0\)` , `\(U_1\)` , `\(U_2\)` etc). 
+An advantage of MLM is to separate more "buckets" of variance that are unexplained. What was originally `\(e_{ti}\)` is now ( `\(U_0\)` + `\(U_1\)` + `\(e_{ti}\)` ). This additional decomposition of variance is beneficial because you are separating signal from noise, translating what was noise `\(e_{ti}\)` into meaningful signal ( `\(U_0\)` , `\(U_1\)` , `\(U_2\)` etc). 
 
 For example, multiple responses per person can identify individual differences (eg not everyone shows the stroop effect) that normally would be chalked up to error. If you parse out this error your signal becomes stronger.
 
@@ -1438,7 +1439,7 @@ G matrix (books term)
 `$${e}_{ij} \sim \mathcal{N}(0, \sigma^{2})$$`
 The `\({e}_{ij}\)` is structured as a NxN matrix, where n reflect number of waves
  
-Note that it is possible to have a different error structure. 
+Note that it is possible to impose a different error structure depending on your needs. 
 
 ---
 ###  Decomposing variance for random intercept model 
@@ -1562,7 +1563,7 @@ We are going to fit a simple longitudinal model: a growth model. Growth model is
 ---
 ## within person empty model
 
- $$ {Y}_{ti} = \gamma_{00} + U_{0i}  + \varepsilon_{ti} $$
+ `$${Y}_{ti} = \gamma_{00} + U_{0i}  + \varepsilon_{ti}$$`
 
 This model is helpful in producing the simplest longitudinal model, one where it states: there is an average value `\(\gamma_{00}\)` that people differ along `\(U_{0i}\)` . Because time is not in the model it assumes people do not change. `\(\varepsilon_{ti}\)` reflects variation around each person's predicted score ( `\(\gamma_{00} + U_{0i}\)` ). 
 
@@ -1581,6 +1582,7 @@ Any time we have a level 1 variable we can model it at level 2. If we want to as
 
 ---
 
+Combined equation: 
  `$${Y}_{ti} = \gamma_{00} + \gamma_{10} (X_{1i})+ U_{0i}  + \varepsilon_{ti}$$`
 
 Because we have a level 1 time predictor in the model, we are now asking the question, how does time influence scores on our DV? Because all regressions are linear by default, it asks if there is an association such that as time increases does the DV? This describes a trajectory. 
@@ -1590,12 +1592,14 @@ What does this look like pictorially?
 ---
 ### random slope
 
+Level 1: 
 `$${Y}_{it} = \beta_{0i}  + \beta_{1i}X_{ti} + \varepsilon_{ti}$$`
   
 Level 2:  
 `$${\beta}_{0i} = \gamma_{00} + U_{0i}$$`  
 `$${\beta}_{1i} = \gamma_{00} + U_{1i}$$`
 
+Combined: 
  `$${Y}_{ti} = \gamma_{00} + \gamma_{10} (X_{1i})+ U_{0i}  + U_{1i}(X_{1i}) + \varepsilon_{ti}$$`
 
 
@@ -1619,7 +1623,7 @@ Much like in normal regression models we often use `\(\sigma^{2}\)` as a means t
 
 ---
 
-![](5.3.png)
+![:scale 80%](5.3.png)
 
 
 
@@ -1636,7 +1640,7 @@ Usually 1 &amp; 2 are explicitly tested whereas 3 is more theoretical
 
 ---
 
-![](5.1.png)
+![:scale 80%](5.1.png)
 
 ---
 ## centering redux
@@ -1645,7 +1649,7 @@ The correlation among random intercept and slopes is directly related to centeri
 
 
 
-![](5.4.png)
+![:scale 70%](5.4.png)
 
 
     </textarea>

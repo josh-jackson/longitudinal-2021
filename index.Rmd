@@ -4,6 +4,7 @@ description: Updates and Announcements
 site: distill::distill_website
 ---
 
+Feb 3. Homework 1 has a new due date of 2/13
 
 Feb 1. Homework 1 is posted. Due 2/8. Also, the github link is now fixed
 
