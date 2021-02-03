@@ -354,7 +354,7 @@ It is also helpful to turn off warnings if some levels are not in your data (`wa
 soep <- soep %>%
   mutate_all(~as.numeric(mapvalues(., from = seq(-1,-7, -1), 
                 to = rep(NA, 7), warn_missing = F)))
-paged_table(soep)
+soep
 ```
 
 
@@ -382,7 +382,7 @@ soep_long <- soep %>%
                names_to = "item", 
                values_to = "value", 
                values_drop_na = TRUE)
-paged_table(soep_long) 
+head(soep_long) 
 ```
 
 

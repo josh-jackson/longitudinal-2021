@@ -38,7 +38,7 @@ navbar:
         - text: "homework 1"
           href: hw-1.html
     - icon: fab fa-github
-      href: https://github.com/josh-jackson/bayes
+      href: https://github.com/josh-jackson/longitudinal-2021
 
 
 output: distill::distill_article

@@ -985,7 +985,7 @@ Homeworks
 <a href="hw-1.html">homework 1</a>
 </div>
 </div>
-<a href="https://github.com/josh-jackson/bayes">
+<a href="https://github.com/josh-jackson/longitudinal-2021">
 <i class="fab fa-github" aria-hidden="true"></i>
 </a>
 <a href="javascript:void(0);" class="nav-toggle">&#9776;</a>
@@ -1215,7 +1215,7 @@ We are going to use level one components to run a regression, all the while leve
 
 ---
 L1
-`$$Y_{trials, i} = \beta_{0i} + \beta_{1i}X_{trial,i} + \varepsilon_{trial}$$`
+`$$Y_{trials, i} = \beta_{0i} + \beta_{1i}X_{trial,i} + \varepsilon_{trial,i}$$`
       
 L2
 `$$\beta_{0} = \gamma_{00} + U_{0i}$$`
@@ -1249,7 +1249,7 @@ Both levels are simple regressions. Level 2 uses coefficients from level 1 as DV
 
 For standard regression, we think of error as existing in one big bucket called `\(\varepsilon\)` . Everything that we do not know goes into that bucket, from measurement error to unmeasured important factors. 
 
-For MLMs we will be breaking up unexplained variance ($\varepsilon$) into multiple buckets. Some of these buckets will be useful variance.  
+For MLMs we will be breaking up unexplained variance ( `\(\varepsilon\)` ) into multiple buckets. Some of these buckets will be useful variance.  
 
 These useful "buckets" (Us) are what we refer to as random/varying effects. 
 
@@ -1263,7 +1263,8 @@ These useful "buckets" (Us) are what we refer to as random/varying effects.
 
 .pull-left[
 
-![]btw.png)
+
+![](btw.png)
 
 
 ]
@@ -1352,6 +1353,8 @@ Akin to ANOVA if we treat `\(U_{0i}\)` as between subjects variance &amp; `\(\va
 `\(\gamma_{00} + U_{0i}\)` is fixed or constant across people
 `\(U_{0i}\)` is random or varies across people
 
+
+
 ---
 ## ICC
 
@@ -1363,7 +1366,7 @@ ICC can also be interpreted as the average (or expected) correlation within a ne
 
 
 ---
-## Time in level 1 
+## A predictor in level 1 
 
 
 Level 1 is where you have data that repeats within your grouping or clustering data. Is your cluster classrooms? Then students are level 1. Is your cluster people? Then observations are level 1. 
@@ -1371,8 +1374,6 @@ Level 1 is where you have data that repeats within your grouping or clustering d
 `$${Y}_{ti} = \beta_{0i}  + \beta_{1i}X_{ti} + \varepsilon_{ti}$$`
 
 Notice on the subscript of X that these predictors vary across group (i) and within the group (t) So if your grouping (i) is people, then t refers to different observations.
-
-This is a simple growth curve model. It fits linear association for time
 
 
 ---
@@ -1402,12 +1403,14 @@ level 2
 combined: 
 `$${Y}_{ti} = \gamma_{00} + \gamma_{10}(X_{ti})+ U_{0i} + U_{1i}(X_{ti}) + \varepsilon_{ti}$$`
 
----
+`$${Y}_{ti} = (\gamma_{00} + U_{0i}) + (\gamma_{10}+  U_{1i})X_{ti} + \varepsilon_{ti}$$`
 
+
+---
 
 By including random effects (U) you making a claim that every group/cluster does *not* have the same `\(\gamma\)` ie intercept/regression coefficient. 
 
-An advantage of MLM is to separate more "buckets" of variance that are unexplained. What was originally `\(e_ti\)` is now ( `\(U_0\)` + `\(U_1\)` + `\(e_ti\)` ). This additional decomposition of variance is beneficial because you are separating signal from noise, translating what was noise `\(e_ij\)` into meaningful signal ( `\(U_0\)` , `\(U_1\)` , `\(U_2\)` etc  ). 
+An advantage of MLM is to separate more "buckets" of variance that are unexplained. What was originally `\(e_ti\)` is now ( `\(U_0\)` + `\(U_1\)` + `\(e_ti\)` ). This additional decomposition of variance is beneficial because you are separating signal from noise, translating what was noise `\(e_ij\)` into meaningful signal ( `\(U_0\)` , `\(U_1\)` , `\(U_2\)` etc). 
 
 For example, multiple responses per person can identify individual differences (eg not everyone shows the stroop effect) that normally would be chalked up to error. If you parse out this error your signal becomes stronger.
 
@@ -1417,6 +1420,7 @@ For example, multiple responses per person can identify individual differences (
 Can think of a persons score divided up into a fixed component as well as the random component. 
 
 `$${\beta}_{1.26} = \gamma_{10} \pm U_{26}$$` 
+Also call BLUPs or empirical bayes estimates
 
 ---
 ## Error Structure
@@ -1431,44 +1435,219 @@ G matrix (books term)
  
 
 
-R matrix 
 `$${e}_{ij} \sim \mathcal{N}(0, \sigma^{2})$$`
+The `\({e}_{ij}\)` is structured as a NxN matrix, where n reflect number of waves
  
-Note that it is possible to have a different error structure. Chapter 4 (optional talks about this, and we will go into more detail later in the semester)
+Note that it is possible to have a different error structure. 
+
+---
+###  Decomposing variance for random intercept model 
+
+.pull-left[
+`$$\text{Total variance CS} = \begin{pmatrix} 
+       \tau_{00}^{2} + \sigma^{2}&amp; \tau_{00}^{2} &amp; \tau_{00}^{2}\\ 
+       \tau_{00}^{2} &amp;  \tau_{00}^{2} + \sigma^{2} &amp;  \tau_{00}^{2}\\
+       \tau_{00}^{2} &amp; \tau_{00}^{2} &amp;   \tau_{00}^{2} + \sigma^{2}
+\end{pmatrix}$$`
+
+
+`$$\text{Btw-Person} = [\tau_{00}^{2} ]$$`
+
+]
+
+.pull-right[
+
+`$$\text{Within-Person VC} = \begin{pmatrix} 
+         \sigma^{2}&amp; 0 &amp; 0\\ 
+       0 &amp;  \sigma^{2} &amp;  0\\
+       0 &amp; 0 &amp;    \sigma^{2}
+\end{pmatrix}$$`
+
+
+Within-person structure ranges from very constrained (same  variances assumes covariances are 0) to quite relaxed. 
+
+`$$\text{Within-Person UN} = \begin{pmatrix} 
+         \sigma_{1}^{2}&amp; \sigma_{12} &amp; \sigma_{13}\\ 
+       \sigma_{21} &amp;  \sigma_{2}^{2} &amp;  \sigma_{23}\\
+       \sigma_{31} &amp; \sigma_{32} &amp;    \sigma_{3}^{2}
+\end{pmatrix}$$`
+
+
+
+]
+
+
+---
+### Error assumptions
+
+Level 1 residuals are independent for Level 1 units across people   
+AND 
+
+Level 1 residuals are independent of random effects  
+
+AND 
+
+Level 1 residuals are the same magnitude across people 
+
+We can modify a standard assumption: 
+Level 1 residuals are independent within a person through different variance/covariance structures
 
 ---
 ## centering 
 
+Because mlms are regressions, and because mlms involve interactions, it is important to consider how your predictors zero point is defined. 
+
+How do you want your intercept interpreted? 
+How do you want lower order terms in an interaction interpreted?
+
+
+We will use these extensively to help disentangle within and between person variance. 
+
+---
+### Uncentered
+
+The default will give you predicted score of intercept when all predictors are zero. 
+
+Because most models will have a random intercept, it is important to keep in mind interpretations as we will be looking at variations around this value. 
+
+
+---
+### Grand mean Centered
+
+Zero now represents that grand mean of the sample. Calculated by taking `\(x_{ti} - \bar{x}\)`
+
+Useful as this is often our the default in other methods. Changes meaning of intercept but not slope. 
+
+A related way to center is group grand mean centering where you take the mean of your grouping variables rather than the grand mean. 
+
+
+---
+### group mean centering (person centering)
+
+Calculated by taking `\(x_{ti} - \bar{x_i}\)`
+
+Can change meaning of intercept and slope. Intercept is now a person's average level rather than the samples average level (grand mean) and level when predictors = 0 (no centering)
+
+Slope at level 1 is the expected change relative to a person's average. 
 
 
 ---
 ## Estimation 
 
+We need to identify: 
+1. the estimates of each parameter
+2. some measure of precision of that estimate (SEs)
+3. an index of overall model fit (deviance/-2LL/aic/bic)
+
+We will use maximum likelihood (and variants of) as well as MCMC (Bayesian) for estimation. 
+
+Model comparison is usually done through a likelihood ratio test distributed as a chi square. 
+
+---
+## ML vs REML
+
+REML = Restricted maximum likelihood
+
+Similar to sample vs population estimates of SD where we do or don't divide by n-1, ML downward biased random effect estimates. 
+
+REML maximizes the likelihood of the residuals, so models with different fixed effects are not on the same scale and are not comparable. As a result, you cannot compare fixed models with likleihood metrics (aic) with REML. You can compare variance differences. 
 
 
 ---
-## pseudo R2
+# transitioning to longitudinal applications
 
 
----
-## categorical estimation 
-
----
-## transitioning to longitudinal applications
-
-
-
----
-## between person 
-
-
+We are going to fit a simple longitudinal model: a growth model. Growth model is just a fancy term for creating lines for each person. 
 
 ---
 ## within person empty model
 
+ $$ {Y}_{ti} = \gamma_{00} + U_{0i}  + \varepsilon_{ti} $$
+
+This model is helpful in producing the simplest longitudinal model, one where it states: there is an average value `\(\gamma_{00}\)` that people differ along `\(U_{0i}\)` . Because time is not in the model it assumes people do not change. `\(\varepsilon_{ti}\)` reflects variation around each person's predicted score ( `\(\gamma_{00} + U_{0i}\)` ). 
 
 ---
-##
+### Adding time
+
+Level 1:
+ 
+`$${Y}_{it} = \beta_{0i}  + \beta_{1i}X_{ti} + \varepsilon_{ti}$$`
+  
+Level 2:  
+`$${\beta}_{0i} = \gamma_{00} + U_{0i}$$`  
+`$${\beta}_{1i} = \gamma_{00}$$` 
+
+Any time we have a level 1 variable we can model it at level 2. If we want to assume it is constant across people, we do not include a random effect. 
+
+---
+
+ `$${Y}_{ti} = \gamma_{00} + \gamma_{10} (X_{1i})+ U_{0i}  + \varepsilon_{ti}$$`
+
+Because we have a level 1 time predictor in the model, we are now asking the question, how does time influence scores on our DV? Because all regressions are linear by default, it asks if there is an association such that as time increases does the DV? This describes a trajectory. 
+
+What does this look like pictorially? 
+
+---
+### random slope
+
+`$${Y}_{it} = \beta_{0i}  + \beta_{1i}X_{ti} + \varepsilon_{ti}$$`
+  
+Level 2:  
+`$${\beta}_{0i} = \gamma_{00} + U_{0i}$$`  
+`$${\beta}_{1i} = \gamma_{00} + U_{1i}$$`
+
+ `$${Y}_{ti} = \gamma_{00} + \gamma_{10} (X_{1i})+ U_{0i}  + U_{1i}(X_{1i}) + \varepsilon_{ti}$$`
+
+
+---
+### correlations among random effects 
+
+`$$\begin{pmatrix} {U}_{0i} \\ {U}_{1i} \end{pmatrix}
+\sim \mathcal{N} \begin{pmatrix} 
+  0,     &amp; \tau_{00}^{2} &amp; \tau_{01}\\ 
+  0, &amp; \tau_{01} &amp; \tau_{10}^{2}
+\end{pmatrix}$$`
+
+The variances and the covariation (correlations) can be of substantive interest. What do each of these terms reflect? What if one of the terms was zero, what would that mean? 
+
+
+---
+### residual 
+
+$$ {\varepsilon}_{ti} \sim \mathcal{N}(0, \sigma^{2})  $$
+Much like in normal regression models we often use `\(\sigma^{2}\)` as a means to describe the fit of the model
+
+---
+
+![](5.3.png)
+
+
+
+---
+## model comparisons
+
+In setting up the basic growth model we have a series of questions to address: 
+
+1. Do we need to add a time component? 
+2. If so, do we need to allow that to vary across people?
+3. if so, do we want to allow the intercept to correlate with the slope? 
+
+Usually 1 &amp; 2 are explicitly tested whereas 3 is more theoretical
+
+---
+
+![](5.1.png)
+
+---
+## centering redux
+
+The correlation among random intercept and slopes is directly related to centering of variables. The two standard choices for time is to center at the mean of time or at the start of time. Both have their pros and cons. 
+
+
+
+![](5.4.png)
+
+
     </textarea>
 <!--radix_placeholder_site_after_body-->
 <!--/radix_placeholder_site_after_body-->
