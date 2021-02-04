@@ -4,6 +4,9 @@ description: Updates and Announcements
 site: distill::distill_website
 ---
 
+Feb 4. Lecture for Feb 3: https://wustl.zoom.us/rec/play/fvshjETnV4CNvGB6qfVFTU5rIjrAZ3XAeuT31NTpNpQ-lIbWuHBBvkrkhBTQyymy6lXA-Mt4Gu8JBVI4._ga_AhdIEmeOvbkg?continueMode=true&_x_zm_rtaid=--Sid4i3Rre6WDZks1SP3g.1612447880263.03585642967cd968d01c39ac863664b2&_x_zm_rhtaid=74
+
+
 Feb 3. Homework 1 has a new due date of 2/13
 
 Feb 1. Homework 1 is posted. Due 2/8. Also, the github link is now fixed
