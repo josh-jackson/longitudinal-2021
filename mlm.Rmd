@@ -755,6 +755,6 @@ The correlation among random intercept and slopes is directly related to centeri
 
 
 
-![](5.4.png)
+![](5.4.png){width=250px}
 
 

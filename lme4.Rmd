@@ -1,0 +1,422 @@
+---
+title: "lme4"
+output:
+  distill::distill_article:
+    toc: true
+    toc_depth: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE)
+
+library(rmarkdown)
+```
+
+# lme4 
+The basic function we will work with is lmer from the lme4 package
+
+```{r}
+library(lme4)
+```
+
+The package was developed to be similar to the lm function. The code will be similar to the formula for the combined model
+
+Code for empty/null/intercept only model
+
+```{r, eval= FALSE}
+
+lmer(Y ~ 1 + (1 | subjects), data=example)
+```
+
+Level 1
+  $$ {Y}_{ti} = \beta_{0i}  +\varepsilon_{ti} $$
+  
+ Level 2
+ $$ {\beta}_{0i} = \gamma_{00} + U_{0i} $$
+ 
+ 
+ Combined 
+ $$ {Y}_{ti} = \gamma_{00} + U_{0i}  + \varepsilon_{ti} $$
+ 
+1 is the way to reference the intercept. All additional fixed effects go outside the parentheses. Inside the parentheses are the random effects and residual terms. To the right of the vertical line is our level 1 residual term, which references the grouping variable. In this case, as with almost all longitudinal work, is the subject ID. To the left of the vertical line is the random effects we want to estimate. Right now this estimates only one random effect, one for the intercept.
+
+It is possible to suppress a random intercept by putting a zero instead of a 1. If you do not put anything there the 1 is implied. 
+
+
+```{r, eval = FALSE}
+lmer(y ~ 1 + time + (1 + time | subjects), data=data)
+
+lmer(y ~ time + (time | subjects), data=data)
+
+```
+
+### Example
+
+```{r}
+example <- read.csv("https://raw.githubusercontent.com/josh-jackson/longitudinal-2021/master/example.csv")
+example$year <- example$week
+```
+
+
+
+```{r}
+mod.1 <- lmer(SMN7 ~ 1 + (1 | ID), data=example)
+summary(mod.1)
+```
+
+
+
+### How to calculate ICC? 
+
+
+```{r}
+0.001823/(0.001823 + 0.001302)
+```
+
+Performance package from the easystats suite is really nice
+
+```{r}
+library(performance) 
+model_performance(mod.1)
+```
+
+
+
+## Exploring beyond the summary
+
+
+```{r}
+class(mod.1)
+```
+
+
+
+### what do the random effects look like? 
+
+
+
+```{r, message = FALSE}
+library(sjPlot)
+plot_model(mod.1, type = "re", sort.est = TRUE)
+```
+
+
+coef = fixef + raneff
+
+
+```{r}
+head(ranef(mod.1))
+```
+
+
+```{r}
+head(coef(mod.1))
+```
+
+```{r}
+fixef(mod.1)
+```
+
+How do these relate? Lets calculate ID 6 intercept random effect
+
+coef = fixef + raneff
+
+```{r}
+
+
+# coef for ID = 6 is 0.04724795  
+0.106972 -0.0597240676 
+
+```
+
+
+To get residuals and fitted scores
+
+```{r}
+library(broom.mixed)
+example.aug<- augment(mod.1, data = example)
+
+paged_table(example.aug)
+
+# .fitted	 = predicted values
+# .resid	= residuals/errors
+# .fixed	 = predicted values with no random effects
+
+```
+
+
+## Adding time to the MLM
+### Fixed slope 
+```{r}
+mod.2f <- lmer(SMN7 ~ 1 + year + (1  | ID), data=example)
+summary(mod.2f)
+```
+What does this look like graphically? 
+
+
+
+### Random slope
+```{r}
+mod.2 <- lmer(SMN7 ~ 1 + year + (year  | ID), data=example)
+summary(mod.2)
+```
+
+How does the intercept change from the random intercept only model? 
+
+How do you interpret year? 
+
+How did the random effects change? 
+
+## Testing models
+REML comparison, which again is what we need to compare random effects. ML is not good for comparing models with different random effects. 
+
+```{r}
+anova(mod.2f, mod.2)
+```
+
+Why is there a 2df difference? 
+
+
+also you can see the non-REML fit info here: 
+
+```{r}
+glance(mod.2f)
+```
+
+Again, the performance package is nice for model fit, which model comparison is a part of
+
+```{r}
+compare_performance(mod.2f, mod.2)
+```
+
+
+
+
+
+### Why treating time is so important
+
+Time with a different scale. How do we interpret? And what changes? 
+
+```{r}
+example$year.n <- (example$year - 30)
+  
+mod.2n <- lmer(SMN7 ~ 1 + year.n + (year.n  | ID), data=example)
+summary(mod.2n)
+```
+What happened? 
+
+
+### Calculation of fixed paramter CIs
+
+From the parameters package, which is part of the easy stats package
+
+```{r}
+library(parameters)
+model_parameters(mod.2)
+```
+
+Give standard estimates. However, robust estimates can be done through a sandwich estiamtion (note the pacakge clubSandwich needs to be installed):
+
+```{r}
+model_parameters(
+  mod.2, 
+  robust = TRUE, 
+  vcov_estimation = "CR", 
+  vcov_type = "CR1"
+)
+```
+
+```{r}
+bootstrap_parameters(
+  mod.2,
+  iterations = 1000,
+  centrality = "median",
+  ci = 0.95,
+  ci_method = "quantile",
+  test = "p-value"
+)
+```
+
+
+#### p -values
+The author of the package dislikes p-values. So they are not included. But what if you need them? Well, CIs. But if pressed you can use the parameters package: 
+
+```{r}
+p_value(mod.2)
+```
+lmertest is another package that does this but it also causes conflicts with standardly used packages so I would refrain from using. 
+
+## Random effects 
+
+### Calculation of random effect confidence interval
+
+Conveys the predicted range around each fixed effect in which 95% of the sample individuals are predicted to fall. 
+
+95% random effect = fixed effect plus minus 1.96 * random standard deviation
+
+How to calculate? 
+1. Intercept $$\gamma_{00} \pm  1.96  *  \tau_{U_{0i}}$$
+
+```{r}
+0.1193933 + (1.96 * 0.240217) 
+0.1193933 - (1.96 * 0.240217) 
+```
+
+
+2. Slope $$\gamma_{10} \pm  1.96  *  \tau_{U_{1i}}$$
+```{r}
+0.0004891 + (1.96 * 0.007745) 
+0.0004891 - (1.96 * 0.007745) 
+```
+
+
+### Individual level random effects 
+
+Are the intercept random effects the same as the model with only the intercept? Why or why not? 
+
+
+```{r}
+head(ranef(mod.1))
+```
+
+```{r}
+head(ranef(mod.2))
+```
+
+
+## Using simulations to get better estimates of confidence around our estimates
+
+```{r}
+library(broom.mixed)
+random_params <- tidy(mod.2,  effects = "ran_vals", conf.int=TRUE)
+head(random_params)
+```
+
+
+
+```{r}
+library(merTools)
+FEsim(mod.2)
+```
+
+```{r}
+re.sim <- REsim(mod.2)
+head(re.sim)
+```
+
+
+This can be used to create CIs for each individual random effect (and fixed effect). What is the confidence interval around person 6's intercept estimate compared to person 2000 who has 25 repeated measurements? 
+
+### Caterpillar plots
+
+Look through these different methods of getting random effects. Note that they are not all exactly the same. 
+
+
+caterpillar plots
+```{r}
+p1 <- plotREsim(re.sim)
+p1
+```
+
+
+### Density of individual random effects
+
+```{r}
+p1.gg1 <- re.sim %>% 
+  filter(term == "(Intercept)") 
+
+ggplot(p1.gg1, aes(mean)) +
+  geom_density()
+```
+
+
+
+```{r}
+p1.gg2 <- re.sim %>% 
+  filter(term == "year") 
+
+
+ggplot(p1.gg2, aes(mean)) +
+  geom_density()
+```
+
+
+
+## Comparing to a standard linear model
+
+
+```{r}
+lm.1 <- lm(SMN7 ~ 1 + year, data = example)
+summary(lm.1)
+```
+
+
+
+
+
+## Predictions and prediction intervals
+
+Predict function is deterministic and uses only the fixed effects (i.e. does not include random effects in the predictions). It does not do prediction in the typical sense where you are predicting *new* individual's scores. 
+
+Simulate is non-deterministic because it samples random effect values for all subjects and then samples from the conditional distribution. Simulation is needed to create true predictions. 
+
+
+
+
+### Predictions and prediction intervals
+Predict function is deterministic and uses only the fixed effects (i.e. does not include random effects in the predictions). It does not do prediction in the typical sense where you are predicting *new* individual's scores. 
+
+Simulate is non-deterministic because it samples random effect values for all subjects and then samples from the conditional distribution. Simulation is needed to create true predictions. 
+
+Short of a fully Bayesian analysis, bootstrapping is the gold-standard for deriving prediction intervals/bands (ie where would a new person score given X), but the time required is typically high.
+
+In order to generate a proper prediction (for either a new person or a new observation within a person), a prediction must account for three sources of uncertainty in mixed models:
+
+1. the residual (observation-level) variance,
+2. the uncertainty in the fixed coefficients, and
+3. the uncertainty in the variance parameters for the random effects
+
+Does so by:
+1. extracting the fixed and random coefficients
+2. takes n draws from the multivariate normal distribution of the fixed and random coefficients (separately)
+3. calculates the linear predictor for each row in newdata based on these draws, and
+4. incorporates the residual variation  
+then: 
+5. returns newdata with the lower and upper limits of the prediction interval and the mean or median of the simulated predictions
+
+
+
+```{r, warning=FALSE}
+library(merTools)
+# see also their shiny app: shinyMer(mod.1)
+
+PI <- predictInterval(merMod = mod.2, newdata = example, level = 0.9, n.sims = 100, stat = "median", include.resid.var = TRUE)
+head(PI)
+```
+
+Nice for bringing in confidence bands around your prediction (And we might use this later)
+
+
+Broom offers the fitted (predicted) values already if you just want to plot your trajectory. But note that these are not typical prediction intervals (what happens if you get a new participant with a certain value of X). The bands fit in ggplot are for predicted $\mu$|X
+
+
+Broom offers the fitted (predicted) values already if you just want to plot your trajectory. But note that these are not typical prediction intervals (what happens if you get a new participant with a certain value of X). The bands fit in ggplot are for predicted $\mu$|X
+
+```{r}
+P.gg <- ggplot(example.aug, aes(x= year, y = .fitted)) + geom_point() + stat_smooth(method = "lm")   
+
+P.gg
+
+```
+
+
+Can also explicitly simulate new data (rather than rely on another function to do so), which will be useful for power calculations later. In the simulated data, the subject means are different from the means in the original data because simulate samples by-subject random effect values using the variance components in the fitted model. 
+
+
+```{r, eval = FALSE}
+sim.1<- simulate(mod.2)
+head(sim.1)
+```
