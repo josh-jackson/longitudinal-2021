@@ -13,6 +13,8 @@ knitr::opts_chunk$set(
   message = FALSE)
 
 library(rmarkdown)
+library(tibble)
+library(tidyverse)
 ```
 
 # lme4 
@@ -97,10 +99,10 @@ class(mod.1)
 ### what do the random effects look like? 
 
 
-
 ```{r, message = FALSE}
 library(sjPlot)
-plot_model(mod.1, type = "re", sort.est = TRUE)
+plot_model(mod.1, type = "re")
+
 ```
 
 
@@ -170,7 +172,93 @@ How do you interpret year?
 
 How did the random effects change? 
 
-## Testing models
+
+# Visualizing results (quickly)
+
+
+There are many ways to do this. The parameters package paired with the see package, both from the easystats package, are useful in this regard. 
+
+```{r}
+library(parameters)
+library(see)
+
+result <- model_parameters(mod.2)
+
+plot(result)
+
+```
+
+
+```{r}
+result2 <- simulate_parameters(mod.2)
+plot(result2, show_intercept = TRUE)
+```
+
+
+
+
+```{r}
+result3 <- model_parameters(mod.2,  effects = "random")
+plot(result3)
+```
+
+
+These graphs however just take your output and make it look nice, in that the same information is still on the results. If we want to say, plot the predcted line we need to do an additional step and FEED the data back into the model. In doing so we create predicted values for each person (or each value of our predictor X), and then can visualize our findings as we would with a regression line. (More on this in the graphing workshop).
+
+To do so we are going to need to use the ggeffects package
+
+```{r}
+library(ggeffects)
+p.mod2 <- ggpredict(mod.2, "year")
+p.mod2
+```
+
+
+```{r}
+plot(p.mod2)
+```
+
+The error band here says that we are less confident in the predicted value as we get from year 
+~4 and beyond. 
+
+
+
+If you want you can also get predicted lines for a particular individual. 
+
+```{r}
+p.r.mod2 <- ggpredict(mod.2, "year", type = "random", condition = c(Subject = 97))
+p.r.mod2
+```
+
+```{r}
+plot(p.r.mod2)
+```
+
+
+```{r}
+p.r.mod3 <- ggpredict(mod.2, c("year","ID[sample=9]"), type = "random")
+plot(p.r.mod3)
+```
+
+
+
+
+```{r}
+plot_model(mod.2, type = "re", grid = FALSE, sort.est = TRUE)
+```
+
+
+We will eventually be doing all of this "by hand" but it is helpful to start thinking about what sort of effects you want to visualize/display. 
+
+```{r}
+P.gg <- ggplot(example.aug, aes(x= year, y = .fitted)) + geom_point() + stat_smooth(method = "lm")   
+
+P.gg
+
+```
+
+
+# Testing models
 REML comparison, which again is what we need to compare random effects. ML is not good for comparing models with different random effects. 
 
 ```{r}
@@ -194,8 +282,6 @@ compare_performance(mod.2f, mod.2)
 
 
 
-
-
 ### Why treating time is so important
 
 Time with a different scale. How do we interpret? And what changes? 
@@ -211,7 +297,7 @@ What happened?
 
 ### Calculation of fixed paramter CIs
 
-From the parameters package, which is part of the easy stats package
+From the parameters package, which is part of the easy stats suite
 
 ```{r}
 library(parameters)
@@ -249,7 +335,7 @@ p_value(mod.2)
 ```
 lmertest is another package that does this but it also causes conflicts with standardly used packages so I would refrain from using. 
 
-## Random effects 
+# Random effects 
 
 ### Calculation of random effect confidence interval
 
@@ -279,11 +365,7 @@ Are the intercept random effects the same as the model with only the intercept? 
 
 
 ```{r}
-head(ranef(mod.1))
-```
-
-```{r}
-head(ranef(mod.2))
+glimpse(ranef(mod.2))
 ```
 
 
@@ -292,7 +374,7 @@ head(ranef(mod.2))
 ```{r}
 library(broom.mixed)
 random_params <- tidy(mod.2,  effects = "ran_vals", conf.int=TRUE)
-head(random_params)
+glimpse(random_params)
 ```
 
 
@@ -312,10 +394,9 @@ This can be used to create CIs for each individual random effect (and fixed effe
 
 ### Caterpillar plots
 
-Look through these different methods of getting random effects. Note that they are not all exactly the same. 
+Look through these different methods of getting random effects. 
 
 
-caterpillar plots
 ```{r}
 p1 <- plotREsim(re.sim)
 p1
@@ -342,17 +423,6 @@ p1.gg2 <- re.sim %>%
 ggplot(p1.gg2, aes(mean)) +
   geom_density()
 ```
-
-
-
-## Comparing to a standard linear model
-
-
-```{r}
-lm.1 <- lm(SMN7 ~ 1 + year, data = example)
-summary(lm.1)
-```
-
 
 
 
@@ -405,12 +475,7 @@ Broom offers the fitted (predicted) values already if you just want to plot your
 
 Broom offers the fitted (predicted) values already if you just want to plot your trajectory. But note that these are not typical prediction intervals (what happens if you get a new participant with a certain value of X). The bands fit in ggplot are for predicted $\mu$|X
 
-```{r}
-P.gg <- ggplot(example.aug, aes(x= year, y = .fitted)) + geom_point() + stat_smooth(method = "lm")   
 
-P.gg
-
-```
 
 
 Can also explicitly simulate new data (rather than rely on another function to do so), which will be useful for power calculations later. In the simulated data, the subject means are different from the means in the original data because simulate samples by-subject random effect values using the variance components in the fitted model. 
