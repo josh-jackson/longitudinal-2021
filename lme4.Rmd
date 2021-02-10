@@ -4,6 +4,8 @@ output:
   distill::distill_article:
     toc: true
     toc_depth: 2
+    mathjax: "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML"
+    self_contained: false 
 ---
 
 ```{r setup, include=FALSE}
@@ -110,12 +112,12 @@ coef = fixef + raneff
 
 
 ```{r}
-head(ranef(mod.1))
+glimpse(ranef(mod.1))
 ```
 
 
 ```{r}
-head(coef(mod.1))
+glimpse(coef(mod.1))
 ```
 
 ```{r}
@@ -171,6 +173,15 @@ How does the intercept change from the random intercept only model?
 How do you interpret year? 
 
 How did the random effects change? 
+
+
+## Viewing equations
+```{r}
+library(texPreview)
+library(equatiomatic)
+extract_eq(mod.2) 
+```
+
 
 
 # Visualizing results (quickly)
@@ -344,6 +355,7 @@ Conveys the predicted range around each fixed effect in which 95% of the sample 
 95% random effect = fixed effect plus minus 1.96 * random standard deviation
 
 How to calculate? 
+
 1. Intercept $$\gamma_{00} \pm  1.96  *  \tau_{U_{0i}}$$
 
 ```{r}
@@ -359,7 +371,8 @@ How to calculate?
 ```
 
 
-### Individual level random effects 
+
+## Individual level random effects
 
 Are the intercept random effects the same as the model with only the intercept? Why or why not? 
 
@@ -369,7 +382,7 @@ glimpse(ranef(mod.2))
 ```
 
 
-## Using simulations to get better estimates of confidence around our estimates
+### Using simulations to get better estimates of confidence around our estimates
 
 ```{r}
 library(broom.mixed)
@@ -379,10 +392,12 @@ glimpse(random_params)
 
 
 
+
 ```{r}
 library(merTools)
 FEsim(mod.2)
 ```
+
 
 ```{r}
 re.sim <- REsim(mod.2)
@@ -467,21 +482,6 @@ PI <- predictInterval(merMod = mod.2, newdata = example, level = 0.9, n.sims = 1
 head(PI)
 ```
 
-Nice for bringing in confidence bands around your prediction (And we might use this later)
-
-
-Broom offers the fitted (predicted) values already if you just want to plot your trajectory. But note that these are not typical prediction intervals (what happens if you get a new participant with a certain value of X). The bands fit in ggplot are for predicted $\mu$|X
-
-
-Broom offers the fitted (predicted) values already if you just want to plot your trajectory. But note that these are not typical prediction intervals (what happens if you get a new participant with a certain value of X). The bands fit in ggplot are for predicted $\mu$|X
 
 
 
-
-Can also explicitly simulate new data (rather than rely on another function to do so), which will be useful for power calculations later. In the simulated data, the subject means are different from the means in the original data because simulate samples by-subject random effect values using the variance components in the fitted model. 
-
-
-```{r, eval = FALSE}
-sim.1<- simulate(mod.2)
-head(sim.1)
-```

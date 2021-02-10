@@ -104,7 +104,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--radix_placeholder_rmarkdown_metadata-->
 
   <script type="text/json" id="radix-rmarkdown-metadata">
-  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","output"]}},"value":[{"type":"character","attributes":{},"value":["lme4"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["toc","toc_depth"]}},"value":[{"type":"logical","attributes":{},"value":[true]},{"type":"integer","attributes":{},"value":[2]}]}]}]}
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","output"]}},"value":[{"type":"character","attributes":{},"value":["lme4"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["toc","toc_depth","mathjax","self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[true]},{"type":"integer","attributes":{},"value":[2]},{"type":"character","attributes":{},"value":["https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML"]},{"type":"logical","attributes":{},"value":[false]}]}]}]}
   </script>
   <!--/radix_placeholder_rmarkdown_metadata-->
   <!--radix_placeholder_navigation_in_header-->
@@ -2443,12 +2443,13 @@ Homeworks
 <ul>
 <li><a href="#exploring-beyond-the-summary">Exploring beyond the summary</a></li>
 <li><a href="#adding-time-to-the-mlm">Adding time to the MLM</a></li>
+<li><a href="#viewing-equations">Viewing equations</a></li>
 </ul></li>
 <li><a href="#visualizing-results-quickly">Visualizing results (quickly)</a></li>
 <li><a href="#testing-models">Testing models</a></li>
 <li><a href="#random-effects">Random effects</a>
 <ul>
-<li><a href="#using-simulations-to-get-better-estimates-of-confidence-around-our-estimates">Using simulations to get better estimates of confidence around our estimates</a></li>
+<li><a href="#individual-level-random-effects">Individual level random effects</a></li>
 <li><a href="#predictions-and-prediction-intervals">Predictions and prediction intervals</a></li>
 </ul></li>
 </ul>
@@ -2560,201 +2561,24 @@ attr(,&quot;package&quot;)
 <p>coef = fixef + raneff</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/lme4/man/ranef.html'>ranef</a></span><span class='op'>(</span><span class='va'>mod.1</span><span class='op'>)</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://tibble.tidyverse.org/reference/glimpse.html'>glimpse</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/lme4/man/ranef.html'>ranef</a></span><span class='op'>(</span><span class='va'>mod.1</span><span class='op'>)</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>$ID
-      (Intercept)
-6   -0.0597240676
-29  -0.0101119688
-34  -0.0103698893
-36  -0.0035902640
-37  -0.0082433829
-48   0.0455797808
-53  -0.0222710793
-54  -0.0066548052
-58  -0.0060624543
-61  -0.0271347235
-66  -0.0123359896
-67  -0.0026491341
-69   0.0348398944
-71  -0.0486040243
-74   0.0484338355
-75   0.0224228634
-76  -0.0021583228
-78   0.0224780927
-79  -0.0054325535
-80  -0.0194707993
-81   0.0712662731
-82   0.0053695094
-85  -0.0532215425
-86  -0.0388885304
-87  -0.0387411472
-89  -0.0208712287
-91   0.0123812011
-92  -0.0078125821
-93   0.0430219016
-94  -0.0543390588
-96   0.0233440081
-97  -0.0497003277
-98  -0.0432302582
-99   0.0104394983
-101  0.0508032394
-102 -0.0104344307
-103 -0.0206130188
-104 -0.0482473609
-105 -0.0478231980
-106 -0.0028045239
-110  0.0418641247
-112 -0.0109089622
-114 -0.0549314098
-115 -0.0013505715
-116  0.0062422910
-120  0.0300499418
-122  0.0793976365
-125  0.0532803435
-127 -0.0105050866
-129 -0.0448207025
-135  0.0406255726
-136 -0.0364069792
-137 -0.0444890904
-140 -0.0153440709
-141  0.0770651692
-142  0.0817077387
-143  0.0072423981
-144  0.0001680065
-146 -0.0551006778
-149 -0.0137965477
-150  0.0091583792
-152 -0.0187707293
-153  0.0490992150
-155 -0.0233396072
-156 -0.0218943803
-159 -0.0488368935
-160  0.0024524455
-162  0.0911638809
-163  0.0155327007
-165  0.0320764602
-167 -0.0025217361
-169  0.0647586755
-171 -0.0397728293
-174  0.0259232134
-182 -0.0154177625
-187 -0.0581588783
-189  0.0348767402
-190 -0.0030744230
-193  0.0636533019
-194  0.0099321407
-201  0.0104848276
-204  0.0414352908
-205  0.0353188897
-208  0.0033367444
-209 -0.0346144188
-211  0.0168223034
-214 -0.0374146988
-219  0.0564683729
-222 -0.0262135788
-223 -0.0228606119
-229 -0.0484315899</code></pre>
+<pre><code>List of 1
+ $ ID:&#39;data.frame&#39;: 91 obs. of  1 variable:
+  ..$ (Intercept): num [1:91] -0.05972 -0.01011 -0.01037 -0.00359 -0.00824 ...
+  ..- attr(*, &quot;postVar&quot;)= num [1, 1, 1:91] 0.00035 0.00048 0.00048 0.00048 0.00035 ...
+ - attr(*, &quot;class&quot;)= chr &quot;ranef.mer&quot;</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span><span class='op'>(</span><span class='va'>mod.1</span><span class='op'>)</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://tibble.tidyverse.org/reference/glimpse.html'>glimpse</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/coef.html'>coef</a></span><span class='op'>(</span><span class='va'>mod.1</span><span class='op'>)</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>$ID
-    (Intercept)
-6    0.04724795
-29   0.09686005
-34   0.09660212
-36   0.10338175
-37   0.09872863
-48   0.15255179
-53   0.08470093
-54   0.10031721
-58   0.10090956
-61   0.07983729
-66   0.09463602
-67   0.10432288
-69   0.14181191
-71   0.05836799
-74   0.15540585
-75   0.12939488
-76   0.10481369
-78   0.12945011
-79   0.10153946
-80   0.08750121
-81   0.17823829
-82   0.11234152
-85   0.05375047
-86   0.06808348
-87   0.06823087
-89   0.08610079
-91   0.11935322
-92   0.09915943
-93   0.14999392
-94   0.05263296
-96   0.13031602
-97   0.05727169
-98   0.06374176
-99   0.11741151
-101  0.15777525
-102  0.09653758
-103  0.08635900
-104  0.05872465
-105  0.05914882
-106  0.10416749
-110  0.14883614
-112  0.09606305
-114  0.05204060
-115  0.10562144
-116  0.11321430
-120  0.13702196
-122  0.18636965
-125  0.16025236
-127  0.09646693
-129  0.06215131
-135  0.14759759
-136  0.07056503
-137  0.06248292
-140  0.09162794
-141  0.18403718
-142  0.18867975
-143  0.11421441
-144  0.10714002
-146  0.05187134
-149  0.09317547
-150  0.11613039
-152  0.08820128
-153  0.15607123
-155  0.08363241
-156  0.08507763
-159  0.05813512
-160  0.10942446
-162  0.19813589
-163  0.12250471
-165  0.13904847
-167  0.10445028
-169  0.17173069
-171  0.06719918
-174  0.13289523
-182  0.09155425
-187  0.04881314
-189  0.14184875
-190  0.10389759
-193  0.17062532
-194  0.11690415
-201  0.11745684
-204  0.14840730
-205  0.14229090
-208  0.11030876
-209  0.07235760
-211  0.12379432
-214  0.06955732
-219  0.16344039
-222  0.08075844
-223  0.08411140
-229  0.05854042</code></pre>
+<pre><code>List of 1
+ $ ID:&#39;data.frame&#39;: 91 obs. of  1 variable:
+  ..$ (Intercept): num [1:91] 0.0472 0.0969 0.0966 0.1034 0.0987 ...
+ - attr(*, &quot;class&quot;)= chr &quot;coef.mer&quot;</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -2865,6 +2689,46 @@ year -0.339</code></pre>
 <p>How does the intercept change from the random intercept only model?</p>
 <p>How do you interpret year?</p>
 <p>How did the random effects change?</p>
+<h2 id="viewing-equations">Viewing equations</h2>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/yonicd/texPreview'>texPreview</a></span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/datalorax/equatiomatic'>equatiomatic</a></span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/pkg/equatiomatic/man/extract_eq.html'>extract_eq</a></span><span class='op'>(</span><span class='va'>mod.2</span><span class='op'>)</span> 
+</code></pre>
+</div>
+<p><span class="math display">\[
+\begin{aligned}
+  \operatorname{SMN7}_{i}  &amp;\sim N \left(\alpha_{j[i]} + \beta_{1j[i]}(\operatorname{year}), \sigma^2 \right) \\    
+\left(
+  \begin{array}{c} 
+    \begin{aligned}
+      &amp;\alpha_{j} \\
+      &amp;\beta_{1j}
+    \end{aligned}
+  \end{array}
+\right)
+  &amp;\sim N \left(
+\left(
+  \begin{array}{c} 
+    \begin{aligned}
+      &amp;\mu_{\alpha_{j}} \\
+      &amp;\mu_{\beta_{1j}}
+    \end{aligned}
+  \end{array}
+\right)
+, 
+\left(
+  \begin{array}{cc}
+     \sigma^2_{\alpha_{j}} &amp; \rho_{\alpha_{j}\beta_{1j}} \\ 
+     \rho_{\beta_{1j}\alpha_{j}} &amp; \sigma^2_{\beta_{1j}}
+  \end{array}
+\right)
+ \right)
+    \text{, for ID j = 1,} \dots \text{,J}
+\end{aligned}
+\]</span></p>
+</div>
 <h1 id="visualizing-results-quickly">Visualizing results (quickly)</h1>
 <p>There are many ways to do this. The parameters package paired with the see package, both from the easystats package, are useful in this regard.</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2877,7 +2741,7 @@ year -0.339</code></pre>
 <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>result</span><span class='op'>)</span>
 </code></pre>
 </div>
-<p><img src="lme4_files/figure-html5/unnamed-chunk-17-1.png" width="624" /></p>
+<p><img src="lme4_files/figure-html5/unnamed-chunk-18-1.png" width="624" /></p>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -2885,7 +2749,7 @@ year -0.339</code></pre>
 <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>result2</span>, show_intercept <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 </code></pre>
 </div>
-<p><img src="lme4_files/figure-html5/unnamed-chunk-18-1.png" width="624" /></p>
+<p><img src="lme4_files/figure-html5/unnamed-chunk-19-1.png" width="624" /></p>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -2893,7 +2757,7 @@ year -0.339</code></pre>
 <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>result3</span><span class='op'>)</span>
 </code></pre>
 </div>
-<p><img src="lme4_files/figure-html5/unnamed-chunk-19-1.png" width="624" /></p>
+<p><img src="lme4_files/figure-html5/unnamed-chunk-20-1.png" width="624" /></p>
 </div>
 <p>These graphs however just take your output and make it look nice, in that the same information is still on the results. If we want to say, plot the predcted line we need to do an additional step and FEED the data back into the model. In doing so we create predicted values for each person (or each value of our predictor X), and then can visualize our findings as we would with a regression line. (More on this in the graphing workshop).</p>
 <p>To do so we are going to need to use the ggeffects package</p>
@@ -2926,7 +2790,7 @@ Adjusted for:
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://strengejacke.github.io/ggeffects/reference/plot.html'>plot</a></span><span class='op'>(</span><span class='va'>p.mod2</span><span class='op'>)</span>
 </code></pre>
 </div>
-<p><img src="lme4_files/figure-html5/unnamed-chunk-21-1.png" width="624" /></p>
+<p><img src="lme4_files/figure-html5/unnamed-chunk-22-1.png" width="624" /></p>
 </div>
 <p>The error band here says that we are less confident in the predicted value as we get from year ~4 and beyond.</p>
 <p>If you want you can also get predicted lines for a particular individual.</p>
@@ -2958,7 +2822,7 @@ Adjusted for:
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://strengejacke.github.io/ggeffects/reference/plot.html'>plot</a></span><span class='op'>(</span><span class='va'>p.r.mod2</span><span class='op'>)</span>
 </code></pre>
 </div>
-<p><img src="lme4_files/figure-html5/unnamed-chunk-23-1.png" width="624" /></p>
+<p><img src="lme4_files/figure-html5/unnamed-chunk-24-1.png" width="624" /></p>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -2966,7 +2830,7 @@ Adjusted for:
 <span class='fu'><a href='https://strengejacke.github.io/ggeffects/reference/plot.html'>plot</a></span><span class='op'>(</span><span class='va'>p.r.mod3</span><span class='op'>)</span>
 </code></pre>
 </div>
-<p><img src="lme4_files/figure-html5/unnamed-chunk-24-1.png" width="624" /></p>
+<p><img src="lme4_files/figure-html5/unnamed-chunk-25-1.png" width="624" /></p>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -2974,10 +2838,10 @@ Adjusted for:
 </code></pre>
 </div>
 <pre><code>[[1]]</code></pre>
-<p><img src="lme4_files/figure-html5/unnamed-chunk-25-1.png" width="624" /></p>
+<p><img src="lme4_files/figure-html5/unnamed-chunk-26-1.png" width="624" /></p>
 <pre><code>
 [[2]]</code></pre>
-<p><img src="lme4_files/figure-html5/unnamed-chunk-25-2.png" width="624" /></p>
+<p><img src="lme4_files/figure-html5/unnamed-chunk-26-2.png" width="624" /></p>
 </div>
 <p>We will eventually be doing all of this “by hand” but it is helpful to start thinking about what sort of effects you want to visualize/display.</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2987,7 +2851,7 @@ Adjusted for:
 <span class='va'>P.gg</span>
 </code></pre>
 </div>
-<p><img src="lme4_files/figure-html5/unnamed-chunk-26-1.png" width="624" /></p>
+<p><img src="lme4_files/figure-html5/unnamed-chunk-27-1.png" width="624" /></p>
 </div>
 <h1 id="testing-models">Testing models</h1>
 <p>REML comparison, which again is what we need to compare random effects. ML is not good for comparing models with different random effects.</p>
@@ -3131,7 +2995,10 @@ year        |    4.89e-04 | 1.91e-03 | [ 0.00, 0.00] |   0.26 | 0.798 </code></p
 <h3 id="calculation-of-random-effect-confidence-interval">Calculation of random effect confidence interval</h3>
 <p>Conveys the predicted range around each fixed effect in which 95% of the sample individuals are predicted to fall.</p>
 <p>95% random effect = fixed effect plus minus 1.96 * random standard deviation</p>
-<p>How to calculate? 1. Intercept <span class="math display">\[\gamma_{00} \pm  1.96  *  \tau_{U_{0i}}\]</span></p>
+<p>How to calculate?</p>
+<ol type="1">
+<li>Intercept <span class="math display">\[\gamma_{00} \pm  1.96  *  \tau_{U_{0i}}\]</span></li>
+</ol>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fl'>0.1193933</span> <span class='op'>+</span> <span class='op'>(</span><span class='fl'>1.96</span> <span class='op'>*</span> <span class='fl'>0.240217</span><span class='op'>)</span> 
@@ -3159,7 +3026,7 @@ year        |    4.89e-04 | 1.91e-03 | [ 0.00, 0.00] |   0.26 | 0.798 </code></p
 </div>
 <pre><code>[1] -0.0146911</code></pre>
 </div>
-<h3 id="individual-level-random-effects">Individual level random effects</h3>
+<h2 id="individual-level-random-effects">Individual level random effects</h2>
 <p>Are the intercept random effects the same as the model with only the intercept? Why or why not?</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -3173,7 +3040,7 @@ year        |    4.89e-04 | 1.91e-03 | [ 0.00, 0.00] |   0.26 | 0.798 </code></p
   ..- attr(*, &quot;postVar&quot;)= num [1:2, 1:2, 1:88] 3.26e-04 -3.42e-05 -3.42e-05 5.18e-05 4.21e-04 ...
  - attr(*, &quot;class&quot;)= chr &quot;ranef.mer&quot;</code></pre>
 </div>
-<h2 id="using-simulations-to-get-better-estimates-of-confidence-around-our-estimates">Using simulations to get better estimates of confidence around our estimates</h2>
+<h3 id="using-simulations-to-get-better-estimates-of-confidence-around-our-estimates">Using simulations to get better estimates of confidence around our estimates</h3>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://github.com/bbolker/broom.mixed'>broom.mixed</a></span><span class='op'>)</span>
@@ -3225,7 +3092,7 @@ $ conf.high &lt;dbl&gt; -0.021162535, 0.031740388, 0.034800657, 0.0349002…</co
 <span class='va'>p1</span>
 </code></pre>
 </div>
-<p><img src="lme4_files/figure-html5/unnamed-chunk-41-1.png" width="624" /></p>
+<p><img src="lme4_files/figure-html5/unnamed-chunk-42-1.png" width="624" /></p>
 </div>
 <h3 id="density-of-individual-random-effects">Density of individual random effects</h3>
 <div class="layout-chunk" data-layout="l-body">
@@ -3237,7 +3104,7 @@ $ conf.high &lt;dbl&gt; -0.021162535, 0.031740388, 0.034800657, 0.0349002…</co
   <span class='fu'>geom_density</span><span class='op'>(</span><span class='op'>)</span>
 </code></pre>
 </div>
-<p><img src="lme4_files/figure-html5/unnamed-chunk-42-1.png" width="624" /></p>
+<p><img src="lme4_files/figure-html5/unnamed-chunk-43-1.png" width="624" /></p>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -3249,7 +3116,7 @@ $ conf.high &lt;dbl&gt; -0.021162535, 0.031740388, 0.034800657, 0.0349002…</co
   <span class='fu'>geom_density</span><span class='op'>(</span><span class='op'>)</span>
 </code></pre>
 </div>
-<p><img src="lme4_files/figure-html5/unnamed-chunk-43-1.png" width="624" /></p>
+<p><img src="lme4_files/figure-html5/unnamed-chunk-44-1.png" width="624" /></p>
 </div>
 <h2 id="predictions-and-prediction-intervals">Predictions and prediction intervals</h2>
 <p>Predict function is deterministic and uses only the fixed effects (i.e. does not include random effects in the predictions). It does not do prediction in the typical sense where you are predicting <em>new</em> individual’s scores.</p>
@@ -3283,17 +3150,6 @@ then: 5. returns newdata with the lower and upper limits of the prediction inter
 5 0.09699704 0.1498951  0.03393066
 6 0.10741065 0.1761874  0.04979927</code></pre>
 </div>
-<p>Nice for bringing in confidence bands around your prediction (And we might use this later)</p>
-<p>Broom offers the fitted (predicted) values already if you just want to plot your trajectory. But note that these are not typical prediction intervals (what happens if you get a new participant with a certain value of X). The bands fit in ggplot are for predicted <span class="math inline">\(\mu\)</span>|X</p>
-<p>Broom offers the fitted (predicted) values already if you just want to plot your trajectory. But note that these are not typical prediction intervals (what happens if you get a new participant with a certain value of X). The bands fit in ggplot are for predicted <span class="math inline">\(\mu\)</span>|X</p>
-<p>Can also explicitly simulate new data (rather than rely on another function to do so), which will be useful for power calculations later. In the simulated data, the subject means are different from the means in the original data because simulate samples by-subject random effect values using the variance components in the fitted model.</p>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>sim.1</span><span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/simulate.html'>simulate</a></span><span class='op'>(</span><span class='va'>mod.2</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>sim.1</span><span class='op'>)</span>
-</code></pre>
-</div>
-</div>
 <div class="sourceCode" id="cb32"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
@@ -3307,7 +3163,7 @@ then: 5. returns newdata with the lower and upper limits of the prediction inter
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML";
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
 </script>
