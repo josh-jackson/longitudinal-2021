@@ -13,11 +13,13 @@ navbar:
           href: intro-1.html
         - text: "MLM"
           href: mlm.html
+        - text: "conditional models"
+          href: conditional.html
     - text: "Workshops"
       menu:
         - text: "data"
           href: data.html
-        - text: "lme4, nlme"
+        - text: "lme4"
           href: lme4.html  
         - text: "plotting"
           href: plotting.html 

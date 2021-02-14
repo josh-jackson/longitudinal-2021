@@ -1,0 +1,475 @@
+---
+title: "conditional"
+output:
+  xaringan::moon_reader:
+    mathjax: "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML"
+    css: xaringan-themer.css
+    seal: false
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      ratio: "16:9"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r xaringan-themer, include = FALSE}
+library(xaringanthemer)
+mono_light(
+  base_color = "#23395b",
+  header_font_google = google_font("Josefin Sans"),
+  text_font_google   = google_font("Montserrat", "300", "300i"),
+  code_font_google   = google_font("Droid Mono"),
+)
+
+library(tidyverse)
+library(broom)
+library(tidybayes)
+library(modelr)
+library(viridis)
+```
+
+
+
+# Conditional models
+
+We are now going to introduce predictors to our growth models beyond time. These predictors are similar to predictors in standard regression -- dummy for nominal, interactions change lower order terms, etcetera. 
+
+
+
+---
+# Level 2 group predictors 
+
+Level 2, person variable that is dummy coded. Note that group here only is measured once, it is a between person variable. We are asking the question, does group 1 differ from group 2 in their...?
+
+level 1: 
+$${Y}_{ti} = \beta_{0i}  + \beta_{1i}Time_{ti} + \varepsilon_{ti}$$
+
+Level 2: 
+
+$${\beta}_{0i} = \gamma_{00} + \gamma_{01}G_{i} +   U_{0i}$$
+
+$${\beta}_{1i} = \gamma_{10} + U_{1i}$$
+
+
+---
+## Interpretation of conditional fixed effects 
+Notice we have a new gamma term, $\gamma_{01}$. How do we interpret this new fixed effect, especially in the presence of other fixed effects?  
+
+$\gamma_{00}$ is the intercept and can be considered the value when G = 0 and time = 0, whereas the $\gamma_{01}$ is the difference in initial values between groups. 
+The value for  group = 1? $\gamma_{00} + \gamma_{01}$
+
+Combined: 
+ $${Y}_{ti} = \gamma_{00} + \gamma_{01}G_{i} + \gamma_{10} (Time_{ti})+ U_{0i}  + U_{1i}(Time_{ti}) + \varepsilon_{ti}$$
+$${Y}_{ti} = (\gamma_{00} + \gamma_{01}G_{i} + U_{0i} ) + [(\gamma_{10}+ U_{1i})(Time_{ti})] + \varepsilon_{ti}$$
+
+---
+### Interpretation of random effects
+
+One thing to keep in mind is that we are now changing the meaning of the random effect. Now that we have a predictor in the model, the $U_{0j}$ is the person specific deviation from the group predicted intercept, not the grand mean intercept. It is the difference from what would be expected given all the terms. In other words, it is conditional on all other predictors in the model.  
+
+Level 1:  
+$${Y}_{ti} = \beta_{0i}  + \beta_{1i}Time_{ti} + \varepsilon_{ti}$$
+
+Level 2:  
+
+$${\beta}_{0i} = \gamma_{00} + \gamma_{01}G_{i} +   U_{0i}$$
+
+$${\beta}_{1i} = \gamma_{10} + U_{1i}$$
+
+
+---
+### random structure
+
+Level 2 covariance matrix
+$$\begin{pmatrix} {U}_{0j} \\ {U}_{1j} \end{pmatrix}
+\sim \mathcal{N} \begin{pmatrix} 
+  0,     & \tau_{00}^{2} & \tau_{01}\\ 
+  0, & \tau_{01} & \tau_{10}^{2}
+\end{pmatrix}$$
+
+Same as before in terms of structure, but the calculations will be slightly different. Why? 
+
+Level 1 residual variance
+$$ {R}_{ij} \sim \mathcal{N}(0, \sigma^{2})  $$
+
+Same as before too. But, would you expect the residual to be smaller or larger compared to a model without a group predictor of the intercept? 
+
+
+---
+### Seperatinng these into intercept and slope
+
+$${Y}_{ti} = (\gamma_{00} + \gamma_{01}G_{i} + U_{0i} ) + [(\gamma_{10}+ U_{1i})(Time_{ti})] + \varepsilon_{ti}$$
+  
+Understanding how to re-write the equation will help for calculating estimated scores for your predictors in addition to being able to interpret the coefficients. This is going to be helpful for predictions and graphing, come later. What would differ between the two equations if calculating predicted scores for group coded = 0 versus a group = 1?
+
+Estimated value for an individual in group = 0  
+$$\hat{Y}_{ti} = (\gamma_{00} + U_{0i} ) + [(\gamma_{10}+ U_{1i})(Time_{ti})]$$
+group = 1 individual 
+$$\hat{Y}_{ti} = (\gamma_{00} + \gamma_{01}+ U_{0i} ) + [(\gamma_{10}+ U_{1i})(Time_{ti})]$$
+
+group = 0 trajectory 
+$$\hat{Y}_{ti} = (\gamma_{00}) + (\gamma_{10})(Time_{ti})$$
+
+group = 1 trajectory 
+$$\hat{Y}_{ti} = (\gamma_{00}+ \gamma_{01}) + (\gamma_{10})(Time_{ti})$$
+
+---
+## Slope and Intercept Group Predictors
+
+Predicting the intercept only can only answer static questions, not about change. To do that we need to introduce predictions for the slope variable, as that is our variable that indexes how people change. 
+
+Level 1:  
+$${Y}_{ti} = \beta_{0i}  + \beta_{1i}Time_{ti} + \varepsilon_{ti}$$
+
+Level 2:  
+
+$${\beta}_{0i} = \gamma_{00} + \gamma_{01}G_{i} +   U_{0i}$$
+
+$${\beta}_{1i} = \gamma_{10} +  \gamma_{11}G_{i} +U_{1i}$$
+
+Similar to before, the interpretation of  $U_{1j}$ changes. The term is now what is left over after accounting for group differences in the mean slope. 
+
+Can you visualize what $U_{1j}$ captures? Can you visualize how $U_{1j}$ differs in this model and one that does not have the $\gamma_{11}G_{j}$ term? 
+
+
+---
+### cross level interactions
+Level 1:  
+$${Y}_{ti} = \beta_{0i}  + \beta_{1i}Time_{ti} + \varepsilon_{ti}$$
+
+Level 2:  
+
+$${\beta}_{0i} = \gamma_{00} + \gamma_{01}G_{i} +   U_{0i}$$
+
+$${\beta}_{1i} = \gamma_{10} +  \gamma_{11}G_{i} +U_{1i}$$
+Combined:
+  $${Y}_{ti} = \gamma_{00} + \gamma_{01}G_{i}+  \gamma_{10} (Time_{ti}) + \gamma_{11}(G_{i}*Time_{ti}) +  U_{0i} + U_{1i}(Time_{ti}) + \varepsilon_{ti}$$
+Notice that when we combine Level 1 and Level 2, the slope effect predictor becomes an interaction with time. Anytime you have a predictor of time that will be an interaction with time in that we are asking does group status (or what ever variable) differs in their relationship between time and your DV.  
+
+---
+### interpretation of lower order terms
+
+Combined:
+  $${Y}_{ti} = \gamma_{00} + \gamma_{01}G_{i}+  \gamma_{10} (Time_{ti}) + \gamma_{11}(G_{i}*Time_{ti}) +  U_{0i} + U_{1i}(Time_{ti}) + \varepsilon_{ti}$$
+  
+As with regression, the lower order terms are now conditional on the higher order interaction. 
+
+$\gamma_{10}$, the fixed effect representing our slope is now the simple slope for group = 0  
+
+$\gamma_{01}$, the fixed effect for group is the difference between groups when time = 0, e.g. the intercept  
+
+$\gamma_{00}$ is the intercept, it is  the value for when our predictors are  zero. Thus it is the value of group = 0 at the initial time period (if 0 = initial status. What is the interpretation if intercept is scaled at the midpoint?)
+
+
+---
+### residual structure
+
+Level 2 covariance matrix
+$$\begin{pmatrix} {U}_{0j} \\ {U}_{1j} \end{pmatrix}
+\sim \mathcal{N} \begin{pmatrix} 
+  0,     & \tau_{00}^{2} & \tau_{01}\\ 
+  0, & \tau_{01} & \tau_{10}^{2}
+\end{pmatrix}$$
+
+How does your variance-covariance matrix change? What is the interpretation of $\tau_{01}$? It is the association between random effects after accounting for (controlling) group differences in intercept and slope. 
+
+Level 1 residual variance
+$${R}_{ij} \sim \mathcal{N}(0, \sigma^{2})$$
+
+How does your residual change relative to a model without group effects? Can you graph conceptually what this now captures? 
+
+---
+### predictive equation
+
+Again, thinking about the equation as a predictive engine will help us later with graphing
+
+Alternative combined
+$${Y}_{ti} = [\gamma_{00} + U_{0i} +\gamma_{01}G_{i}] + [(\gamma_{10}  + \gamma_{11}G_{i}+  U_{1i})(Time_{ti})] + \varepsilon_{ti}$$
+  
+This is just rearranged so you can see that different groups have different intercepts and slopes -- very much alike simple slopes analyses for interactions in standard regression. 
+
+  
+  $$\hat{Y}_{ti} = [\gamma_{00} +\gamma_{01}G_{i}] + [(\gamma_{10}  + \gamma_{11}G_{i})(Time_{ti})]$$
+  
+Notice how when G = 0, the equation simplifies:
+  
+$$\hat{Y}_{ti} = \gamma_{00} + \gamma_{10} (Time_{ti})$$ 
+  
+
+---
+# Level 2 Continuous predictors 
+
+Introducing a continuous predictor is similar to the group predictors, and is similar to how continuous predictors are used in regression -- remember, MLM, is just fancy regression. Here the continuous predictor is again only measured once. It is thought of as a between person variable. 
+
+Level 1:  
+$${Y}_{ti} = \beta_{0i}  + \beta_{1i}Time_{ti} + \varepsilon_{ti}$$
+
+Level 2:  
+
+$${\beta}_{0i} = \gamma_{00} + \gamma_{01}C_{i} +   U_{0i}$$
+
+$${\beta}_{1i} = \gamma_{10} +  \gamma_{11}C_{i} +U_{1i}$$ 
+
+
+Combined:
+  $${Y}_{ti} = \gamma_{00} + \gamma_{01}C_{i}+  \gamma_{10} (Time_{ti}) + \gamma_{11}(C_{i}*Time_{ti}) +  U_{0i} + U_{1j}(Time_{ti}) + \varepsilon_{ti}$$
+  
+---
+## Continuous conditional interpretation
+
+$${Y}_{ti} = \gamma_{00} + \gamma_{01}C_{i}+  \gamma_{10} (Time_{ti}) + \gamma_{11}(C_{i}*Time_{ti}) +  U_{0i} + U_{1j}(Time_{ti}) + \varepsilon_{ti}$$
+
+As with nominal level 2 predictors, the interpretation of our intercept is now when all predictors are at zero i.e. time AND C.   
+
+The $\gamma_{11}$ coefficient is now the difference in slopes for one unit of our C variable. 
+
+The $\gamma_{01}$ is now the effect of time when the continuous predictor is zero. Zero is meaningful when you code for dummy or effect variables, but is not always straightforward with continuous variables. It is thus recommended to *always* center your predictors to aide in interpretation. 
+
+$\gamma_{00}$ is the intercept, it is  the value for when our predictors are  zero. 
+
+$U_{0i}$ Is the random effect for intercept after accounting for C. 
+  
+$U_{1i}$ Is the random effect for the slope after accounting for C. 
+
+The covariance between them is now accounting for or controlling for this predictor. 
+
+---
+### Equations necessary for plotting
+
+The same logic for plotting models with nominal variables applies to continuous  variables. Remembering back to decomposing interactions in standard regression models, it is important to plot predicted lines at different levels of interest. Usually plus minus one SD.
+
+$$\hat{Y}_{ti} = [\gamma_{00} + \gamma_{01}C_{i}]+  [\gamma_{10} + \gamma_{11}C_{i}]*Time_{ti}$$
+
+Assuming C is standardized: 
+-1sd
+  $$\hat{Y}_{ti} = [\gamma_{00} +(\gamma_{01}*-1)] + [\gamma_{10}  + (\gamma_{11}*-1)]*Time_{ti}$$
+
+
+Mean
+  $$\hat{Y}_{ti} = \gamma_{00} + \gamma_{10} * (Time_{ti})$$
+  
+  
++1sd
+  $$\hat{Y}_{ti} = [\gamma_{00} +\gamma_{01}] + [\gamma_{10}  + \gamma_{11}]*Time_{ti}$$
+
+---
+### individual level trajectories
+
+What would individual level trajectories look like? 
+
+  $$\hat{Y}_{ti} = [\gamma_{00} + \gamma_{01}C_{i}+  U_{0i}] + [\gamma_{10}  + (\gamma_{11}*C_{i}) + U_{1i}]  * Time_{ti}$$
+
+If you know someones random effects, and you know the fixed effects, you can create predicted values for any level of time. 
+
+
+---
+### random effects as residuals 
+
+How can a model like this be interpreted? 
+
+Level 1:  
+$${Y}_{ti} = \beta_{0i}  + \beta_{1i}Time_{ti} + \varepsilon_{ti}$$
+
+Level 2:  
+
+$${\beta}_{0i} = \gamma_{00} + \gamma_{01}C_{i} +   U_{0i}$$
+
+$${\beta}_{1i} = \gamma_{10} +  \gamma_{11}C_{i}$$
+
+
+---
+###  more level 2 predictors
+
+Interpretations with multiple predictors in regression extend to MLMs. For example, can you think about the interpretation of each parameter as well as the plots you would want to do for a model such as looking at health across time, examining the effects of an intervention, while controlling for initial exercise status?: 
+
+level 1: 
+$${Health}_{ti} = \beta_{0i}  + \beta_{1i}Time_{ti} + \varepsilon_{ti}$$
+
+Level 2: 
+$${\beta}_{0i} = \gamma_{00} + \gamma_{01}Exercise_{i} +  \gamma_{02}Intervention_{i} +   U_{0i}$$  
+
+$${\beta}_{1i} = \gamma_{10} + \gamma_{11}Intervention_{i} + U_{1i}$$  
+
+$$\hat{Health}_{ti} = [\gamma_{00} + \gamma_{01}Exercise_{i}+ \gamma_{02}Intervention_{i}+ U_{0i}] + [\gamma_{10}  + \gamma_{11}Intervention_{i} + U_{1i}]  * Time_{ti}$$
+
+---
+# types of centering 
+Changing the scale of your predictors changes the interpretation of your model. 
+
+1. Original metric (no centering)
+
+2. Group-mean centering (our group/nesting is person so this is also called person centering). This will be more appropriate when we talk about level 1 predictors. 
+
+3. Group grand-mean centering (centering around person avg)
+
+4. Grand-mean centering (this is taking the average across every obs)
+
+5. Centering on a value of theoretical or applied interest
+
+Importantly, centering can both change the interpretation of the coefficients, as well as the fit of the model. The latter is especially true when 1) people differ on the number of assessment points (ie grand mean =/= average person mean) and 2) the intercept is far away from a group or grand mean. The latter will influence the random effect variances and their covariances. 
+
+---
+## Time centering 
+
+Our time variable is our only level 1 predictor that we have worked with up to this point. We typically center time around each person's initial time to make the intercept more interpretable. However, this can cause correlations between an intercept and a slope. If high, the correlation can be problematic in terms of estimation. Often we center time in the middle of the repeated assessments to minimize this association. 
+
+Doing so is especially important if you want to use some variable to predict intercept and slope (or use intercept/slope to predict some variable).
+
+It is sometimes helpful to center time as the last time point. Why? So as to use a predictor in the model that is trying to longitudinally predict from the initial point, not change, but a time point far in the future
+
+
+---
+What if people don't have the same number of assessment waves or the same timespan? Where do you center? One option, the most clean, is to center within each person's own time, regardless of whether it lines up with others. This is nice because it makes the $\gamma_{00}$ interpretable as the average score across people. 
+
+However, what is the average score? If you are looking at longitudinal data where people span in age from 20 to 80 and the time each person was in the study differed from 1 to 10 years. How do you interpret the average person intercept? Data wise it is consistent but interpretation wise it may not be. Thus you may want to center on something constant across people, like age. The $\gamma_{00}$ can now easily be interpreted as age 40, for example. Buuut, this results in wonky residual terms, perhaps leading to greater covariance between intercept and slope. 
+
+---
+## Level 2 centering
+
+Because level 2 is involved with cross-level interactions, it is always helpful to at least consider centering. For level 2, the centering options are much easier, as one can generally go with grand mean centering. As everyone has only 1 value to contribute to, the calculation and the interpretation is more straightforward. 
+
+level 1: 
+$${Health}_{ti} = \beta_{0i}  + \beta_{1i}Time_{ti} + \varepsilon_{ti}$$
+
+Level 2: 
+$${\beta}_{0i} = \gamma_{00} + \gamma_{01}Exercise_{i} +  \gamma_{02}Intervention_{i} +   U_{0i}$$  
+
+$${\beta}_{1i} = \gamma_{10} + \gamma_{11}Intervention_{i} + U_{1i}$$
+
+$$\hat{Health}_{ti} = [\gamma_{00} + \gamma_{01}Exercise_{i}+ \gamma_{02}Intervention_{i}+ U_{0i}] + [\gamma_{10}  + \gamma_{11}Intervention_{i} + U_{1i}]  * Time_{ti}$$
+
+---
+# Random effects and residual (standard) assumptions
+
+1. Joint normal distribution of random effects
+2. Normally distributed residual  
+3. Constant variance over time  
+4. Random effects $\pm U_{0j}$ and residual $\varepsilon_{ij}$ are uncorrelated and have a mean of zero  
+ 
+Some of these we can relax, some of these are not too bad if we violate, some of these we cannot escape. A solution, to many of these standard assumptions is to change the model. The model that we are presenting is basic in that it is all defaults.   
+
+---
+## Data generating process (DGP)
+
+Our standard assumption is that the DV comes from a data generating process that results in normal distributions. This does not mean that it needs to result in an observed normal distribution. Instead, the default of assuming an Gaussian DGP is practical: it is robust against violations and the alternatives are sometimes harder to justify. 
+
+If you think you have a non-Gaussian DGP (like a Poisson or a negative binomial if you are using some sort of count data) you will need to use a different estimation technique. You can do this somewhat with the package we will be working with primarily, lme4. However, the BRMS package -- which uses Bayesian estimation -- has many more possibilities: geometric, log normal, weibull, exponential, gamma, Beta, hurdle Poisson/gamma/negative binomial, zero inflated beta/Poisson/negative binomial, cumulative. We will fit some of these later in the semester. 
+
+Currently, however, assume we are working with  
+${Y}_{ti} \sim \mathcal{N}(0, \sigma^{2})$. Altering the assumed DGP will alter the assumptions we have. 
+
+---
+# Estimation
+Maximum likelihood estimation. Uses a likelihood function that describes the probability of observing the sample data as a function of the parameters. Attempts to maximize the function through an iterative process. Because it is iterative, it might fail.  
+
+Restricted maximum likelihood (REML) vs Full Maximum likelihood (ML). Will give you similar parameters, the differences are in the standard errors. REML is similar to dividing by N - 1 for SE whereas ML is similar to dividing by N. 
+
+Differences account for the fact that fixed effects are being estimated simultaneously with the variance parameters in ML. Estimates of the variance parameters assume that the fixed effects estimates are known and thus does not account for uncertainty in these estimates. 
+
+REML accounts for uncertainty in the fixed effects before estimating residual variance. REML attempts to maximize the likelihood of the residuals whereas ML maximizes the sample data. REML can be thought of as an unbiased estimate of the residual variance. 
+
+REML is good for small sample size both N and group. However, if you use REML you should be careful in testing fixed effects against each other (more down below). Deviances tests for fixed effects should be done with ML, but only random effects with REML. ML can also look at random effects too. 
+
+---
+# Testing significance (adapted from Ben Bolker)
+4 Methods for testing single parameters
+From worst to best:
+
+1. Wald Z-tests. 
+
+2. Wald t-tests
+
+Easy to compute - test statistic over standard error However, they are asymptotic standard error approximations, assuming both that (1) the sampling distributions of the parameters are multivariate normal and that (2) the sampling distribution of the log-likelihood is (proportional to) χ2.
+
+The above two are okay to do for single parameter estimates of fixed effects. But beware that  a) degrees of freedom calculations are not straightforward and b) the assumptions for random effects are be hard to meet. 
+
+---
+## Likelihood ratio test
+
+'3. Likelihood ratio test (also called deviance test).  
+
+Used for model comparisons (often multiparameter comparisons) and for tests of random effects. REML can only be used if model compared have the same fixed parts and only differ in random. Otherwise ML must be used. 
+
+Asks: How much more likely the data is under a more complex model than under the simpler model (these models need to be nested to compare this)?
+
+Log Likelihood (LL) is derived from ML estimation. Logs are used because they are computationally simpler; logs of multiplications are reduced to adding the logs together. 
+
+---
+Larger the LL the better the fit. 
+
+Deviance compares two LLs. Current model and a saturated model (that fits data perfectly). Asks how much worse the current model is to the best possible model. Deviance = -2[LL current - LL saturated]
+
+LL saturated = 1 for MLMs (probability it will perfectly recapture data). log of 1 is 0. So this term drops out. Deviance = -2(LL current model). AKA -2logL or -2LL 
+
+Can compare two models via subtraction, often referred to as a full and reduced model. Differences is distributed as a chi square with a df equal to how many "constraints" are included. Constraints can be thought of as forcing a parameter to be zero ie removing it.  
+
+---
+Comparing 2 models is called a likelihood ratio test. Need to have: 
+1. same data
+2. nested models (think of constraining a parameter to zero)
+
+Why work with deviances and not just log likelihoods? Why -2? Why a ratio test when you subtract deviances? Maths. Working with deviances allows us to subtract two from one another, which is equivalent to taking the ratio of likelihoods. 
+
+You can test in R using the same procedure we would to test different regression models.
+
+---
+## Likelihood tests for random effects
+Remember variances do not have values below zero and thus the distributions get a wonky quickly. Needs mixture distributions (Cannot be easily done with chi square, for example). This is part of the reason why no SEs for random effects and thus no WALD tests. 
+
+Can technically do LRT comparisons for random effects, though that falls to many similar problems as trying to do a Wald test. 
+
+The sampling distribution of variance estimates is in general strongly asymmetric: the standard error may be a poor characterization of the uncertainty. Thus the best way to handle is to do bootstrapped estimates. 
+
+---
+### bootstrapped confidence intervals
+
+The best way to deal with wonky sampling distributions is through bootstrapping your own sampling distribution.
+
+'4. Markov chain Monte Carlo (MCMC) or parametric bootstrap confidence intervals
+
+The latter we covered how to do in our workshop using {mertools}. The former we will discuss later in the semester
+
+---
+## AIC and BIC
+Used when you want to compare non-nested data. Need to have the same data, however. 
+
+AIC (Akaike’s Information Criterion) and the BIC (Bayesian Information Criterion) where “smaller is better.” This is the opposite of LL. As with the other types, these may give you wonky findings depending on some factors as they are related to LLs. 
+
+AIC = 2(number of parameters) + (−2LL)
+BIC = ln(n)(number of parameters) + (−2LL)
+
+BIC penalizes models with more parameters more than AIC does. 
+
+---
+## Coefficient of determination equivalents
+You want to get a model fit estimate. BIC and AIC are good to compare nested models but they aren't standardized and thus make comparison across non nested models difficult. 
+
+With MLM models we cannot directly compute R2. Instead we will use pseudo R2. Pseudo R2 is similar to R2 in that it can be thought of as the correlation between your predicted and actual scores.
+
+We typically think of this as a measure of variance explained divided by total variance. This is where things get tricky: should you include or exclude variation of different random-effects terms? These are error, but they are modeled in the sense that they are not unexplained. Is the effect size wanted after you are "controlling for" or do you want to talk about total variation?
+
+---
+The general idea is to be upfront about what you are comparing and what is included. Typically this is done with comparing models, much like a hierarchical regression. Taking the difference in variance between model 1 and model 2 and dividing it by model 1 makes it explicit what you are looking at and what you are including or not including. 
+
+E.g,. residual variance in varying intercept model subtracted from growth model divided by intercept only model. This can tell you how much unexplained variance is explained by time. 
+
+```{r, eval = FALSE}
+(sigma(mod.1) - sigma(mod.2)) / sigma(mod.1)
+```
+
+---
+# Level 1 predictors 
+
+These are predictors that are assessed at level 1, which repeat. Note that there are some variables that are inherently level 2 (e.g. handedness), some that make sense more as a level 1 (e.g., mood) and some that could be considered either depending on your research question and/or your data (e.g. income). The latter type could conceivably change across time (And thus be appropriate for a level 1 variable) but may not change at the rate of your construct or not be important.
+
+These can be treated as another predictor with the effect of "controlling" for some level 1 variable. Thus the regression coefficients in the model are conditional on this covariate. 
+
+
+
+  
+
+
+

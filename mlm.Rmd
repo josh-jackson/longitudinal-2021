@@ -681,7 +681,7 @@ $${Y}_{it} = \beta_{0i}  + \beta_{1i}X_{ti} + \varepsilon_{ti}$$
   
 Level 2:  
 $${\beta}_{0i} = \gamma_{00} + U_{0i}$$  
-$${\beta}_{1i} = \gamma_{00}$$ 
+$${\beta}_{1i} = \gamma_{10}$$ 
 
 Any time we have a level 1 variable we can model it at level 2. If we want to assume it is constant across people, we do not include a random effect. 
 
@@ -702,7 +702,7 @@ $${Y}_{it} = \beta_{0i}  + \beta_{1i}X_{ti} + \varepsilon_{ti}$$
   
 Level 2:  
 $${\beta}_{0i} = \gamma_{00} + U_{0i}$$  
-$${\beta}_{1i} = \gamma_{00} + U_{1i}$$
+$${\beta}_{1i} = \gamma_{10} + U_{1i}$$
 
 Combined: 
  $${Y}_{ti} = \gamma_{00} + \gamma_{10} (X_{1i})+ U_{0i}  + U_{1i}(X_{1i}) + \varepsilon_{ti}$$

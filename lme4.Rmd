@@ -338,13 +338,28 @@ bootstrap_parameters(
 ```
 
 
-#### p -values
+### p -values
 The author of the package dislikes p-values. So they are not included. But what if you need them? Well, CIs. But if pressed you can use the parameters package: 
 
 ```{r}
 p_value(mod.2)
 ```
 lmertest is another package that does this but it also causes conflicts with standardly used packages so I would refrain from using. 
+
+
+### Model assumption tests
+
+```{r}
+performance::check_model(mod.2, panel = FALSE)
+```
+
+### posterior predictions
+
+```{r}
+pp_check(mod.2)
+```
+
+
 
 # Random effects 
 

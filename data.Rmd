@@ -470,21 +470,23 @@ paged_table(b5_soep_long)
 b5_soep_long<- soep_long %>%
   filter(type == "Big 5") %>% 
   group_by(Procedural__SID, trait, year) %>% 
-  summarize(value = mean(value, na.rm = T)) 
+  dplyr::summarize(value = mean(value, na.rm = T)) 
 paged_table(b5_soep_long)
 ```
 
 Now that we have our means we can bring the demographic info back into the dataframe...or whatever else you would want to bring in. 
 
 ```{r b5 composites 3}
+
 b5_soep_long <- soep_long %>%
   filter(type == "Big 5") %>% 
   group_by(Procedural__SID, trait, year) %>% 
-  summarize(value = mean(value, na.rm = T)) %>% 
+  dplyr::summarize(value = mean(value, na.rm = T)) %>% 
   ungroup() %>% 
   left_join(soep_long %>% 
     select(Procedural__SID, DOB = Demographic__DOB, Sex = Demographic__Sex) %>%
     distinct())
+
 paged_table(b5_soep_long) 
 ```
 
@@ -535,7 +537,7 @@ paged_table(events_long )
 events_long <- soep_long %>%
   filter(type == "Life Event") %>% 
   group_by(Procedural__SID, trait) %>% 
-  summarize(value = sum(value, na.rm = T),value = ifelse(value > 1, 1, 0))
+  dplyr::summarize(value = sum(value, na.rm = T),value = ifelse(value > 1, 1, 0))
 paged_table(events_long )
 ```
 
@@ -548,13 +550,13 @@ To do this, we'll use a little bit of `dplyr` rather than the base `R` function 
 ```{r life event descriptives 1}
 events_long %>%
   group_by(trait, value) %>% 
-  summarize(N = n()) 
+  dplyr::summarize(N = n()) 
 ```
 
 ```{r life event descriptives 2}
 events_long %>%
   group_by(trait, value) %>% 
-  summarize(N = n()) %>%
+  dplyr::summarize(N = n()) %>%
   ungroup() %>%
   pivot_wider(names_from = value, values_from = N)
 ```

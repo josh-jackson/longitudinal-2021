@@ -2385,6 +2385,7 @@ Lectures
 <div class="nav-dropdown-content">
 <a href="intro-1.html">Intro to longitudinal</a>
 <a href="mlm.html">MLM</a>
+<a href="conditional.html">conditional models</a>
 </div>
 </div>
 <div class="nav-dropdown">
@@ -2395,7 +2396,7 @@ Workshops
 </button>
 <div class="nav-dropdown-content">
 <a href="data.html">data</a>
-<a href="lme4.html">lme4, nlme</a>
+<a href="lme4.html">lme4</a>
 <a href="plotting.html">plotting</a>
 <a href="simulation.html">simulation</a>
 <a href="purr.html">purr</a>
@@ -2979,7 +2980,7 @@ year        |    4.89e-04 | 1.91e-03 | [ 0.00, 0.00] |   0.26 | 0.798 </code></p
 1 (Intercept) 0.1046705011  0.094100820 0.115929931 0.0000000
 2        year 0.0006201687 -0.003272039 0.004095102 0.7052947</code></pre>
 </div>
-<h4 id="p--values">p -values</h4>
+<h3 id="p--values">p -values</h3>
 <p>The author of the package dislikes p-values. So they are not included. But what if you need them? Well, CIs. But if pressed you can use the parameters package:</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -2991,6 +2992,22 @@ year        |    4.89e-04 | 1.91e-03 | [ 0.00, 0.00] |   0.26 | 0.798 </code></p
 2        year 7.982280e-01</code></pre>
 </div>
 <p>lmertest is another package that does this but it also causes conflicts with standardly used packages so I would refrain from using.</p>
+<h3 id="model-assumption-tests">Model assumption tests</h3>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>performance</span><span class='fu'>::</span><span class='fu'><a href='https://easystats.github.io/performance/reference/check_model.html'>check_model</a></span><span class='op'>(</span><span class='va'>mod.2</span>, panel <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="lme4_files/figure-html5/unnamed-chunk-36-1.png" width="624" /><img src="lme4_files/figure-html5/unnamed-chunk-36-2.png" width="624" /><img src="lme4_files/figure-html5/unnamed-chunk-36-3.png" width="624" /><img src="lme4_files/figure-html5/unnamed-chunk-36-4.png" width="624" /><img src="lme4_files/figure-html5/unnamed-chunk-36-5.png" width="624" /><img src="lme4_files/figure-html5/unnamed-chunk-36-6.png" width="624" /></p>
+</div>
+<h3 id="posterior-predictions">posterior predictions</h3>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://easystats.github.io/performance/reference/pp_check.html'>pp_check</a></span><span class='op'>(</span><span class='va'>mod.2</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="lme4_files/figure-html5/unnamed-chunk-37-1.png" width="624" /></p>
+</div>
 <h1 id="random-effects">Random effects</h1>
 <h3 id="calculation-of-random-effect-confidence-interval">Calculation of random effect confidence interval</h3>
 <p>Conveys the predicted range around each fixed effect in which 95% of the sample individuals are predicted to fall.</p>
@@ -3065,9 +3082,9 @@ $ conf.high &lt;dbl&gt; -0.021162535, 0.031740388, 0.034800657, 0.0349002…</co
 <span class='fu'><a href='https://rdrr.io/pkg/merTools/man/FEsim.html'>FEsim</a></span><span class='op'>(</span><span class='va'>mod.2</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>         term         mean       median          sd
-1 (Intercept) 0.1045936956 0.1047996597 0.005332031
-2        year 0.0004627689 0.0005085626 0.001850039</code></pre>
+<pre><code>         term        mean       median          sd
+1 (Intercept) 0.104837715 0.1042876366 0.005404447
+2        year 0.000516185 0.0005360292 0.001929322</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -3076,12 +3093,12 @@ $ conf.high &lt;dbl&gt; -0.021162535, 0.031740388, 0.034800657, 0.0349002…</co
 </code></pre>
 </div>
 <pre><code>  groupFctr groupID        term         mean       median         sd
-1        ID       6 (Intercept) -0.054207424 -0.054761262 0.01731465
-2        ID      29 (Intercept) -0.007503797 -0.008766099 0.02274858
-3        ID      34 (Intercept) -0.006332766 -0.008183133 0.02210541
-4        ID      36 (Intercept) -0.009333456 -0.007229504 0.02298969
-5        ID      37 (Intercept) -0.006194147 -0.006573534 0.01896006
-6        ID      48 (Intercept)  0.034748207  0.033995934 0.01849990</code></pre>
+1        ID       6 (Intercept) -0.057217623 -0.057215652 0.01786603
+2        ID      29 (Intercept) -0.010064809 -0.011112412 0.01980399
+3        ID      34 (Intercept) -0.007409408 -0.007006766 0.02217660
+4        ID      36 (Intercept) -0.006507850 -0.006560813 0.02208567
+5        ID      37 (Intercept) -0.006863077 -0.005303389 0.01855996
+6        ID      48 (Intercept)  0.037155408  0.036352933 0.01945153</code></pre>
 </div>
 <p>This can be used to create CIs for each individual random effect (and fixed effect). What is the confidence interval around person 6’s intercept estimate compared to person 2000 who has 25 repeated measurements?</p>
 <h3 id="caterpillar-plots">Caterpillar plots</h3>
@@ -3092,7 +3109,7 @@ $ conf.high &lt;dbl&gt; -0.021162535, 0.031740388, 0.034800657, 0.0349002…</co
 <span class='va'>p1</span>
 </code></pre>
 </div>
-<p><img src="lme4_files/figure-html5/unnamed-chunk-42-1.png" width="624" /></p>
+<p><img src="lme4_files/figure-html5/unnamed-chunk-44-1.png" width="624" /></p>
 </div>
 <h3 id="density-of-individual-random-effects">Density of individual random effects</h3>
 <div class="layout-chunk" data-layout="l-body">
@@ -3104,7 +3121,7 @@ $ conf.high &lt;dbl&gt; -0.021162535, 0.031740388, 0.034800657, 0.0349002…</co
   <span class='fu'>geom_density</span><span class='op'>(</span><span class='op'>)</span>
 </code></pre>
 </div>
-<p><img src="lme4_files/figure-html5/unnamed-chunk-43-1.png" width="624" /></p>
+<p><img src="lme4_files/figure-html5/unnamed-chunk-45-1.png" width="624" /></p>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -3116,7 +3133,7 @@ $ conf.high &lt;dbl&gt; -0.021162535, 0.031740388, 0.034800657, 0.0349002…</co
   <span class='fu'>geom_density</span><span class='op'>(</span><span class='op'>)</span>
 </code></pre>
 </div>
-<p><img src="lme4_files/figure-html5/unnamed-chunk-44-1.png" width="624" /></p>
+<p><img src="lme4_files/figure-html5/unnamed-chunk-46-1.png" width="624" /></p>
 </div>
 <h2 id="predictions-and-prediction-intervals">Predictions and prediction intervals</h2>
 <p>Predict function is deterministic and uses only the fixed effects (i.e. does not include random effects in the predictions). It does not do prediction in the typical sense where you are predicting <em>new</em> individual’s scores.</p>
@@ -3142,13 +3159,13 @@ then: 5. returns newdata with the lower and upper limits of the prediction inter
 <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>PI</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>         fit       upr         lwr
-1 0.03675463 0.1057421 -0.01601645
-2 0.04181466 0.1094028 -0.01067463
-3 0.03768845 0.1093494 -0.02485995
-4 0.09469381 0.1635802  0.01441828
-5 0.09699704 0.1498951  0.03393066
-6 0.10741065 0.1761874  0.04979927</code></pre>
+<pre><code>         fit        upr          lwr
+1 0.05270466 0.11089507 -0.009337879
+2 0.04359175 0.09887672 -0.013342142
+3 0.04382813 0.09719000 -0.025492193
+4 0.09777059 0.16875447  0.024160060
+5 0.09881617 0.15236055  0.026293406
+6 0.09551711 0.16640537  0.029405964</code></pre>
 </div>
 <div class="sourceCode" id="cb32"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
