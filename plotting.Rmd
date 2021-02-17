@@ -1,0 +1,547 @@
+---
+title: "plotting"
+author: "Josh Jackson"
+output:
+  distill::distill_article:
+    toc: true
+    toc_depth: 2
+    mathjax: "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML"
+    self_contained: false 
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE)
+
+
+```
+
+
+# Workspace  
+## Packages  
+
+First let's load in our packages. We're going to load in a couple of extras (`brms` and `tidybayes`) that we haven't used before. These will let us make some pretty plots later. 
+
+```{r packages}
+library(psych)
+library(rmarkdown)
+library(distributional)
+library(knitr)
+library(kableExtra)
+library(lme4)
+library(broom.mixed)
+library(brms)
+library(tidybayes)
+library(ggdist)
+library(plyr)
+library(tidyverse)
+library(modelr)
+library(equatiomatic)
+library(ggeffects)
+```
+
+## Read in Data  
+The National Longitudinal Study of Youths 1979 Child and Young Adult Sample (NLSYCYA) is a longitudinal study conducted by the National Bureau of Labor Statistics. The sample includes the children of the original 1979 sample, of which we will use a small subset. Here, we are going to use a subset of the more than 11,000 variables available that include the following:
+
+Item Name   | Description                   | Time-Varying?
+----------- | ----------------------------- | -------------
+PROC_CID    | Participant ID                | No  
+Dem_DOB     | Year of Date of Birth         | No
+groups      | Jail, Community Service, None | No
+DemPWeight  | Weight Percentile at age 10   | No
+age         | Age of participant            | Yes
+Year        | Year of Survey                | Yes
+age0        | Age of participant (centered) | Yes
+SensSeek    | Sensation-Seeking Composite   | Yes
+CESD        | CESD Depression Composite     | Yes
+
+```{r read data }
+
+load("sample.RData")
+
+glimpse(sample_dat)
+```
+
+
+## Restructure Data  
+These data are already largely cleaned as that is not our focus today.First we need to create a time variable centered at zero, so we can interpret our moderators later. 
+
+
+```{r}
+long.1 <- sample_dat %>%
+   mutate(wave = year - 1996,
+          age0 = age-16) 
+paged_table(long.1)
+```
+
+
+# Running Basic Growth Model  
+
+We'll start with the basic growth model for depression.  
+
+```{r}
+cesd.1 <- lmer(CESD ~ 1 + age0 + (age0 | PROC_CID), data = long.1)
+```
+
+```{r}
+summary(cesd.1)
+```
+
+Lets try another with sensation seeking 
+
+```{r}
+sens.1 <- lmer(SensSeek ~ 1 + age0 + (age0 | PROC_CID), data = long.1)
+```
+
+
+```{r}
+summary(sens.1)
+```
+
+
+## Multiple models simultaneously! 
+We can also do these simultaneously. How? 
+
+
+```{r}
+long.2 <- sample_dat %>%
+  pivot_longer(cols = CESD:SensSeek, names_to = "trait", values_to = "value") %>%
+   mutate(wave = year - 1996,
+          age0 = age-16)
+paged_table(long.2)
+```
+
+
+Note how this is has two different DVs under the trait column. Often we have it not like this, where we have multiple DVs we want as separate columns, or that we only create a dataframe that includes the DV we are interested in. But if you want to run multiple models at the same time you need to "stack them on top of one another. 
+
+Once we are there we are going to use something called "list columns"
+
+We'll start by using the `group_by()` and `nest()` functions from `dplyr` and `tidyr` to put the data for each trait into a cell of our data frame:  
+
+```{r nest}
+(long_nested <- long.2 %>%
+  group_by(trait) %>%
+  nest())
+```
+
+Now, our data frame is 2 x 2, with the elements in the second column each containing the data frame that corresponds to that trait. This makes it really easy to run our models using the `map()` family of unctions from `purrr`.  We will learn more about this package later, right now I just want to show you the possibility. 
+
+```{r map}
+(long_nested <- long_nested %>%
+  mutate(fit1 = map(data, ~lmer(value ~ 1 + age0 + (age0 | PROC_CID), data = .))))
+```
+
+We can see we have a new list column in our data frame called fit1 that contains an S4 class lmerMod, which simply means your growth model. 
+
+
+```{r}
+(long_nested <- long_nested %>%
+  mutate(tidy = map(fit1, broom::tidy)))
+```
+
+
+
+```{r}
+(long_nested %>% 
+  unnest(tidy, .drop=TRUE))
+```
+
+
+Now that we've run our models, we are ready to plot the results.
+
+
+# Predicted Values  
+Before we get to plotting we have to think about what we want to plot. Usually, we want to show "the regression line" like with normal regression. This is another way to say you want to examine "predicted values" also known as "fitted values"
+
+How do we do this? 1. identify the equation we want to graph and 2. feed the equation values to have it spit out fitted values. 
+
+We've already did #1, as that information is stored in the model object. 
+
+## Fitted equation. What equation do we want to feed? 
+
+```{r}
+extract_eq(sens.1, wrap = TRUE, use_coefs = TRUE)
+```
+
+ $$\hat{Y}_{ti} = [\gamma_{00} +   U_{0i}] + [\gamma_{10}   + U_{1i}]  * Time_{ti}$$
+
+The tricky part is figuring out what values to feed into the equation. 
+
+There are two main classes of what we can feed into this equation. 1. Original data values. 2. Pre-specified values that you are interested in. Typically across the range of some predictor variable, like our time variable. 
+
+There are multiple ways to get fitted/predicted values. 
+
+```{r}
+fitted <- predict(sens.1)
+glimpse(fitted)
+```
+
+```{r}
+fitted.2 <- augment(sens.1)
+glimpse(fitted.2)
+```
+
+
+Note how the default of ggpredict doesn't give fitted values for each person. Instead it provides "marginal effects" which is typically what we want when we want to plot. 
+```{r}
+ggpred <- ggpredict(sens.1, terms = "age0")
+
+ggpred
+```
+ggpredict is nice, but it is less flexible in terms of what values you can feed into the model and how you want to treat your values.  
+
+But my preferred approach is to use the modelr package. It is user friendly and it plays nicely with creating pre-specified values ie a range of time values rather than everyone's x-values. The above approaches do well in terms of predicting everyone's x values using the existing dataframe. 
+
+There are two parts to feeding values into an equation. First we have to create a new dataframe for those values to go. If we are *not* going to  use original data, then the fitted values cannot go into the original dataframe. So we need to make it up. To do so we are going to use the data_grid function from modelr. It is very similar to the expand.grid or expand functions if you are familiar with those (I believe data_grid is a wrapper for the expand function). 
+
+Right now our models are relatively simple, and all we have to do is feed in our time variable. But when we have multiple predictors and covariates that we may want at certain values, calculating he predicted values are relatively difficult by hand. That is where modelr comes in. 
+
+1. Start with a dataset that you created your model from and feed that to data_grid. Then we need to specify what variables you want to be constant and what variables you want to vary. For this model, we only have one variable, and we want to graph it along the entire range of time. So we need to create a dataset that varies across the range of time we are interested in. 
+
+```{r}
+long.1 %>% 
+  data_grid(age0 = seq_range(age0, n = 10))
+```
+
+Note that this is a range of OBSERVED values! Not values we think we may be interested in ala ggpredict. 
+
+This would work for simple regression models. But we don't have simple models. Even though we have only one predictor we still have another variable in our model, our person variable. 
+
+```{r}
+long.1 %>% 
+  data_grid(age0 = seq_range(age0, n = 10), PROC_CID)
+```
+
+
+
+```{r}
+long.1 %>% 
+  data_grid(age0 = seq_range(age0, n = 10), PROC_CID)%>% 
+    add_predictions(sens.1)
+```
+
+
+
+```{r}
+
+long.1 %>% 
+  data_grid(age0, PROC_CID)%>% 
+    add_predictions(sens.1)
+
+```
+
+
+Now lets plot! 
+
+# Plot  
+
+Again, there are lots of ways to do plots. Especially if you want quick plots over bespoke, publication ready plots. 
+
+## ggeffects 
+
+```{r plot1}
+plot(ggpred)
+```
+
+##ggeffects + tidy
+
+```{r}
+tmp <- sens.1 %>%
+  tidy(effects = c("ran_pars", "ran_vals", "fixed"))
+tmp
+```
+
+Notice the number of rows. We now have random effect info for everyones intercept and slope. 
+
+```{r}
+ggpred %>% 
+ggplot(aes(x = x, y = predicted)) + 
+  geom_ribbon(mapping = aes(ymin = conf.low,
+                            ymax = conf.high)) + 
+  geom_line() 
+
+```
+
+
+## tidy at the individual level
+
+First step is to reduce our dataframe size by this helpful function
+
+```{r formula}
+sample_n_of <- function(data, size, ...) {
+  dots <- quos(...)
+  
+  group_ids <- data %>% 
+    group_by(!!! dots) %>% 
+    group_indices()
+  
+  sampled_groups <- sample(unique(group_ids), size)
+  
+  data %>% 
+    filter(group_ids %in% sampled_groups)
+}
+```
+
+
+```{r}
+sens.1 %>%
+  augment() %>%
+  sample_n_of(15, PROC_CID) %>% 
+  ungroup() %>%
+  dplyr::select(".fitted", "PROC_CID", "age0", "SensSeek") %>%
+  ggplot(data = .,
+         mapping = aes(x = age0,
+                       y = SensSeek,
+                       group = PROC_CID,
+                       colour = PROC_CID)) +
+  geom_point(aes(y = .fitted)) +
+  geom_line(aes(y = .fitted))
+
+```
+
+## modelr 
+
+```{r}
+m.1 <- long.1 %>% 
+  data_grid(age0 = seq_range(age0, n = 10), PROC_CID,.model = long.1) %>% 
+  add_predictions(sens.1) %>% 
+  ggplot(aes(y = pred, x = age0, group = PROC_CID)) +
+  geom_line(alpha = .2)
+
+```
+
+
+```{r}
+
+(fix.eff <- long.1 %>% 
+  data_grid(age0 = seq_range(age0, n = 10), PROC_CID,.model = long.1) %>% 
+  add_predictions(sens.1) %>% 
+ dplyr::select(age0, PROC_CID, pred, SensSeek) %>% 
+  group_by(age0) %>% 
+  dplyr::summarize(pred = mean(pred)))
+
+```
+
+```{r}
+
+fix.eff %>% 
+  ggplot(aes(x = age0, y = pred)) +
+  geom_line() 
+
+```
+
+
+
+```{r}
+
+long.1 %>% 
+  data_grid(age0 = seq_range(age0, n = 10), PROC_CID,.model = long.1) %>% 
+  add_predictions(sens.1) %>% 
+  ggplot(aes(y = pred, x = age0)) +
+  geom_line(aes(group = PROC_CID), alpha = .2) +
+  geom_line(data = fix.eff, color = "blue", size = 3)
+```
+
+
+## Confidence bands
+
+Confidence bands are tricky within mlms. This is due in part for no standard equation to calculate them, unless there is a lot of assumptions into it. That is what ggeffets uses. There are two solutions. 
+
+1. hand calculations. 
+2. Bootstrapping
+3. Bayesian! 
+
+### CI "by hand" calculation
+
+We need to matrix-multiply X by the parameter vector B to get the predictions, then extract the variance-covariance matrix V of the parameters and compute XVX' to get the variance-covariance matrix of the predictions. The square-root of the diagonal of this matrix represent the standard errors of the predictions, which are then multiplied by 1.96 for the confidence intervals.
+
+This is the approach that ggeffects does behind the scene. You could use a function for this --  if you know how to and are inclined then go for it. But, it might just be easier to work with ggeffects. 
+
+```{r, eval = FALSE}
+
+pv_fun <- function(frame, m){
+  nvar <- nrow(vcov(m)) # # of variables
+  varnames <- str_replace_all(colnames(vcov(m)), "[()]", "") # names for vcov mat
+  vcov_mat <- matrix(vcov(summary(m))@x, nvar) # chnage vcov mat class
+  colnames(vcov_mat) <- varnames; rownames(vcov_mat) <- varnames # rename vcov mat
+  frame_mat <- frame %>% as.matrix
+  pv <- diag(frame_mat %*% vcov_mat %*% t(frame_mat)) # compute variance
+  SE <- sqrt(pv) 
+  return(SE)
+}
+```
+
+
+Before I mentioned on downfall of ggpredict was that it automates which values it spits out. This does not need to be the case. We could recreate the entire range of values doing something like this 
+
+```{r}
+ggpred.2 <- ggpredict(sens.1, terms = "age0[-2,3,8]")
+ggpred.2
+```
+
+```{r}
+plot(ggpred.2)
+```
+
+Though notice that CI band has only three values and then rest of them are filled in. We may want to do better. 
+
+```{r}
+ggpred.3 <- ggpredict(sens.1, terms = "age0[-2,0, 2, 4, 6,8]")
+ggpred.3
+```
+
+And we can also do fancy this up by taking the data and using ggplot directly 
+```{r}
+ggpred.3 %>% 
+  ggplot(aes(x = x, y = predicted)) +
+  geom_ribbon(aes(ymin=conf.low,ymax=conf.high),alpha=0.2,fill="blue") +
+  geom_line() +
+  theme_default()
+  
+```
+
+
+
+### Bootstrapping
+
+As you will see I am a Bayesian estimation fanatic, and that method is much easier (and correct!) than either bootstrapping or hand calculations. Buuuut, now isn't the right time for that. We could use the predictInterval function from merTools. It doesn't work nicely with modelr though, soo we will use the bootstrap function from modelr. 
+
+Of coures the bootsrap function is a little extra. Whereas the predictInterval takes sample statistics and bootstraps them, we are going to BOOTSTRAP THE ENTIRE SAMPLE. Be warned if you have BIG datasets. 
+
+```{r}
+boot.tmp <- long.1  %>%
+  dplyr::select(age0, PROC_CID, SensSeek) 
+
+
+  boot2<- modelr::bootstrap(boot.tmp, 100) 
+  boot2
+```
+
+
+We now have 100 samples of our dataset. Think of these as possible datasets if we would go out and collect this study again. Cool huh? 
+
+Okay, now with all of these 100 dataset we are going to run a mlm. We are going to loop through those using the map function from purrr, given that we are working in list columns. 
+
+```{r}
+boot.results<- boot2 %>% 
+  group_by(.id) %>% 
+  mutate(models = map(strap, ~lmer(SensSeek ~ 1 + age0 + (age0 | PROC_CID), data = .)),
+         results = map(models, broom.mixed::tidy),
+         fits = map(models, broom.mixed::augment))
+
+boot.results
+```
+
+
+
+```{r}
+boot.results %>%
+ unnest(results) 
+```
+
+
+```{r}
+params_boot <- boot.results %>%
+ unnest(results) %>% 
+  dplyr::select(.id, effect, term, estimate ) %>% 
+  filter(effect=="fixed") %>% 
+  pivot_wider(names_from = term, values_from = estimate)
+```
+
+
+```{r}
+boot.results %>%
+ unnest(fits) 
+```
+
+
+Notice how many rows we have above. This is giving us fitted values for each person at each age across each boot sample. 
+
+We can take our code from before and modify it to give us average fit effects collapsed across each boot sample (.id, and age). This should give us 600 rows (6 age points to plot * 100 boots)
+
+```{r}
+boot.results %>%
+ unnest(fits) %>% 
+  dplyr::select(age0, PROC_CID, .fitted, SensSeek) %>% 
+  group_by(age0, .id) %>% 
+  dplyr::summarize(pred = mean(.fitted))
+```
+
+
+```{r}
+b1<- boot.results %>%
+ unnest(fits) %>% 
+  dplyr::select(age0, PROC_CID, .fitted, SensSeek) %>% 
+  group_by(age0, .id) %>% 
+  dplyr::summarize(pred = mean(.fitted)) %>% 
+  ggplot(aes(x = age0, y = pred)) +
+  geom_smooth(aes( group = .id),method = lm, se = FALSE, alpha = .04) 
+b1
+```
+
+
+
+```{r}
+fix.eff <- boot.results %>%
+ unnest(fits) %>% 
+  dplyr::select(age0, PROC_CID, .fitted, SensSeek) %>% 
+  group_by(age0, .id) %>% 
+  dplyr::summarize(pred = mean(.fitted)) %>% 
+  group_by(age0) %>% 
+  dplyr::summarize(pred = mean(pred)) 
+fix.eff
+```
+
+```{r}
+boot.results %>%
+ unnest(fits) %>% 
+  dplyr::select(age0, PROC_CID, .fitted, SensSeek) %>% 
+  group_by(age0, .id) %>% 
+  dplyr::summarize(pred = mean(.fitted)) %>% 
+  ggplot(aes(x = age0, y = pred)) +
+  geom_smooth(aes( group = .id),method = lm, se = FALSE, alpha = .04) + 
+  geom_smooth(data=fix.eff, method = lm, se = FALSE, color = "black")
+```
+
+
+# Two-Level Categorical Moderator  
+
+
+
+Variable  | D1  
+--------- | ---
+Jail      | 0 
+None      | 1
+
+
+When we plot these, we are plotting the simple slopes. Subbing 1 and 0 into the equations above we end up with the following for the groups.  
+
+None:  
+Jail: 
+
+
+
+## Three group Categorical Moderator  
+
+
+Variable  | D1  | D2  
+--------- | --- | ---
+Jail      | 0   | 0
+None      | 1   | 0
+CommServ  | 0   | 1  
+
+
+When we plot these, we are plotting the simple slopes. Subbing 1 and 0 into the equations above we end up with the following for the groups.  
+
+None: 
+Jail: 
+Community Service: 
+
+
+## Continuous Time-Invariant Moderator  
+
+
+

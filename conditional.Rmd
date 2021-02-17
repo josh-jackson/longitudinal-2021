@@ -130,9 +130,9 @@ $${\beta}_{0i} = \gamma_{00} + \gamma_{01}G_{i} +   U_{0i}$$
 
 $${\beta}_{1i} = \gamma_{10} +  \gamma_{11}G_{i} +U_{1i}$$
 
-Similar to before, the interpretation of  $U_{1j}$ changes. The term is now what is left over after accounting for group differences in the mean slope. 
+Similar to before, the interpretation of  $U_{1i}$ changes. The term is now what is left over after accounting for group differences in the mean slope. 
 
-Can you visualize what $U_{1j}$ captures? Can you visualize how $U_{1j}$ differs in this model and one that does not have the $\gamma_{11}G_{j}$ term? 
+Can you visualize what $U_{1i}$ captures? Can you visualize how $U_{1i}$ differs in this model and one that does not have the $\gamma_{11}G_{i}$ term? 
 
 
 ---
