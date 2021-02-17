@@ -3040,8 +3040,10 @@ Adjusted for:
   <span class='fu'><a href='https://modelr.tidyverse.org/reference/add_predictions.html'>add_predictions</a></span><span class='op'>(</span><span class='va'>sens.1</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
   <span class='fu'>ggplot</span><span class='op'>(</span><span class='fu'>aes</span><span class='op'>(</span>y <span class='op'>=</span> <span class='va'>pred</span>, x <span class='op'>=</span> <span class='va'>age0</span>, group <span class='op'>=</span> <span class='va'>PROC_CID</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
   <span class='fu'>geom_line</span><span class='op'>(</span>alpha <span class='op'>=</span> <span class='fl'>.2</span><span class='op'>)</span>
+<span class='va'>m.1</span>
 </code></pre>
 </div>
+<p><img src="plotting_files/figure-html5/unnamed-chunk-20-1.png" width="624" /></p>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -3240,16 +3242,16 @@ Adjusted for:
 # Groups:   .id [100]
    strap .id   models effect group term  estimate std.error statistic
    &lt;lis&gt; &lt;chr&gt; &lt;list&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
- 1 &lt;res… 001   &lt;lmer… fixed  &lt;NA&gt;  (Int…  2.75      0.0210    131.   
- 2 &lt;res… 001   &lt;lmer… fixed  &lt;NA&gt;  age0  -0.0118    0.00771    -1.53 
- 3 &lt;res… 001   &lt;lmer… ran_p… PROC… sd__…  0.529    NA          NA    
- 4 &lt;res… 001   &lt;lmer… ran_p… PROC… cor_… -0.266    NA          NA    
- 5 &lt;res… 001   &lt;lmer… ran_p… PROC… sd__…  0.172    NA          NA    
- 6 &lt;res… 001   &lt;lmer… ran_p… Resi… sd__…  0.138    NA          NA    
- 7 &lt;res… 002   &lt;lmer… fixed  &lt;NA&gt;  (Int…  2.76      0.0202    136.   
- 8 &lt;res… 002   &lt;lmer… fixed  &lt;NA&gt;  age0  -0.00469   0.00534    -0.878
- 9 &lt;res… 002   &lt;lmer… ran_p… PROC… sd__…  0.497    NA          NA    
-10 &lt;res… 002   &lt;lmer… ran_p… PROC… cor_… -0.362    NA          NA    
+ 1 &lt;res… 001   &lt;lmer… fixed  &lt;NA&gt;  (Int…  2.79      0.0215    129.   
+ 2 &lt;res… 001   &lt;lmer… fixed  &lt;NA&gt;  age0  -0.00938   0.00548    -1.71 
+ 3 &lt;res… 001   &lt;lmer… ran_p… PROC… sd__…  0.542    NA          NA    
+ 4 &lt;res… 001   &lt;lmer… ran_p… PROC… cor_… -0.443    NA          NA    
+ 5 &lt;res… 001   &lt;lmer… ran_p… PROC… sd__…  0.107    NA          NA    
+ 6 &lt;res… 001   &lt;lmer… ran_p… Resi… sd__…  0.223    NA          NA    
+ 7 &lt;res… 002   &lt;lmer… fixed  &lt;NA&gt;  (Int…  2.72      0.0205    133.   
+ 8 &lt;res… 002   &lt;lmer… fixed  &lt;NA&gt;  age0   0.00152   0.00484     0.315
+ 9 &lt;res… 002   &lt;lmer… ran_p… PROC… sd__…  0.505    NA          NA    
+10 &lt;res… 002   &lt;lmer… ran_p… PROC… cor_… -0.329    NA          NA    
 # … with 590 more rows, and 1 more variable: fits &lt;list&gt;</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
@@ -3270,18 +3272,18 @@ Adjusted for:
 </div>
 <pre><code># A tibble: 208,400 x 18
 # Groups:   .id [100]
-   strap .id   models results SensSeek  age0 PROC_CID .fitted   .resid
-   &lt;lis&gt; &lt;chr&gt; &lt;list&gt; &lt;list&gt;     &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;
- 1 &lt;res… 001   &lt;lmer… &lt;tibbl…     3.67    -2   156604    3.63  0.0387 
- 2 &lt;res… 001   &lt;lmer… &lt;tibbl…     3.33     8    92802    3.35 -0.0132 
- 3 &lt;res… 001   &lt;lmer… &lt;tibbl…     3        0     9503    3.00  0.00257
- 4 &lt;res… 001   &lt;lmer… &lt;tibbl…     2.67     6   629102    2.62  0.0443 
- 5 &lt;res… 001   &lt;lmer… &lt;tibbl…     2.67     0   718403    2.68 -0.0142 
- 6 &lt;res… 001   &lt;lmer… &lt;tibbl…     2       -2   629703    2.01 -0.0146 
- 7 &lt;res… 001   &lt;lmer… &lt;tibbl…     3       -2   512504    2.99  0.00821
- 8 &lt;res… 001   &lt;lmer… &lt;tibbl…     2.67     2  1204201    2.66  0.00349
- 9 &lt;res… 001   &lt;lmer… &lt;tibbl…     3        0   964804    2.99  0.0116 
-10 &lt;res… 001   &lt;lmer… &lt;tibbl…     3        0   598001    2.89  0.109  
+   strap .id   models results SensSeek  age0 PROC_CID .fitted  .resid
+   &lt;lis&gt; &lt;chr&gt; &lt;list&gt; &lt;list&gt;     &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+ 1 &lt;res… 001   &lt;lmer… &lt;tibbl…     3        8   551801    2.90  0.100 
+ 2 &lt;res… 001   &lt;lmer… &lt;tibbl…     3.33     8   827602    3.36 -0.0227
+ 3 &lt;res… 001   &lt;lmer… &lt;tibbl…     2.67     0   830902    2.51  0.154 
+ 4 &lt;res… 001   &lt;lmer… &lt;tibbl…     2.67     2    18301    2.71 -0.0459
+ 5 &lt;res… 001   &lt;lmer… &lt;tibbl…     2       -2   124402    1.97  0.0289
+ 6 &lt;res… 001   &lt;lmer… &lt;tibbl…     4       -2   827901    3.87  0.126 
+ 7 &lt;res… 001   &lt;lmer… &lt;tibbl…     2.33     4   153301    2.61 -0.277 
+ 8 &lt;res… 001   &lt;lmer… &lt;tibbl…     3.67    -2   837502    3.62  0.0455
+ 9 &lt;res… 001   &lt;lmer… &lt;tibbl…     2.33     4   565201    2.37 -0.0350
+10 &lt;res… 001   &lt;lmer… &lt;tibbl…     2.33     2   851004    2.36 -0.0230
 # … with 208,390 more rows, and 9 more variables: .hat &lt;dbl&gt;,
 #   .cooksd &lt;dbl&gt;, .fixed &lt;dbl&gt;, .mu &lt;dbl&gt;, .offset &lt;dbl&gt;,
 #   .sqrtXwt &lt;dbl&gt;, .sqrtrwt &lt;dbl&gt;, .weights &lt;dbl&gt;, .wtres &lt;dbl&gt;</code></pre>
@@ -3302,15 +3304,15 @@ Adjusted for:
     age0 .id    pred
    &lt;dbl&gt; &lt;chr&gt; &lt;dbl&gt;
  1    -2 001    2.78
- 2    -2 002    2.75
- 3    -2 003    2.70
- 4    -2 004    2.83
- 5    -2 005    2.78
- 6    -2 006    2.80
- 7    -2 007    2.79
- 8    -2 008    2.77
- 9    -2 009    2.72
-10    -2 010    2.75
+ 2    -2 002    2.74
+ 3    -2 003    2.75
+ 4    -2 004    2.76
+ 5    -2 005    2.77
+ 6    -2 006    2.81
+ 7    -2 007    2.77
+ 8    -2 008    2.81
+ 9    -2 009    2.76
+10    -2 010    2.80
 # … with 590 more rows</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">

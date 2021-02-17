@@ -313,7 +313,7 @@ m.1 <- long.1 %>%
   add_predictions(sens.1) %>% 
   ggplot(aes(y = pred, x = age0, group = PROC_CID)) +
   geom_line(alpha = .2)
-
+m.1
 ```
 
 
