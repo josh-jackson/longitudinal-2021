@@ -103,6 +103,7 @@ summary(sens.1)
 
 
 ## Multiple models simultaneously! 
+
 We can also do these simultaneously. How? 
 
 
@@ -113,6 +114,7 @@ long.2 <- sample_dat %>%
           age0 = age-16)
 paged_table(long.2)
 ```
+
 
 
 Note how this is has two different DVs under the trait column. Often we have it not like this, where we have multiple DVs we want as separate columns, or that we only create a dataframe that includes the DV we are interested in. But if you want to run multiple models at the same time you need to "stack them on top of one another. 
@@ -186,6 +188,7 @@ glimpse(fitted.2)
 
 
 Note how the default of ggpredict doesn't give fitted values for each person. Instead it provides "marginal effects" which is typically what we want when we want to plot. 
+
 ```{r}
 ggpred <- ggpredict(sens.1, terms = "age0")
 
@@ -394,6 +397,7 @@ ggpred.3
 ```
 
 And we can also do fancy this up by taking the data and using ggplot directly 
+
 ```{r}
 ggpred.3 %>% 
   ggplot(aes(x = x, y = predicted)) +

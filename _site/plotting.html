@@ -2832,7 +2832,7 @@ $ .sqrtrwt &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
 $ .weights &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
 $ .wtres   &lt;dbl&gt; 0.563262656, -0.085688486, 0.334807697, 0.06371764…</code></pre>
 </div>
-Note how the default of ggpredict doesn’t give fitted values for each person. Instead it provides “marginal effects” which is typically what we want when we want to plot.
+<p>Note how the default of ggpredict doesn’t give fitted values for each person. Instead it provides “marginal effects” which is typically what we want when we want to plot.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>ggpred</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://strengejacke.github.io/ggeffects/reference/ggpredict.html'>ggpredict</a></span><span class='op'>(</span><span class='va'>sens.1</span>, terms <span class='op'>=</span> <span class='st'>"age0"</span><span class='op'>)</span>
@@ -3161,7 +3161,7 @@ Adjusted for:
 Adjusted for:
 * PROC_CID = 0 (population-level)</code></pre>
 </div>
-And we can also do fancy this up by taking the data and using ggplot directly
+<p>And we can also do fancy this up by taking the data and using ggplot directly</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>ggpred.3</span> <span class='op'>%&gt;%</span> 
@@ -3240,16 +3240,16 @@ And we can also do fancy this up by taking the data and using ggplot directly
 # Groups:   .id [100]
    strap .id   models effect group term  estimate std.error statistic
    &lt;lis&gt; &lt;chr&gt; &lt;list&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
- 1 &lt;res… 001   &lt;lmer… fixed  &lt;NA&gt;  (Int…  2.75      0.0211    130.   
- 2 &lt;res… 001   &lt;lmer… fixed  &lt;NA&gt;  age0  -0.00439   0.00507    -0.866
- 3 &lt;res… 001   &lt;lmer… ran_p… PROC… sd__…  0.521    NA          NA    
- 4 &lt;res… 001   &lt;lmer… ran_p… PROC… cor_… -0.336    NA          NA    
- 5 &lt;res… 001   &lt;lmer… ran_p… PROC… sd__…  0.0909   NA          NA    
- 6 &lt;res… 001   &lt;lmer… ran_p… Resi… sd__…  0.254    NA          NA    
- 7 &lt;res… 002   &lt;lmer… fixed  &lt;NA&gt;  (Int…  2.75      0.0206    134.   
- 8 &lt;res… 002   &lt;lmer… fixed  &lt;NA&gt;  age0  -0.00245   0.00487    -0.502
- 9 &lt;res… 002   &lt;lmer… ran_p… PROC… sd__…  0.514    NA          NA    
-10 &lt;res… 002   &lt;lmer… ran_p… PROC… cor_… -0.275    NA          NA    
+ 1 &lt;res… 001   &lt;lmer… fixed  &lt;NA&gt;  (Int…  2.75      0.0210    131.   
+ 2 &lt;res… 001   &lt;lmer… fixed  &lt;NA&gt;  age0  -0.0118    0.00771    -1.53 
+ 3 &lt;res… 001   &lt;lmer… ran_p… PROC… sd__…  0.529    NA          NA    
+ 4 &lt;res… 001   &lt;lmer… ran_p… PROC… cor_… -0.266    NA          NA    
+ 5 &lt;res… 001   &lt;lmer… ran_p… PROC… sd__…  0.172    NA          NA    
+ 6 &lt;res… 001   &lt;lmer… ran_p… Resi… sd__…  0.138    NA          NA    
+ 7 &lt;res… 002   &lt;lmer… fixed  &lt;NA&gt;  (Int…  2.76      0.0202    136.   
+ 8 &lt;res… 002   &lt;lmer… fixed  &lt;NA&gt;  age0  -0.00469   0.00534    -0.878
+ 9 &lt;res… 002   &lt;lmer… ran_p… PROC… sd__…  0.497    NA          NA    
+10 &lt;res… 002   &lt;lmer… ran_p… PROC… cor_… -0.362    NA          NA    
 # … with 590 more rows, and 1 more variable: fits &lt;list&gt;</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
@@ -3272,16 +3272,16 @@ And we can also do fancy this up by taking the data and using ggplot directly
 # Groups:   .id [100]
    strap .id   models results SensSeek  age0 PROC_CID .fitted   .resid
    &lt;lis&gt; &lt;chr&gt; &lt;list&gt; &lt;list&gt;     &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;
- 1 &lt;res… 001   &lt;lmer… &lt;tibbl…     4        2   325201    3.85  0.149  
- 2 &lt;res… 001   &lt;lmer… &lt;tibbl…     3        4   644806    2.82  0.180  
- 3 &lt;res… 001   &lt;lmer… &lt;tibbl…     2        4   448304    1.65  0.350  
- 4 &lt;res… 001   &lt;lmer… &lt;tibbl…     2.33     2   851004    2.37 -0.0357 
- 5 &lt;res… 001   &lt;lmer… &lt;tibbl…     3       -2   291103    2.99  0.00831
- 6 &lt;res… 001   &lt;lmer… &lt;tibbl…     2.67     8   288602    2.67 -0.00249
- 7 &lt;res… 001   &lt;lmer… &lt;tibbl…     2.67     6   708101    2.71 -0.0391 
- 8 &lt;res… 001   &lt;lmer… &lt;tibbl…     3        4   746404    2.96  0.0402 
- 9 &lt;res… 001   &lt;lmer… &lt;tibbl…     3        2   224003    2.94  0.0638 
-10 &lt;res… 001   &lt;lmer… &lt;tibbl…     2.67     0   115203    2.68 -0.00847
+ 1 &lt;res… 001   &lt;lmer… &lt;tibbl…     3.67    -2   156604    3.63  0.0387 
+ 2 &lt;res… 001   &lt;lmer… &lt;tibbl…     3.33     8    92802    3.35 -0.0132 
+ 3 &lt;res… 001   &lt;lmer… &lt;tibbl…     3        0     9503    3.00  0.00257
+ 4 &lt;res… 001   &lt;lmer… &lt;tibbl…     2.67     6   629102    2.62  0.0443 
+ 5 &lt;res… 001   &lt;lmer… &lt;tibbl…     2.67     0   718403    2.68 -0.0142 
+ 6 &lt;res… 001   &lt;lmer… &lt;tibbl…     2       -2   629703    2.01 -0.0146 
+ 7 &lt;res… 001   &lt;lmer… &lt;tibbl…     3       -2   512504    2.99  0.00821
+ 8 &lt;res… 001   &lt;lmer… &lt;tibbl…     2.67     2  1204201    2.66  0.00349
+ 9 &lt;res… 001   &lt;lmer… &lt;tibbl…     3        0   964804    2.99  0.0116 
+10 &lt;res… 001   &lt;lmer… &lt;tibbl…     3        0   598001    2.89  0.109  
 # … with 208,390 more rows, and 9 more variables: .hat &lt;dbl&gt;,
 #   .cooksd &lt;dbl&gt;, .fixed &lt;dbl&gt;, .mu &lt;dbl&gt;, .offset &lt;dbl&gt;,
 #   .sqrtXwt &lt;dbl&gt;, .sqrtrwt &lt;dbl&gt;, .weights &lt;dbl&gt;, .wtres &lt;dbl&gt;</code></pre>
@@ -3301,16 +3301,16 @@ And we can also do fancy this up by taking the data and using ggplot directly
 # Groups:   age0 [6]
     age0 .id    pred
    &lt;dbl&gt; &lt;chr&gt; &lt;dbl&gt;
- 1    -2 001    2.83
- 2    -2 002    2.72
- 3    -2 003    2.77
- 4    -2 004    2.77
- 5    -2 005    2.77
- 6    -2 006    2.77
- 7    -2 007    2.81
- 8    -2 008    2.75
- 9    -2 009    2.78
-10    -2 010    2.73
+ 1    -2 001    2.78
+ 2    -2 002    2.75
+ 3    -2 003    2.70
+ 4    -2 004    2.83
+ 5    -2 005    2.78
+ 6    -2 006    2.80
+ 7    -2 007    2.79
+ 8    -2 008    2.77
+ 9    -2 009    2.72
+10    -2 010    2.75
 # … with 590 more rows</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
@@ -3343,10 +3343,10 @@ And we can also do fancy this up by taking the data and using ggplot directly
    age0  pred
 * &lt;dbl&gt; &lt;dbl&gt;
 1    -2  2.77
-2     0  2.73
+2     0  2.74
 3     2  2.75
-4     4  2.73
-5     6  2.67
+4     4  2.74
+5     6  2.68
 6     8  2.71</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
