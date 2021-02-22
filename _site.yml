@@ -23,16 +23,6 @@ navbar:
           href: lme4.html  
         - text: "plotting"
           href: plotting.html 
-        - text: "simulation"
-          href: simulation.html 
-        - text: "purr"
-          href: purr.html 
-        - text: "brms"
-          href: brms.html 
-        - text: "lavaan"
-          href: lavaan.html 
-        - text: "mice"
-          href: mice.html
     - text: "Syllabus"
       href: syllabus.html
     - text: "Homeworks"

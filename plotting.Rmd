@@ -1,6 +1,5 @@
 ---
 title: "plotting"
-author: "Josh Jackson"
 output:
   distill::distill_article:
     toc: true
@@ -8,6 +7,7 @@ output:
     mathjax: "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML"
     self_contained: false 
 ---
+
 
 
 ```{r setup, include=FALSE}
@@ -196,9 +196,9 @@ ggpred
 ```
 ggpredict is nice, but it is less flexible in terms of what values you can feed into the model and how you want to treat your values.  
 
-But my preferred approach is to use the modelr package. It is user friendly and it plays nicely with creating pre-specified values ie a range of time values rather than everyone's x-values. The above approaches do well in terms of predicting everyone's x values using the existing dataframe. 
+But my preferred approach is to use the modelr package. It is pretty user friendly, makes you aware of what is going on behind the scenes, and it is even easier to use in bayesian frameworks.  
 
-There are two parts to feeding values into an equation. First we have to create a new dataframe for those values to go. If we are *not* going to  use original data, then the fitted values cannot go into the original dataframe. So we need to make it up. To do so we are going to use the data_grid function from modelr. It is very similar to the expand.grid or expand functions if you are familiar with those (I believe data_grid is a wrapper for the expand function). 
+There are two parts to feeding values into an equation. First we have to create a new dataframe for those values to go. If we are *not* going to  use original data, then the fitted values cannot go into the original dataframe. So we need to make it up. To do so we are going to use the data_grid function from modelr. It is very similar to the expand.grid, crossing or other expand functions if you are familiar with those (I believe data_grid is a wrapper for the expand function). 
 
 Right now our models are relatively simple, and all we have to do is feed in our time variable. But when we have multiple predictors and covariates that we may want at certain values, calculating he predicted values are relatively difficult by hand. That is where modelr comes in. 
 
@@ -224,6 +224,7 @@ long.1 %>%
 long.1 %>% 
   data_grid(age0 = seq_range(age0, n = 10), PROC_CID)%>% 
     add_predictions(sens.1)
+
 ```
 
 
@@ -231,7 +232,7 @@ long.1 %>%
 ```{r}
 
 long.1 %>% 
-  data_grid(age0, PROC_CID)%>% 
+  data_grid(age0, PROC_CID = 1601)%>% 
     add_predictions(sens.1)
 
 ```
@@ -513,6 +514,32 @@ boot.results %>%
 
 # Two-Level Categorical Moderator  
 
+Level 1:  
+$${Y}_{ti} = \beta_{0i}  + \beta_{1i}Time_{ti} + \varepsilon_{ti}$$
+
+Level 2:  
+
+$${\beta}_{0i} = \gamma_{00} + \gamma_{01}G_{i} +   U_{0i}$$
+
+$${\beta}_{1i} = \gamma_{10} +  \gamma_{11}G_{i} +U_{1i}$$
+
+
+```{r}
+long.1g <- long.1 %>%  filter(groups != "CommServ")
+
+cesd.2 <- lmer(CESD ~ 1 + age0*groups + (age0 | PROC_CID), data = long.1g)
+```
+
+```{r}
+summary(cesd.2)
+```
+
+
+Jail:  
+$$\hat{Y}_{ti} = \gamma_{00} + \gamma_{10} (Time_{ti})$$ 
+
+None: 
+$$\hat{Y}_{ti} = [\gamma_{00} +\gamma_{01}] + [(\gamma_{10}  + \gamma_{11})(Time_{ti})]$$
 
 
 Variable  | D1  
@@ -521,31 +548,206 @@ Jail      | 0
 None      | 1
 
 
-When we plot these, we are plotting the simple slopes. Subbing 1 and 0 into the equations above we end up with the following for the groups.  
 
-None:  
-Jail: 
+```{r}
+long.1 %>%  filter(groups != "CommServ") %>%
+  group_by(groups) %>%
+  data_grid(age0 = seq_range(age0, n = 10)) 
+```
 
 
 
-## Three group Categorical Moderator  
+```{r}
+long.1 %>%  filter(groups != "CommServ") %>%
+  group_by(groups) %>%
+  data_grid(age0 = seq_range(age0, n = 10), PROC_CID ) %>% 
+  add_predictions(cesd.2)
+
+```
+
+
+```{r}
+long.1 %>%  filter(groups != "CommServ") %>%
+  group_by(groups) %>%
+  data_grid(age0 = seq_range(age0, n = 10), PROC_CID) %>% 
+   add_predictions(cesd.2) %>% 
+  group_by(age0, groups) %>% 
+  dplyr::summarize(pred = mean(pred))
+```
+
+
+```{r}
+long.1 %>%  filter(groups != "CommServ") %>%
+  group_by(groups) %>%
+  data_grid(age0 = seq_range(age0, n = 10), PROC_CID) %>% 
+  add_predictions(cesd.2) %>% 
+  group_by(age0, groups) %>% 
+  dplyr::summarize(pred = mean(pred)) %>% 
+    ggplot(aes(x = age0, y = pred, group = groups)) +
+  geom_line(aes(color = groups), size = 2) +
+  geom_point(data = long.1, aes(x = age0, y = CESD))
+
+```
+
+
+# Three group Categorical Moderator  
+
+Level 1:  
+$${Y}_{ti} = \beta_{0i}  + \beta_{1i}Time_{ti} + \varepsilon_{ti}$$
+
+Level 2:  
+
+$${\beta}_{0i} = \gamma_{00} + \gamma_{01}G_{1i} + \gamma_{02}G_{2i}   + U_{0i}$$
+
+$${\beta}_{1i} = \gamma_{10} +  \gamma_{11}G_{1i} +  \gamma_{12}G_{2i} +U_{1i}$$
+Combined:
+  $${Y}_{ti} = \gamma_{00} + \gamma_{01}G_{1i}+  \gamma_{02}G_{2i}  + \gamma_{10} (Time_{ti}) + \gamma_{11}(G_{1i}*Time_{ti}) +  \gamma_{12}(G_{2i}*Time_{ti}) +  U_{0i} + U_{1i}(Time_{ti}) + \varepsilon_{ti}$$
 
 
 Variable  | D1  | D2  
 --------- | --- | ---
-Jail      | 0   | 0
-None      | 1   | 0
+None      | 0   | 0
+Jail      | 1   | 0
 CommServ  | 0   | 1  
 
 
 When we plot these, we are plotting the simple slopes. Subbing 1 and 0 into the equations above we end up with the following for the groups.  
 
-None: 
-Jail: 
-Community Service: 
+None: $$\hat{Y}_{ti} = \gamma_{00} +  \gamma_{10} (Time_{ti})$$
+Jail: $${Y}_{ti} = (\gamma_{00} + \gamma_{01}) +   ( \gamma_{10}  + \gamma_{11})(Time_{ti})$$
+Community Service: $${Y}_{ti} = (\gamma_{00} + \gamma_{02}) +   ( \gamma_{10}  + \gamma_{12})(Time_{ti})$$
 
 
-## Continuous Time-Invariant Moderator  
+```{r}
+cesd.3 <- lmer(CESD ~ 1 + age0*groups + (age0 | PROC_CID), data = long.1)
+```
+
+```{r}
+summary(cesd.3)
+```
 
 
+```{r}
+long.1 %>%  
+  group_by(groups) %>%
+  data_grid(age0 = seq_range(age0, n = 10), PROC_CID) %>% 
+  add_predictions(cesd.3) 
+
+```
+
+```{r}
+long.1 %>%  
+  group_by(groups) %>%
+  data_grid(age0 = seq_range(age0, n = 10), PROC_CID) %>% 
+  add_predictions(cesd.3) %>% 
+  group_by(age0, groups) %>% 
+  dplyr::summarize(pred = mean(pred)) %>% 
+    ggplot(aes(x = age0, y = pred, group = groups)) +
+  geom_line(aes(color = groups), size = 2) +
+  geom_point(data = long.1, aes(x = age0, y = CESD)) +
+  ylab("Depression") + xlab("age") + scale_x_continuous(labels = seq(10, 18, by = 2))
+```
+
+
+# Continuous Time-Invariant Moderator  
+
+
+Level 1:  
+$${Y}_{ti} = \beta_{0i}  + \beta_{1i}Time_{ti} + \varepsilon_{ti}$$
+
+Level 2:  
+
+$${\beta}_{0i} = \gamma_{00} + \gamma_{01}C_{i} +   U_{0i}$$
+
+$${\beta}_{1i} = \gamma_{10} +  \gamma_{11}C_{i} +U_{1i}$$ 
+
+
+Combined:
+  $${Y}_{ti} = \gamma_{00} + \gamma_{01}C_{i}+  \gamma_{10} (Time_{ti}) + \gamma_{11}(C_{i}*Time_{ti}) +  U_{0i} + U_{1j}(Time_{ti}) + \varepsilon_{ti}$$
+  
+```{r}
+
+long.1$SensSeek.c <- long.1$SensSeek - mean(long.1$SensSeek)
+describe(long.1$SensSeek.c)
+
+```
+
+```{r}
+cesd.4 <- lmer(CESD ~ 1 + age0*SensSeek.c + (age0 | PROC_CID), data = long.1)
+summary(cesd.4)
+```
+
+
+
+
+When we plot these, we are plotting the simple slopes. Subbing plus and minus 1 sd and the mean into the equations above we end up with the following for the groups.  
+
+-1sd:
+  $$\hat{Y}_{ti} = [\gamma_{00} +(\gamma_{01}*-.58)] + [\gamma_{10}  + (\gamma_{11}*-1)]*Time_{ti}$$
+
+
+Mean:
+  $$\hat{Y}_{ti} = \gamma_{00} + \gamma_{10} * (Time_{ti})$$
+  
+  
++1sd: 
+  $$\hat{Y}_{ti} = [\gamma_{00} +\gamma_{01}*.58] + [\gamma_{10}  + \gamma_{11}]*Time_{ti}$$
+
+
+## modelr
+
+```{r}
+long.1 %>%  
+  data_grid(age0 = seq_range(age0, n = 10), SensSeek = c(.58, 0, -.58)) 
+```
+
+
+```{r}
+long.1 %>%  
+  data_grid(age0 = seq_range(age0, n = 10), SensSeek = c(.58, 0, -.58), PROC_CID) 
+```
+
+
+
+```{r}
+long.1 %>%  
+  data_grid(age0 = seq_range(age0, n = 10), SensSeek.c = c(.58, 0, -.58), PROC_CID) %>% 
+  add_predictions(cesd.4) %>% 
+  group_by(age0, SensSeek.c) %>% 
+  dplyr::summarize(pred = mean(pred)) %>% 
+    ggplot(aes(x = age0, y = pred, group = SensSeek.c)) +
+  geom_line(aes(color = SensSeek.c), size = 2) 
+```
+
+##ggeffects
+
+```{r}
+ggpred.4 <- ggpredict(cesd.3, terms = c("age0", "groups "))
+ggpred.4
+```
+
+```{r}
+ggpred.4  %>% 
+    ggplot() +
+  geom_line(aes(x = x, y=predicted, group = group)) 
+```
+
+
+
+
+```{r}
+ggpred.5 <- ggpredict(cesd.4, terms = c("age0", "SensSeek.c "))
+ggpred.5
+```
+
+```{r}
+plot(ggpred.5)
+```
+
+
+```{r}
+ggpred.5  %>% 
+    ggplot() +
+  geom_line(aes(x = x, y=predicted, group = group), size = 2) 
+```
 

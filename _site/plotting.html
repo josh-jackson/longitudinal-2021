@@ -89,7 +89,6 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 
 
 
-  <meta name="article:author" content="Josh Jackson"/>
 
   <!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
   <meta property="og:title" content="Applied Longitudinal Data Analysis: plotting"/>
@@ -105,7 +104,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   <!--radix_placeholder_rmarkdown_metadata-->
 
   <script type="text/json" id="radix-rmarkdown-metadata">
-  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","author","output"]}},"value":[{"type":"character","attributes":{},"value":["plotting"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name"]}},"value":[{"type":"character","attributes":{},"value":["Josh Jackson"]}]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["toc","toc_depth","mathjax","self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[true]},{"type":"integer","attributes":{},"value":[2]},{"type":"character","attributes":{},"value":["https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML"]},{"type":"logical","attributes":{},"value":[false]}]}]}]}
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","output"]}},"value":[{"type":"character","attributes":{},"value":["plotting"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["toc","toc_depth","mathjax","self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[true]},{"type":"integer","attributes":{},"value":[2]},{"type":"character","attributes":{},"value":["https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML"]},{"type":"logical","attributes":{},"value":[false]}]}]}]}
   </script>
   <!--/radix_placeholder_rmarkdown_metadata-->
   <!--radix_placeholder_navigation_in_header-->
@@ -2365,7 +2364,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"plotting","authors":[{"author":"Josh Jackson","authorURL":"#","affiliation":"&nbsp;","affiliationURL":"#","orcidID":""}]}
+{"title":"plotting","authors":[]}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -2399,11 +2398,6 @@ Workshops
 <a href="data.html">data</a>
 <a href="lme4.html">lme4</a>
 <a href="plotting.html">plotting</a>
-<a href="simulation.html">simulation</a>
-<a href="purr.html">purr</a>
-<a href="brms.html">brms</a>
-<a href="lavaan.html">lavaan</a>
-<a href="mice.html">mice</a>
 </div>
 </div>
 <a href="syllabus.html">Syllabus</a>
@@ -2435,12 +2429,6 @@ Homeworks
 
 </div>
 
-<div class="d-byline">
-  
-  Josh Jackson
-  
-
-</div>
 
 <div class="d-article">
 <div class="d-contents d-contents-float">
@@ -2468,10 +2456,11 @@ Homeworks
 <li><a href="#modelr">modelr</a></li>
 <li><a href="#confidence-bands">Confidence bands</a></li>
 </ul></li>
-<li><a href="#two-level-categorical-moderator">Two-Level Categorical Moderator</a>
-<ul>
+<li><a href="#two-level-categorical-moderator">Two-Level Categorical Moderator</a></li>
 <li><a href="#three-group-categorical-moderator">Three group Categorical Moderator</a></li>
-<li><a href="#continuous-time-invariant-moderator">Continuous Time-Invariant Moderator</a></li>
+<li><a href="#continuous-time-invariant-moderator">Continuous Time-Invariant Moderator</a>
+<ul>
+<li><a href="#modelr-1">modelr</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -2561,7 +2550,7 @@ Homeworks
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/load.html'>load</a></span><span class='op'>(</span><span class='st'>"sample.RData"</span><span class='op'>)</span>
 
-<span class='fu'>glimpse</span><span class='op'>(</span><span class='va'>sample_dat</span><span class='op'>)</span>
+<span class='fu'><a href='https://tibble.tidyverse.org/reference/glimpse.html'>glimpse</a></span><span class='op'>(</span><span class='va'>sample_dat</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code>Rows: 2,084
@@ -2803,7 +2792,7 @@ age0 -0.312</code></pre>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>fitted</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>sens.1</span><span class='op'>)</span>
-<span class='fu'>glimpse</span><span class='op'>(</span><span class='va'>fitted</span><span class='op'>)</span>
+<span class='fu'><a href='https://tibble.tidyverse.org/reference/glimpse.html'>glimpse</a></span><span class='op'>(</span><span class='va'>fitted</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code> Named num [1:2084] 3.1 3.09 3 2.94 2.92 ...
@@ -2812,7 +2801,7 @@ age0 -0.312</code></pre>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>fitted.2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://generics.r-lib.org/reference/augment.html'>augment</a></span><span class='op'>(</span><span class='va'>sens.1</span><span class='op'>)</span>
-<span class='fu'>glimpse</span><span class='op'>(</span><span class='va'>fitted.2</span><span class='op'>)</span>
+<span class='fu'><a href='https://tibble.tidyverse.org/reference/glimpse.html'>glimpse</a></span><span class='op'>(</span><span class='va'>fitted.2</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code>Rows: 2,084
@@ -2856,8 +2845,8 @@ Adjusted for:
 * PROC_CID = 0 (population-level)</code></pre>
 </div>
 <p>ggpredict is nice, but it is less flexible in terms of what values you can feed into the model and how you want to treat your values.</p>
-<p>But my preferred approach is to use the modelr package. It is user friendly and it plays nicely with creating pre-specified values ie a range of time values rather than everyone’s x-values. The above approaches do well in terms of predicting everyone’s x values using the existing dataframe.</p>
-<p>There are two parts to feeding values into an equation. First we have to create a new dataframe for those values to go. If we are <em>not</em> going to use original data, then the fitted values cannot go into the original dataframe. So we need to make it up. To do so we are going to use the data_grid function from modelr. It is very similar to the expand.grid or expand functions if you are familiar with those (I believe data_grid is a wrapper for the expand function).</p>
+<p>But my preferred approach is to use the modelr package. It is pretty user friendly, makes you aware of what is going on behind the scenes, and it is even easier to use in bayesian frameworks.</p>
+<p>There are two parts to feeding values into an equation. First we have to create a new dataframe for those values to go. If we are <em>not</em> going to use original data, then the fitted values cannot go into the original dataframe. So we need to make it up. To do so we are going to use the data_grid function from modelr. It is very similar to the expand.grid, crossing or other expand functions if you are familiar with those (I believe data_grid is a wrapper for the expand function).</p>
 <p>Right now our models are relatively simple, and all we have to do is feed in our time variable. But when we have multiple predictors and covariates that we may want at certain values, calculating he predicted values are relatively difficult by hand. That is where modelr comes in.</p>
 <ol type="1">
 <li>Start with a dataset that you created your model from and feed that to data_grid. Then we need to specify what variables you want to be constant and what variables you want to vary. For this model, we only have one variable, and we want to graph it along the entire range of time. So we need to create a dataset that varies across the range of time we are interested in.</li>
@@ -2930,24 +2919,19 @@ Adjusted for:
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>long.1</span> <span class='op'>%&gt;%</span> 
-  <span class='fu'><a href='https://modelr.tidyverse.org/reference/data_grid.html'>data_grid</a></span><span class='op'>(</span><span class='va'>age0</span>, <span class='va'>PROC_CID</span><span class='op'>)</span><span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://modelr.tidyverse.org/reference/data_grid.html'>data_grid</a></span><span class='op'>(</span><span class='va'>age0</span>, PROC_CID <span class='op'>=</span> <span class='fl'>1601</span><span class='op'>)</span><span class='op'>%&gt;%</span> 
     <span class='fu'><a href='https://modelr.tidyverse.org/reference/add_predictions.html'>add_predictions</a></span><span class='op'>(</span><span class='va'>sens.1</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code># A tibble: 5,544 x 3
-    age0 PROC_CID  pred
-   &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;
- 1    -2     1601  3.12
- 2    -2     9102  3.01
- 3    -2     9501  2.94
- 4    -2     9502  2.94
- 5    -2     9503  2.91
- 6    -2    10001  2.91
- 7    -2    12802  3.02
- 8    -2    13801  3.02
- 9    -2    14302  3.21
-10    -2    17502  2.84
-# … with 5,534 more rows</code></pre>
+<pre><code># A tibble: 6 x 3
+   age0 PROC_CID  pred
+  &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;
+1    -2     1601  3.12
+2     0     1601  3.10
+3     2     1601  3.09
+4     4     1601  3.07
+5     6     1601  3.05
+6     8     1601  3.03</code></pre>
 </div>
 <p>Now lets plot!</p>
 <h1 id="plot">Plot</h1>
@@ -3106,7 +3090,7 @@ Adjusted for:
   <span class='va'>nvar</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='fu'><a href='https://strengejacke.github.io/ggeffects/reference/vcov.html'>vcov</a></span><span class='op'>(</span><span class='va'>m</span><span class='op'>)</span><span class='op'>)</span> <span class='co'># # of variables</span>
   <span class='va'>varnames</span> <span class='op'>&lt;-</span> <span class='fu'>str_replace_all</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='fu'><a href='https://strengejacke.github.io/ggeffects/reference/vcov.html'>vcov</a></span><span class='op'>(</span><span class='va'>m</span><span class='op'>)</span><span class='op'>)</span>, <span class='st'>"[()]"</span>, <span class='st'>""</span><span class='op'>)</span> <span class='co'># names for vcov mat</span>
   <span class='va'>vcov_mat</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://strengejacke.github.io/ggeffects/reference/vcov.html'>vcov</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>m</span><span class='op'>)</span><span class='op'>)</span><span class='op'>@</span><span class='va'>x</span>, <span class='va'>nvar</span><span class='op'>)</span> <span class='co'># chnage vcov mat class</span>
-  <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>vcov_mat</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>varnames</span>; <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span><span class='op'>(</span><span class='va'>vcov_mat</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>varnames</span> <span class='co'># rename vcov mat</span>
+  <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>vcov_mat</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>varnames</span>; <span class='fu'><a href='https://tibble.tidyverse.org/reference/rownames.html'>rownames</a></span><span class='op'>(</span><span class='va'>vcov_mat</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>varnames</span> <span class='co'># rename vcov mat</span>
   <span class='va'>frame_mat</span> <span class='op'>&lt;-</span> <span class='va'>frame</span> <span class='op'>%&gt;%</span> <span class='va'>as.matrix</span>
   <span class='va'>pv</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/diag.html'>diag</a></span><span class='op'>(</span><span class='va'>frame_mat</span> <span class='op'>%*%</span> <span class='va'>vcov_mat</span> <span class='op'>%*%</span> <span class='fu'><a href='https://rdrr.io/r/base/t.html'>t</a></span><span class='op'>(</span><span class='va'>frame_mat</span><span class='op'>)</span><span class='op'>)</span> <span class='co'># compute variance</span>
   <span class='va'>SE</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/MathFun.html'>sqrt</a></span><span class='op'>(</span><span class='va'>pv</span><span class='op'>)</span> 
@@ -3242,16 +3226,16 @@ Adjusted for:
 # Groups:   .id [100]
    strap .id   models effect group term  estimate std.error statistic
    &lt;lis&gt; &lt;chr&gt; &lt;list&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
- 1 &lt;res… 001   &lt;lmer… fixed  &lt;NA&gt;  (Int…  2.79      0.0215    129.   
- 2 &lt;res… 001   &lt;lmer… fixed  &lt;NA&gt;  age0  -0.00938   0.00548    -1.71 
- 3 &lt;res… 001   &lt;lmer… ran_p… PROC… sd__…  0.542    NA          NA    
- 4 &lt;res… 001   &lt;lmer… ran_p… PROC… cor_… -0.443    NA          NA    
- 5 &lt;res… 001   &lt;lmer… ran_p… PROC… sd__…  0.107    NA          NA    
- 6 &lt;res… 001   &lt;lmer… ran_p… Resi… sd__…  0.223    NA          NA    
- 7 &lt;res… 002   &lt;lmer… fixed  &lt;NA&gt;  (Int…  2.72      0.0205    133.   
- 8 &lt;res… 002   &lt;lmer… fixed  &lt;NA&gt;  age0   0.00152   0.00484     0.315
- 9 &lt;res… 002   &lt;lmer… ran_p… PROC… sd__…  0.505    NA          NA    
-10 &lt;res… 002   &lt;lmer… ran_p… PROC… cor_… -0.329    NA          NA    
+ 1 &lt;res… 001   &lt;lmer… fixed  &lt;NA&gt;  (Int…  2.76      0.0201     137.  
+ 2 &lt;res… 001   &lt;lmer… fixed  &lt;NA&gt;  age0  -0.00609   0.00553     -1.10
+ 3 &lt;res… 001   &lt;lmer… ran_p… PROC… sd__…  0.494    NA           NA   
+ 4 &lt;res… 001   &lt;lmer… ran_p… PROC… cor_… -0.368    NA           NA   
+ 5 &lt;res… 001   &lt;lmer… ran_p… PROC… sd__…  0.105    NA           NA   
+ 6 &lt;res… 001   &lt;lmer… ran_p… Resi… sd__…  0.242    NA           NA   
+ 7 &lt;res… 002   &lt;lmer… fixed  &lt;NA&gt;  (Int…  2.77      0.0208     133.  
+ 8 &lt;res… 002   &lt;lmer… fixed  &lt;NA&gt;  age0  -0.00945   0.00516     -1.83
+ 9 &lt;res… 002   &lt;lmer… ran_p… PROC… sd__…  0.511    NA           NA   
+10 &lt;res… 002   &lt;lmer… ran_p… PROC… cor_… -0.331    NA           NA   
 # … with 590 more rows, and 1 more variable: fits &lt;list&gt;</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
@@ -3272,18 +3256,18 @@ Adjusted for:
 </div>
 <pre><code># A tibble: 208,400 x 18
 # Groups:   .id [100]
-   strap .id   models results SensSeek  age0 PROC_CID .fitted  .resid
-   &lt;lis&gt; &lt;chr&gt; &lt;list&gt; &lt;list&gt;     &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
- 1 &lt;res… 001   &lt;lmer… &lt;tibbl…     3        8   551801    2.90  0.100 
- 2 &lt;res… 001   &lt;lmer… &lt;tibbl…     3.33     8   827602    3.36 -0.0227
- 3 &lt;res… 001   &lt;lmer… &lt;tibbl…     2.67     0   830902    2.51  0.154 
- 4 &lt;res… 001   &lt;lmer… &lt;tibbl…     2.67     2    18301    2.71 -0.0459
- 5 &lt;res… 001   &lt;lmer… &lt;tibbl…     2       -2   124402    1.97  0.0289
- 6 &lt;res… 001   &lt;lmer… &lt;tibbl…     4       -2   827901    3.87  0.126 
- 7 &lt;res… 001   &lt;lmer… &lt;tibbl…     2.33     4   153301    2.61 -0.277 
- 8 &lt;res… 001   &lt;lmer… &lt;tibbl…     3.67    -2   837502    3.62  0.0455
- 9 &lt;res… 001   &lt;lmer… &lt;tibbl…     2.33     4   565201    2.37 -0.0350
-10 &lt;res… 001   &lt;lmer… &lt;tibbl…     2.33     2   851004    2.36 -0.0230
+   strap .id   models results SensSeek  age0 PROC_CID .fitted   .resid
+   &lt;lis&gt; &lt;chr&gt; &lt;list&gt; &lt;list&gt;     &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;
+ 1 &lt;res… 001   &lt;lmer… &lt;tibbl…     3       -2    10001    2.98  0.0207 
+ 2 &lt;res… 001   &lt;lmer… &lt;tibbl…     2        8   498102    1.98  0.0241 
+ 3 &lt;res… 001   &lt;lmer… &lt;tibbl…     2.33    -2   207602    2.58 -0.242  
+ 4 &lt;res… 001   &lt;lmer… &lt;tibbl…     2.67    -2   266203    2.73 -0.0595 
+ 5 &lt;res… 001   &lt;lmer… &lt;tibbl…     3        4   797103    2.97  0.0332 
+ 6 &lt;res… 001   &lt;lmer… &lt;tibbl…     3        2    13801    2.97  0.0309 
+ 7 &lt;res… 001   &lt;lmer… &lt;tibbl…     2.33     0   853201    2.38 -0.0468 
+ 8 &lt;res… 001   &lt;lmer… &lt;tibbl…     3.33     4    14302    3.33  0.00589
+ 9 &lt;res… 001   &lt;lmer… &lt;tibbl…     3        0   354902    2.95  0.0470 
+10 &lt;res… 001   &lt;lmer… &lt;tibbl…     2        0  1219107    2.04 -0.0426 
 # … with 208,390 more rows, and 9 more variables: .hat &lt;dbl&gt;,
 #   .cooksd &lt;dbl&gt;, .fixed &lt;dbl&gt;, .mu &lt;dbl&gt;, .offset &lt;dbl&gt;,
 #   .sqrtXwt &lt;dbl&gt;, .sqrtrwt &lt;dbl&gt;, .weights &lt;dbl&gt;, .wtres &lt;dbl&gt;</code></pre>
@@ -3303,15 +3287,15 @@ Adjusted for:
 # Groups:   age0 [6]
     age0 .id    pred
    &lt;dbl&gt; &lt;chr&gt; &lt;dbl&gt;
- 1    -2 001    2.78
- 2    -2 002    2.74
- 3    -2 003    2.75
- 4    -2 004    2.76
- 5    -2 005    2.77
+ 1    -2 001    2.75
+ 2    -2 002    2.80
+ 3    -2 003    2.78
+ 4    -2 004    2.77
+ 5    -2 005    2.80
  6    -2 006    2.81
  7    -2 007    2.77
- 8    -2 008    2.81
- 9    -2 009    2.76
+ 8    -2 008    2.78
+ 9    -2 009    2.78
 10    -2 010    2.80
 # … with 590 more rows</code></pre>
 </div>
@@ -3346,9 +3330,9 @@ Adjusted for:
 * &lt;dbl&gt; &lt;dbl&gt;
 1    -2  2.77
 2     0  2.74
-3     2  2.75
+3     2  2.74
 4     4  2.74
-5     6  2.68
+5     6  2.67
 6     8  2.71</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
@@ -3366,6 +3350,57 @@ Adjusted for:
 <p><img src="plotting_files/figure-html5/unnamed-chunk-37-1.png" width="624" /></p>
 </div>
 <h1 id="two-level-categorical-moderator">Two-Level Categorical Moderator</h1>
+<p>Level 1:<br />
+<span class="math display">\[{Y}_{ti} = \beta_{0i}  + \beta_{1i}Time_{ti} + \varepsilon_{ti}\]</span></p>
+<p>Level 2:</p>
+<p><span class="math display">\[{\beta}_{0i} = \gamma_{00} + \gamma_{01}G_{i} +   U_{0i}\]</span></p>
+<p><span class="math display">\[{\beta}_{1i} = \gamma_{10} +  \gamma_{11}G_{i} +U_{1i}\]</span></p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>long.1g</span> <span class='op'>&lt;-</span> <span class='va'>long.1</span> <span class='op'>%&gt;%</span>  <span class='fu'><a href='https://rdrr.io/r/stats/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>groups</span> <span class='op'>!=</span> <span class='st'>"CommServ"</span><span class='op'>)</span>
+
+<span class='va'>cesd.2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lme4/man/lmer.html'>lmer</a></span><span class='op'>(</span><span class='va'>CESD</span> <span class='op'>~</span> <span class='fl'>1</span> <span class='op'>+</span> <span class='va'>age0</span><span class='op'>*</span><span class='va'>groups</span> <span class='op'>+</span> <span class='op'>(</span><span class='va'>age0</span> <span class='op'>|</span> <span class='va'>PROC_CID</span><span class='op'>)</span>, data <span class='op'>=</span> <span class='va'>long.1g</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>cesd.2</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Linear mixed model fit by REML [&#39;lmerMod&#39;]
+Formula: CESD ~ 1 + age0 * groups + (age0 | PROC_CID)
+   Data: long.1g
+
+REML criterion at convergence: 2580.8
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-2.3639 -0.5675 -0.1486  0.4497  3.6864 
+
+Random effects:
+ Groups   Name        Variance Std.Dev. Corr 
+ PROC_CID (Intercept) 0.102816 0.32065       
+          age0        0.002664 0.05162  -0.23
+ Residual             0.195118 0.44172       
+Number of obs: 1573, groups:  PROC_CID, 689
+
+Fixed effects:
+                 Estimate Std. Error t value
+(Intercept)      0.614466   0.027687  22.194
+age0             0.015409   0.007096   2.171
+groupsJail       0.154335   0.036812   4.193
+age0:groupsJail -0.009122   0.009213  -0.990
+
+Correlation of Fixed Effects:
+            (Intr) age0   grpsJl
+age0        -0.367              
+groupsJail  -0.752  0.276       
+age0:grpsJl  0.282 -0.770 -0.373</code></pre>
+</div>
+<p>Jail:<br />
+<span class="math display">\[\hat{Y}_{ti} = \gamma_{00} + \gamma_{10} (Time_{ti})\]</span></p>
+<p>None: <span class="math display">\[\hat{Y}_{ti} = [\gamma_{00} +\gamma_{01}] + [(\gamma_{10}  + \gamma_{11})(Time_{ti})]\]</span></p>
 <table>
 <thead>
 <tr class="header">
@@ -3384,10 +3419,118 @@ Adjusted for:
 </tr>
 </tbody>
 </table>
-<p>When we plot these, we are plotting the simple slopes. Subbing 1 and 0 into the equations above we end up with the following for the groups.</p>
-<p>None:<br />
-Jail:</p>
-<h2 id="three-group-categorical-moderator">Three group Categorical Moderator</h2>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>long.1</span> <span class='op'>%&gt;%</span>  <span class='fu'><a href='https://rdrr.io/r/stats/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>groups</span> <span class='op'>!=</span> <span class='st'>"CommServ"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>group_by</span><span class='op'>(</span><span class='va'>groups</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'><a href='https://modelr.tidyverse.org/reference/data_grid.html'>data_grid</a></span><span class='op'>(</span>age0 <span class='op'>=</span> <span class='fu'><a href='https://modelr.tidyverse.org/reference/seq_range.html'>seq_range</a></span><span class='op'>(</span><span class='va'>age0</span>, n <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span><span class='op'>)</span> 
+</code></pre>
+</div>
+<pre><code># A tibble: 20 x 2
+# Groups:   groups [2]
+   groups   age0
+   &lt;fct&gt;   &lt;dbl&gt;
+ 1 None   -2    
+ 2 None   -0.889
+ 3 None    0.222
+ 4 None    1.33 
+ 5 None    2.44 
+ 6 None    3.56 
+ 7 None    4.67 
+ 8 None    5.78 
+ 9 None    6.89 
+10 None    8    
+11 Jail   -2    
+12 Jail   -0.889
+13 Jail    0.222
+14 Jail    1.33 
+15 Jail    2.44 
+16 Jail    3.56 
+17 Jail    4.67 
+18 Jail    5.78 
+19 Jail    6.89 
+20 Jail    8    </code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>long.1</span> <span class='op'>%&gt;%</span>  <span class='fu'><a href='https://rdrr.io/r/stats/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>groups</span> <span class='op'>!=</span> <span class='st'>"CommServ"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>group_by</span><span class='op'>(</span><span class='va'>groups</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'><a href='https://modelr.tidyverse.org/reference/data_grid.html'>data_grid</a></span><span class='op'>(</span>age0 <span class='op'>=</span> <span class='fu'><a href='https://modelr.tidyverse.org/reference/seq_range.html'>seq_range</a></span><span class='op'>(</span><span class='va'>age0</span>, n <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>, <span class='va'>PROC_CID</span> <span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://modelr.tidyverse.org/reference/add_predictions.html'>add_predictions</a></span><span class='op'>(</span><span class='va'>cesd.2</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code># A tibble: 6,890 x 4
+# Groups:   groups [2]
+   groups  age0 PROC_CID  pred
+   &lt;fct&gt;  &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;
+ 1 None      -2     9102 0.423
+ 2 None      -2    10001 0.494
+ 3 None      -2    12802 0.533
+ 4 None      -2    13801 0.564
+ 5 None      -2    18801 0.292
+ 6 None      -2    22901 0.356
+ 7 None      -2    23603 0.460
+ 8 None      -2    38803 0.496
+ 9 None      -2    42801 0.674
+10 None      -2    43902 0.558
+# … with 6,880 more rows</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>long.1</span> <span class='op'>%&gt;%</span>  <span class='fu'><a href='https://rdrr.io/r/stats/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>groups</span> <span class='op'>!=</span> <span class='st'>"CommServ"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>group_by</span><span class='op'>(</span><span class='va'>groups</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'><a href='https://modelr.tidyverse.org/reference/data_grid.html'>data_grid</a></span><span class='op'>(</span>age0 <span class='op'>=</span> <span class='fu'><a href='https://modelr.tidyverse.org/reference/seq_range.html'>seq_range</a></span><span class='op'>(</span><span class='va'>age0</span>, n <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>, <span class='va'>PROC_CID</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+   <span class='fu'><a href='https://modelr.tidyverse.org/reference/add_predictions.html'>add_predictions</a></span><span class='op'>(</span><span class='va'>cesd.2</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'>group_by</span><span class='op'>(</span><span class='va'>age0</span>, <span class='va'>groups</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarize</a></span><span class='op'>(</span>pred <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>pred</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code># A tibble: 20 x 3
+# Groups:   age0 [10]
+     age0 groups  pred
+    &lt;dbl&gt; &lt;fct&gt;  &lt;dbl&gt;
+ 1 -2     None   0.584
+ 2 -2     Jail   0.756
+ 3 -0.889 None   0.601
+ 4 -0.889 Jail   0.763
+ 5  0.222 None   0.618
+ 6  0.222 Jail   0.770
+ 7  1.33  None   0.635
+ 8  1.33  Jail   0.777
+ 9  2.44  None   0.652
+10  2.44  Jail   0.784
+11  3.56  None   0.669
+12  3.56  Jail   0.791
+13  4.67  None   0.686
+14  4.67  Jail   0.798
+15  5.78  None   0.703
+16  5.78  Jail   0.805
+17  6.89  None   0.721
+18  6.89  Jail   0.812
+19  8     None   0.738
+20  8     Jail   0.819</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>long.1</span> <span class='op'>%&gt;%</span>  <span class='fu'><a href='https://rdrr.io/r/stats/filter.html'>filter</a></span><span class='op'>(</span><span class='va'>groups</span> <span class='op'>!=</span> <span class='st'>"CommServ"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>group_by</span><span class='op'>(</span><span class='va'>groups</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'><a href='https://modelr.tidyverse.org/reference/data_grid.html'>data_grid</a></span><span class='op'>(</span>age0 <span class='op'>=</span> <span class='fu'><a href='https://modelr.tidyverse.org/reference/seq_range.html'>seq_range</a></span><span class='op'>(</span><span class='va'>age0</span>, n <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>, <span class='va'>PROC_CID</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://modelr.tidyverse.org/reference/add_predictions.html'>add_predictions</a></span><span class='op'>(</span><span class='va'>cesd.2</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'>group_by</span><span class='op'>(</span><span class='va'>age0</span>, <span class='va'>groups</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarize</a></span><span class='op'>(</span>pred <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>pred</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+    <span class='fu'>ggplot</span><span class='op'>(</span><span class='fu'>aes</span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>age0</span>, y <span class='op'>=</span> <span class='va'>pred</span>, group <span class='op'>=</span> <span class='va'>groups</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_line</span><span class='op'>(</span><span class='fu'>aes</span><span class='op'>(</span>color <span class='op'>=</span> <span class='va'>groups</span><span class='op'>)</span>, size <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_point</span><span class='op'>(</span>data <span class='op'>=</span> <span class='va'>long.1</span>, <span class='fu'>aes</span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>age0</span>, y <span class='op'>=</span> <span class='va'>CESD</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="plotting_files/figure-html5/unnamed-chunk-43-1.png" width="624" /></p>
+</div>
+<h1 id="three-group-categorical-moderator">Three group Categorical Moderator</h1>
+<p>Level 1:<br />
+<span class="math display">\[{Y}_{ti} = \beta_{0i}  + \beta_{1i}Time_{ti} + \varepsilon_{ti}\]</span></p>
+<p>Level 2:</p>
+<p><span class="math display">\[{\beta}_{0i} = \gamma_{00} + \gamma_{01}G_{1i} + \gamma_{02}G_{2i}   + U_{0i}\]</span></p>
+<p><span class="math display">\[{\beta}_{1i} = \gamma_{10} +  \gamma_{11}G_{1i} +  \gamma_{12}G_{2i} +U_{1i}\]</span> Combined: <span class="math display">\[{Y}_{ti} = \gamma_{00} + \gamma_{01}G_{1i}+  \gamma_{02}G_{2i}  + \gamma_{10} (Time_{ti}) + \gamma_{11}(G_{1i}*Time_{ti}) +  \gamma_{12}(G_{2i}*Time_{ti}) +  U_{0i} + U_{1i}(Time_{ti}) + \varepsilon_{ti}\]</span></p>
 <table>
 <thead>
 <tr class="header">
@@ -3398,12 +3541,12 @@ Jail:</p>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Jail</td>
+<td>None</td>
 <td>0</td>
 <td>0</td>
 </tr>
 <tr class="even">
-<td>None</td>
+<td>Jail</td>
 <td>1</td>
 <td>0</td>
 </tr>
@@ -3415,9 +3558,323 @@ Jail:</p>
 </tbody>
 </table>
 <p>When we plot these, we are plotting the simple slopes. Subbing 1 and 0 into the equations above we end up with the following for the groups.</p>
-<p>None: Jail: Community Service:</p>
-<h2 id="continuous-time-invariant-moderator">Continuous Time-Invariant Moderator</h2>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<p>None: <span class="math display">\[\hat{Y}_{ti} = \gamma_{00} +  \gamma_{10} (Time_{ti})\]</span> Jail: <span class="math display">\[{Y}_{ti} = (\gamma_{00} + \gamma_{01}) +   ( \gamma_{10}  + \gamma_{11})(Time_{ti})\]</span> Community Service: <span class="math display">\[{Y}_{ti} = (\gamma_{00} + \gamma_{02}) +   ( \gamma_{10}  + \gamma_{12})(Time_{ti})\]</span></p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>cesd.3</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lme4/man/lmer.html'>lmer</a></span><span class='op'>(</span><span class='va'>CESD</span> <span class='op'>~</span> <span class='fl'>1</span> <span class='op'>+</span> <span class='va'>age0</span><span class='op'>*</span><span class='va'>groups</span> <span class='op'>+</span> <span class='op'>(</span><span class='va'>age0</span> <span class='op'>|</span> <span class='va'>PROC_CID</span><span class='op'>)</span>, data <span class='op'>=</span> <span class='va'>long.1</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>cesd.3</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Linear mixed model fit by REML [&#39;lmerMod&#39;]
+Formula: CESD ~ 1 + age0 * groups + (age0 | PROC_CID)
+   Data: long.1
+
+REML criterion at convergence: 3440.4
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-2.3178 -0.5822 -0.1687  0.4489  3.6986 
+
+Random effects:
+ Groups   Name        Variance Std.Dev. Corr 
+ PROC_CID (Intercept) 0.101256 0.31821       
+          age0        0.002421 0.04921  -0.25
+ Residual             0.201460 0.44884       
+Number of obs: 2084, groups:  PROC_CID, 924
+
+Fixed effects:
+                     Estimate Std. Error t value
+(Intercept)          0.614678   0.027810  22.102
+age0                 0.015394   0.007064   2.179
+groupsJail           0.153993   0.036976   4.165
+groupsCommServ       0.145874   0.041712   3.497
+age0:groupsJail     -0.009185   0.009169  -1.002
+age0:groupsCommServ -0.016996   0.010880  -1.562
+
+Correlation of Fixed Effects:
+            (Intr) age0   grpsJl grpsCS ag0:gJ
+age0        -0.378                            
+groupsJail  -0.752  0.284                     
+gropsCmmSrv -0.667  0.252  0.501              
+age0:grpsJl  0.291 -0.770 -0.384 -0.194       
+ag0:grpsCmS  0.245 -0.649 -0.184 -0.355  0.500</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>long.1</span> <span class='op'>%&gt;%</span>  
+  <span class='fu'>group_by</span><span class='op'>(</span><span class='va'>groups</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'><a href='https://modelr.tidyverse.org/reference/data_grid.html'>data_grid</a></span><span class='op'>(</span>age0 <span class='op'>=</span> <span class='fu'><a href='https://modelr.tidyverse.org/reference/seq_range.html'>seq_range</a></span><span class='op'>(</span><span class='va'>age0</span>, n <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>, <span class='va'>PROC_CID</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://modelr.tidyverse.org/reference/add_predictions.html'>add_predictions</a></span><span class='op'>(</span><span class='va'>cesd.3</span><span class='op'>)</span> 
+</code></pre>
+</div>
+<pre><code># A tibble: 9,240 x 4
+# Groups:   groups [3]
+   groups  age0 PROC_CID  pred
+   &lt;fct&gt;  &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;
+ 1 None      -2     9102 0.428
+ 2 None      -2    10001 0.494
+ 3 None      -2    12802 0.530
+ 4 None      -2    13801 0.564
+ 5 None      -2    18801 0.300
+ 6 None      -2    22901 0.362
+ 7 None      -2    23603 0.464
+ 8 None      -2    38803 0.499
+ 9 None      -2    42801 0.671
+10 None      -2    43902 0.559
+# … with 9,230 more rows</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>long.1</span> <span class='op'>%&gt;%</span>  
+  <span class='fu'>group_by</span><span class='op'>(</span><span class='va'>groups</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
+  <span class='fu'><a href='https://modelr.tidyverse.org/reference/data_grid.html'>data_grid</a></span><span class='op'>(</span>age0 <span class='op'>=</span> <span class='fu'><a href='https://modelr.tidyverse.org/reference/seq_range.html'>seq_range</a></span><span class='op'>(</span><span class='va'>age0</span>, n <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>, <span class='va'>PROC_CID</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://modelr.tidyverse.org/reference/add_predictions.html'>add_predictions</a></span><span class='op'>(</span><span class='va'>cesd.3</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'>group_by</span><span class='op'>(</span><span class='va'>age0</span>, <span class='va'>groups</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarize</a></span><span class='op'>(</span>pred <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>pred</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+    <span class='fu'>ggplot</span><span class='op'>(</span><span class='fu'>aes</span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>age0</span>, y <span class='op'>=</span> <span class='va'>pred</span>, group <span class='op'>=</span> <span class='va'>groups</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_line</span><span class='op'>(</span><span class='fu'>aes</span><span class='op'>(</span>color <span class='op'>=</span> <span class='va'>groups</span><span class='op'>)</span>, size <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_point</span><span class='op'>(</span>data <span class='op'>=</span> <span class='va'>long.1</span>, <span class='fu'>aes</span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>age0</span>, y <span class='op'>=</span> <span class='va'>CESD</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>ylab</span><span class='op'>(</span><span class='st'>"Depression"</span><span class='op'>)</span> <span class='op'>+</span> <span class='fu'>xlab</span><span class='op'>(</span><span class='st'>"age"</span><span class='op'>)</span> <span class='op'>+</span> <span class='fu'>scale_x_continuous</span><span class='op'>(</span>labels <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>10</span>, <span class='fl'>18</span>, by <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="plotting_files/figure-html5/unnamed-chunk-47-1.png" width="624" /></p>
+</div>
+<h1 id="continuous-time-invariant-moderator">Continuous Time-Invariant Moderator</h1>
+<p>Level 1:<br />
+<span class="math display">\[{Y}_{ti} = \beta_{0i}  + \beta_{1i}Time_{ti} + \varepsilon_{ti}\]</span></p>
+<p>Level 2:</p>
+<p><span class="math display">\[{\beta}_{0i} = \gamma_{00} + \gamma_{01}C_{i} +   U_{0i}\]</span></p>
+<p><span class="math display">\[{\beta}_{1i} = \gamma_{10} +  \gamma_{11}C_{i} +U_{1i}\]</span></p>
+<p>Combined: <span class="math display">\[{Y}_{ti} = \gamma_{00} + \gamma_{01}C_{i}+  \gamma_{10} (Time_{ti}) + \gamma_{11}(C_{i}*Time_{ti}) +  U_{0i} + U_{1j}(Time_{ti}) + \varepsilon_{ti}\]</span></p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>long.1</span><span class='op'>$</span><span class='va'>SensSeek.c</span> <span class='op'>&lt;-</span> <span class='va'>long.1</span><span class='op'>$</span><span class='va'>SensSeek</span> <span class='op'>-</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>long.1</span><span class='op'>$</span><span class='va'>SensSeek</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/pkg/psych/man/describe.html'>describe</a></span><span class='op'>(</span><span class='va'>long.1</span><span class='op'>$</span><span class='va'>SensSeek.c</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>   vars    n mean   sd median trimmed  mad   min  max range  skew
+X1    1 2084    0 0.58  -0.07       0 0.49 -1.74 1.26     3 -0.19
+   kurtosis   se
+X1     0.44 0.01</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>cesd.4</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lme4/man/lmer.html'>lmer</a></span><span class='op'>(</span><span class='va'>CESD</span> <span class='op'>~</span> <span class='fl'>1</span> <span class='op'>+</span> <span class='va'>age0</span><span class='op'>*</span><span class='va'>SensSeek.c</span> <span class='op'>+</span> <span class='op'>(</span><span class='va'>age0</span> <span class='op'>|</span> <span class='va'>PROC_CID</span><span class='op'>)</span>, data <span class='op'>=</span> <span class='va'>long.1</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>cesd.4</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Linear mixed model fit by REML [&#39;lmerMod&#39;]
+Formula: CESD ~ 1 + age0 * SensSeek.c + (age0 | PROC_CID)
+   Data: long.1
+
+REML criterion at convergence: 3436.1
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-2.3477 -0.5970 -0.1525  0.4536  3.7854 
+
+Random effects:
+ Groups   Name        Variance Std.Dev. Corr 
+ PROC_CID (Intercept) 0.101649 0.31882       
+          age0        0.002278 0.04772  -0.24
+ Residual             0.202924 0.45047       
+Number of obs: 2084, groups:  PROC_CID, 924
+
+Fixed effects:
+                 Estimate Std. Error t value
+(Intercept)      0.715479   0.015833  45.189
+age0             0.007810   0.003936   1.984
+SensSeek.c       0.088807   0.024405   3.639
+age0:SensSeek.c -0.004804   0.006785  -0.708
+
+Correlation of Fixed Effects:
+            (Intr) age0   SnsSk.
+age0        -0.374              
+SensSeek.c  -0.029  0.021       
+ag0:SnsSk.c  0.019  0.028 -0.442</code></pre>
+</div>
+<p>When we plot these, we are plotting the simple slopes. Subbing plus and minus 1 sd and the mean into the equations above we end up with the following for the groups.</p>
+<p>-1sd: <span class="math display">\[\hat{Y}_{ti} = [\gamma_{00} +(\gamma_{01}*-.58)] + [\gamma_{10}  + (\gamma_{11}*-1)]*Time_{ti}\]</span></p>
+<p>Mean: <span class="math display">\[\hat{Y}_{ti} = \gamma_{00} + \gamma_{10} * (Time_{ti})\]</span></p>
+<p>+1sd: <span class="math display">\[\hat{Y}_{ti} = [\gamma_{00} +\gamma_{01}*.58] + [\gamma_{10}  + \gamma_{11}]*Time_{ti}\]</span></p>
+<h2 id="modelr-1">modelr</h2>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>long.1</span> <span class='op'>%&gt;%</span>  
+  <span class='fu'><a href='https://modelr.tidyverse.org/reference/data_grid.html'>data_grid</a></span><span class='op'>(</span>age0 <span class='op'>=</span> <span class='fu'><a href='https://modelr.tidyverse.org/reference/seq_range.html'>seq_range</a></span><span class='op'>(</span><span class='va'>age0</span>, n <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>, SensSeek <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>.58</span>, <span class='fl'>0</span>, <span class='op'>-</span><span class='fl'>.58</span><span class='op'>)</span><span class='op'>)</span> 
+</code></pre>
+</div>
+<pre><code># A tibble: 30 x 2
+     age0 SensSeek
+    &lt;dbl&gt;    &lt;dbl&gt;
+ 1 -2       -0.580
+ 2 -2        0    
+ 3 -2        0.580
+ 4 -0.889   -0.580
+ 5 -0.889    0    
+ 6 -0.889    0.580
+ 7  0.222   -0.580
+ 8  0.222    0    
+ 9  0.222    0.580
+10  1.33    -0.580
+# … with 20 more rows</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>long.1</span> <span class='op'>%&gt;%</span>  
+  <span class='fu'><a href='https://modelr.tidyverse.org/reference/data_grid.html'>data_grid</a></span><span class='op'>(</span>age0 <span class='op'>=</span> <span class='fu'><a href='https://modelr.tidyverse.org/reference/seq_range.html'>seq_range</a></span><span class='op'>(</span><span class='va'>age0</span>, n <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>, SensSeek <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>.58</span>, <span class='fl'>0</span>, <span class='op'>-</span><span class='fl'>.58</span><span class='op'>)</span>, <span class='va'>PROC_CID</span><span class='op'>)</span> 
+</code></pre>
+</div>
+<pre><code># A tibble: 27,720 x 3
+    age0 SensSeek PROC_CID
+   &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
+ 1    -2   -0.580     1601
+ 2    -2   -0.580     9102
+ 3    -2   -0.580     9501
+ 4    -2   -0.580     9502
+ 5    -2   -0.580     9503
+ 6    -2   -0.580    10001
+ 7    -2   -0.580    12802
+ 8    -2   -0.580    13801
+ 9    -2   -0.580    14302
+10    -2   -0.580    17502
+# … with 27,710 more rows</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>long.1</span> <span class='op'>%&gt;%</span>  
+  <span class='fu'><a href='https://modelr.tidyverse.org/reference/data_grid.html'>data_grid</a></span><span class='op'>(</span>age0 <span class='op'>=</span> <span class='fu'><a href='https://modelr.tidyverse.org/reference/seq_range.html'>seq_range</a></span><span class='op'>(</span><span class='va'>age0</span>, n <span class='op'>=</span> <span class='fl'>10</span><span class='op'>)</span>, SensSeek.c <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>.58</span>, <span class='fl'>0</span>, <span class='op'>-</span><span class='fl'>.58</span><span class='op'>)</span>, <span class='va'>PROC_CID</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'><a href='https://modelr.tidyverse.org/reference/add_predictions.html'>add_predictions</a></span><span class='op'>(</span><span class='va'>cesd.4</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'>group_by</span><span class='op'>(</span><span class='va'>age0</span>, <span class='va'>SensSeek.c</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarize</a></span><span class='op'>(</span>pred <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>pred</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+    <span class='fu'>ggplot</span><span class='op'>(</span><span class='fu'>aes</span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>age0</span>, y <span class='op'>=</span> <span class='va'>pred</span>, group <span class='op'>=</span> <span class='va'>SensSeek.c</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_line</span><span class='op'>(</span><span class='fu'>aes</span><span class='op'>(</span>color <span class='op'>=</span> <span class='va'>SensSeek.c</span><span class='op'>)</span>, size <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span> 
+</code></pre>
+</div>
+<p><img src="plotting_files/figure-html5/unnamed-chunk-52-1.png" width="624" /></p>
+</div>
+<p>##ggeffects</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>ggpred.4</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://strengejacke.github.io/ggeffects/reference/ggpredict.html'>ggpredict</a></span><span class='op'>(</span><span class='va'>cesd.3</span>, terms <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"age0"</span>, <span class='st'>"groups "</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>ggpred.4</span>
+</code></pre>
+</div>
+<pre><code># Predicted values of CESD
+# x = age0
+
+# groups = None
+
+ x | Predicted |       95% CI
+-----------------------------
+-2 |      0.58 | [0.51, 0.65]
+ 0 |      0.61 | [0.56, 0.67]
+ 2 |      0.65 | [0.59, 0.70]
+ 4 |      0.68 | [0.61, 0.74]
+ 6 |      0.71 | [0.63, 0.79]
+ 8 |      0.74 | [0.63, 0.84]
+
+# groups = Jail
+
+ x | Predicted |       95% CI
+-----------------------------
+-2 |      0.76 | [0.70, 0.82]
+ 0 |      0.77 | [0.72, 0.82]
+ 2 |      0.78 | [0.74, 0.83]
+ 4 |      0.79 | [0.74, 0.85]
+ 6 |      0.81 | [0.74, 0.87]
+ 8 |      0.82 | [0.73, 0.90]
+
+# groups = CommServ
+
+ x | Predicted |       95% CI
+-----------------------------
+-2 |      0.76 | [0.69, 0.84]
+ 0 |      0.76 | [0.70, 0.82]
+ 2 |      0.76 | [0.70, 0.82]
+ 4 |      0.75 | [0.68, 0.83]
+ 6 |      0.75 | [0.66, 0.85]
+ 8 |      0.75 | [0.62, 0.87]
+
+Adjusted for:
+* PROC_CID = 0 (population-level)</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>ggpred.4</span>  <span class='op'>%&gt;%</span> 
+    <span class='fu'>ggplot</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_line</span><span class='op'>(</span><span class='fu'>aes</span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>x</span>, y<span class='op'>=</span><span class='va'>predicted</span>, group <span class='op'>=</span> <span class='va'>group</span><span class='op'>)</span><span class='op'>)</span> 
+</code></pre>
+</div>
+<p><img src="plotting_files/figure-html5/unnamed-chunk-54-1.png" width="624" /></p>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>ggpred.5</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://strengejacke.github.io/ggeffects/reference/ggpredict.html'>ggpredict</a></span><span class='op'>(</span><span class='va'>cesd.4</span>, terms <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"age0"</span>, <span class='st'>"SensSeek.c "</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>ggpred.5</span>
+</code></pre>
+</div>
+<pre><code># Predicted values of CESD
+# x = age0
+
+# SensSeek.c = -0.58
+
+ x | Predicted |       95% CI
+-----------------------------
+-2 |      0.64 | [0.59, 0.70]
+ 0 |      0.66 | [0.62, 0.71]
+ 2 |      0.69 | [0.65, 0.72]
+ 4 |      0.71 | [0.66, 0.75]
+ 6 |      0.73 | [0.67, 0.79]
+ 8 |      0.75 | [0.67, 0.83]
+
+# SensSeek.c = 0
+
+ x | Predicted |       95% CI
+-----------------------------
+-2 |      0.70 | [0.66, 0.74]
+ 0 |      0.72 | [0.68, 0.75]
+ 2 |      0.73 | [0.70, 0.76]
+ 4 |      0.75 | [0.71, 0.78]
+ 6 |      0.76 | [0.72, 0.81]
+ 8 |      0.78 | [0.72, 0.84]
+
+# SensSeek.c = 0.58
+
+ x | Predicted |       95% CI
+-----------------------------
+-2 |      0.76 | [0.70, 0.81]
+ 0 |      0.77 | [0.73, 0.81]
+ 2 |      0.78 | [0.74, 0.82]
+ 4 |      0.79 | [0.74, 0.83]
+ 6 |      0.80 | [0.73, 0.86]
+ 8 |      0.81 | [0.73, 0.89]
+
+Adjusted for:
+* PROC_CID = 0 (population-level)</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://strengejacke.github.io/ggeffects/reference/plot.html'>plot</a></span><span class='op'>(</span><span class='va'>ggpred.5</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="plotting_files/figure-html5/unnamed-chunk-56-1.png" width="624" /></p>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>ggpred.5</span>  <span class='op'>%&gt;%</span> 
+    <span class='fu'>ggplot</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_line</span><span class='op'>(</span><span class='fu'>aes</span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>x</span>, y<span class='op'>=</span><span class='va'>predicted</span>, group <span class='op'>=</span> <span class='va'>group</span><span class='op'>)</span>, size <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span> 
+</code></pre>
+</div>
+<p><img src="plotting_files/figure-html5/unnamed-chunk-57-1.png" width="624" /></p>
+</div>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
