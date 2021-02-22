@@ -250,13 +250,6 @@ Again, there are lots of ways to do plots. Especially if you want quick plots ov
 plot(ggpred)
 ```
 
-##ggeffects + tidy
-
-```{r}
-tmp <- sens.1 %>%
-  tidy(effects = c("ran_pars", "ran_vals", "fixed"))
-tmp
-```
 
 Notice the number of rows. We now have random effect info for everyones intercept and slope. 
 
@@ -270,7 +263,23 @@ ggplot(aes(x = x, y = predicted)) +
 ```
 
 
-## tidy at the individual level
+```{r}
+long.1$ID <- as.factor(long.1$PROC_CID)
+sens.1f <- lmer(SensSeek ~ 1 + age0 + (age0 | ID), data = long.1)
+
+ggpred2 <- ggpredict(sens.1f, terms = c("age0", "ID"), type = "random")
+glimpse(ggpred2)
+```
+
+```{r}
+ggpred2 %>% 
+  ggplot( aes(x = x,y = predicted,
+                       group = group)) +
+  geom_line(alpha = .1)
+```
+
+
+## tidy 
 
 First step is to reduce our dataframe size by this helpful function
 
@@ -292,6 +301,13 @@ sample_n_of <- function(data, size, ...) {
 
 ```{r}
 sens.1 %>%
+  augment() 
+```
+
+
+
+```{r}
+sens.1 %>%
   augment() %>%
   sample_n_of(15, PROC_CID) %>% 
   ungroup() %>%
@@ -307,6 +323,13 @@ sens.1 %>%
 ```
 
 ## modelr 
+
+```{r}
+long.1 %>% 
+  data_grid(age0 = seq_range(age0, n = 10), PROC_CID,.model = long.1) %>% 
+  add_predictions(sens.1) 
+```
+
 
 ```{r}
 m.1 <- long.1 %>% 
