@@ -1,0 +1,849 @@
+---
+title: "tvc"
+output:
+  xaringan::moon_reader:
+    mathjax: https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML
+    css: xaringan-themer.css
+    seal: no
+    nature:
+      highlightStyle: github
+      highlightLines: yes
+      ratio: '16:9'
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r xaringan-themer, include = FALSE}
+library(xaringanthemer)
+mono_light(
+  base_color = "#23395b",
+  header_font_google = google_font("Josefin Sans"),
+  text_font_google   = google_font("Montserrat", "300", "300i"),
+  code_font_google   = google_font("Droid Mono"),
+)
+
+library(tidyverse)
+library(broom)
+library(tidybayes)
+library(modelr)
+library(viridis)
+```
+
+
+# Level 1 predictors 
+
+
+AKA Time-varying covariates (TVCs)  
+
+We have already have a predictor at level 1, time. The introduction of other level 1 predictors adds some complexity. 
+
+As a reminder, level 1 predictors repeat whereas level 2 predictors are constant. Level 1 is within person, whereas level 2 is between person. 
+
+---
+# Categorical (structured) vs continuous (unstructured) 
+
+Our repeated assessments are often collected based on some sort of structure. You have enough funding for three waves of data, and you proceed to call participants. These three waves may be specified to occur every 6 months, for example. However, it rarely works out that nicely. What to do? 
+
+Well, we could ignore the timing differences. Do we think that a few weeks difference will make or break your general conclusions? Sticking with wave is seen as treating time as categorical. 
+
+We could also treat it as continuous. This is usually preferred because why get rid of meaningful information? Within MLMs there is practically no downside to doing so. 
+
+Treating time as categorical, however, is standard with SEM based longitudinal methods. 
+
+---
+## Balanced vs unbalanced
+
+Balanced for longitudinal models means that everyone has the same number of repeated assessments. As with ANOVA/experimental designs, balance makes the math easier. 
+
+In longitudinal designs it is important  where this unbalance comes from. Does the unbalance occur because of dumb luck or is it systematically related to some variable e.g., attrition via death/health?
+
+The downfalls from unbalanced designs come from difficulties in convergence and interpretation. This is especially true when time is categorical rather than continuous (as continuous time makes estimation of variance components easier as it is more likely to be separated from the fixed effects).
+
+---
+# TVCs
+
+Consider health across time predicted by a level 1 exercise variable (1 = yes, exercised). 
+
+level 1: 
+$${Health}_{ti} = \beta_{0i}  + \beta_{1i}Time_{ti} + \beta_{2i}Exercise_{ti} + \varepsilon_{ti}$$
+
+Level 2: 
+$${\beta}_{0i} = \gamma_{00} +   U_{0i}$$  
+
+
+$${\beta}_{1i} = \gamma_{10} +  U_{1i}$$  
+
+$${\beta}_{2i} = \gamma_{20}$$  
+
+Combined: 
+
+$${Health}_{ti} =  [\gamma_{00} +   \gamma_{10}Time_{ti}   + \gamma_{20}Exercise_{ti}] + [ U_{0i}  + U_{1i}Time_{ti}+ \varepsilon_{ti}]$$
+
+---
+## interpretation 
+
+
+Tvs can be treated as another predictor with the effect of "controlling" for some TVC. Thus the regression coefficients in the model are conditional on this covariate. 
+
+$\gamma_{10}$ is the average rate of change in health, controlling for exercise
+
+$\gamma_{20}$ is the average difference in health when exercising vs when not, across time (so controlling for) 
+
+$\gamma_{00}$ is the average health at Time = 0 for those that do not exercise. Ie when both predictors are at zero.  
+
+
+---
+
+How would you visualize the fixed effects for varying combinations of exercise? 
+
+---
+## What if time is not focal?
+
+Usually time is not an important factor for studies that last for weeks where we want to look at repeated associations or correlations across time. What happens to the time variable? Two options: 
+
+1. Ignore it. 
+
+2. Use it to control to increases in your DV across time, but mostly disregard.
+
+
+---
+## Introducing a random slope for a TVC
+
+Person specific residuals make the interpretation of parameters a little more difficult as the model says that the gap between exercise and not exercise is the same for everyone. Should we allow it to be this way? 
+
+
+level 1: 
+$${Health}_{ti} = \beta_{0i}  + \beta_{1i}Time_{ti} + \beta_{2i}Exercise_{ti} + \varepsilon_{ti}$$
+
+Level 2: 
+$${\beta}_{0i} = \gamma_{00} +   U_{0i}$$  
+
+
+$${\beta}_{1i} = \gamma_{10} +  U_{1i}$$  
+
+$${\beta}_{2i} = \gamma_{20} +  U_{2i}$$  
+
+Level 2 variance-covariance matrix: 
+
+$$\begin{pmatrix} {U}_{0i} \\ {U}_{1i} \\ {U}_{2i} \end{pmatrix}
+\sim \mathcal{N} \begin{pmatrix} 
+  0,  &  \tau_{0}^{2} & \tau_{01}   & \tau_{02}   \\ 
+  0, & \tau_{10} & \tau_{1}^{2} & \tau_{12}  \\
+  0, & \tau_{20} & \tau_{21} & \tau_{2}^{2}
+\end{pmatrix}$$
+
+
+
+Residual variance at level 1
+
+$${R}_{ti} \sim \mathcal{N}(0, \sigma^{2})$$
+
+---
+## Where does the variance go? 
+
+Compared to time invariant (level 2) predictors, tvc/level 1 predictors are likely to explain variance level 1 and level 2 variance terms. This is because level 1 predictors can include both level 1 and level 2 information. 
+
+Typically level 2 predictors tend to only reduce level 2 variance. It is possible, however, that including a level 1 predictor will increase the variance in level 2 variance components. 
+
+
+---
+## Interactions among level 1 variables
+
+Couldn't exercise levels influence the slope of health? The previous models constrained the slopes to be the same, saying that people differ on level when exercising vs not but not on rate of change. 
+
+
+$${Health}_{ti} =  [\gamma_{00} +   \gamma_{10}Time_{ti}   + \gamma_{20}Exercise_{ti} + \gamma_{30}TimeXExercise_{ti}] + [ U_{0i}  + U_{1i}Time_{ti}+ \varepsilon_{ti}]$$
+
+How could you visualize this model? 
+
+How do you interpret each of the terms (knowing what you know about interactions)?
+
+How would all of this change if our level 1 variable was continuous? 
+
+
+---
+# Centering redux
+
+If we just leave the exercise variable by itself there is often a combination of within and between person information. The two sources are "smushed" together. 
+
+I could exercise more than the average person (between person) but my research question is about what happens when i exercise a lot, does that correspond to health. Because my excercise level varies there is within person information. 
+
+Together it is not clear whether exercise is associated with health BECAUSE people who exercise tend to be healthier (a between person question that could be addressed with cross sectional data) or is it because when someone exercises they feel healthier. 
+
+How is $\gamma_{20}Exercise_{ti}$ interpreted? 
+
+
+---
+## person mean centering
+
+Typically for level 1 we will want to within person-mean center to help with the issue of "smushed" variance. Especially when you are working with level 1 interactions, centering is important to interpret your lower order terms. 
+
+However, this gets rid of all mean level information for a person. The question at hand is not whether you exercise more or less it is compared to your typical levels, what happens when you exercise more or less. 
+
+If you are including a level 1 person centered variable in the model, note that 1) the average level of exercise is not controlled for and 2) the variation around the level will likely be related to the persons mean score. In other words, the within and between person variance of exercise is not neatly decomposed.
+
+To do so, we will have to create a new variable out of the existing level 1 variable, a person mean. This makes the effects of the person level uncorrelated with the effects of the between person level
+
+---
+## Seperating between and within person effects
+
+Level 1: 
+
+$${Health}_{ti} = \beta_{0i}  + \beta_{1i}Time_{ti} + \beta_{2i}(Exercise_{ti}-\overline{Exercise_{i}}) + \varepsilon_{ti}$$
+
+Level 2: 
+$${\beta}_{0i} = \gamma_{00} + \gamma_{01}\overline{Exercise_{i}} + U_{0i}$$  
+
+
+$${\beta}_{1i} = \gamma_{10} +  U_{1i}$$  
+
+$${\beta}_{2i} = \gamma_{20}$$
+
+---
+
+If we leave out out the level 2 exercise mean as a predictor that assumes there are no between person effects. 
+
+What would we be testing if we included included person mean exercise to the person level effect? 
+
+$${\beta}_{2i} = \gamma_{20}+ \gamma_{21}\overline{Exercise_{i}}$$
+
+
+---
+## Multiple level 1 predictors
+
+$${Health}_{ti} =  [\gamma_{00} +   \gamma_{10}Time_{ti}   + \gamma_{20}(Exercise_{ti}-\overline{Exercise_{i}}) + \gamma_{30}Mood_{ti}$$
+$$+\gamma_{40}(Mood*(Exercise_{ti}-\overline{Exercise_{i}}))_{ti} ] + [ U_{0i}  + U_{1i}Time_{ti}+ \varepsilon_{ti}]$$
+ 
+How would $\gamma_{20}$ and $\gamma_{40}$ change in interpretation if exercise was not person centered?
+ 
+---
+Level 1: 
+$${Health}_{ti} = \beta_{0i}  + \beta_{1i}Time_{ti} + \beta_{2i}(Exercise_{ti}-\overline{Exercise_{i}}) +$$
+$$\beta_{3i}Mood_{ti}+\beta_{4i}Mood_{ti}*(Exercise_{ti}-\overline{Exercise_{i}})  +\varepsilon_{ti}$$
+
+Level 2: 
+$${\beta}_{0i} = \gamma_{00} + \gamma_{01}\overline{Exercise_{i}} + U_{0i}$$  
+
+
+$${\beta}_{1i} = \gamma_{10} +  U_{1i}$$  
+
+$${\beta}_{2i} = \gamma_{20}$$
+$${\beta}_{3i} = \gamma_{30}$$
+$${\beta}_{4i} = \gamma_{40}$$
+
+---
+##What happens if we want to add a level 2 predictor? 
+ 
+$${Health}_{ti} =  [\gamma_{00} + \gamma_{10}Time_{ti} + \gamma_{20}(Exercise_{ti}-\overline{Exercise_{i}}) +\gamma_{30}Mood_{ti}+\gamma_{31}(Mood*\overline{Exercise_{i}})_{ti}$$ 
+ 
+ $$+\gamma_{40}(Mood*(Exercise_{ti}-\overline{Exercise_{i}}))_{ti} ] + [ U_{0i}  + U_{1i}Time_{ti}+ \varepsilon_{ti}]$$
+ 
+---
+
+Level 1: 
+$${Health}_{ti} = \beta_{0i}  + \beta_{1i}Time_{ti} + \beta_{2i}(Exercise_{ti}-\overline{Exercise_{i}}) + \beta_{3i}Mood_{ti} +\varepsilon_{ti}$$
+
+Level 2: 
+$${\beta}_{0i} = \gamma_{00} + \gamma_{01}\overline{Exercise_{i}} + U_{0i}$$  
+
+
+$${\beta}_{1i} = \gamma_{10} +  U_{1i}$$  
+
+$${\beta}_{2i} = \gamma_{20}$$
+$${\beta}_{3i} = \gamma_{30} + \gamma_{31}  (\overline{Exercise_{i}})$$
+
+
+
+---
+## Lagged models
+  
+What if I want to predict something in the future? Such that my exercise today is associated with future health gains. 
+
+Level 1
+$${Health}_{ti} = \beta_{0i}  + \beta_{1i}Time_{ti} + \beta_{2i}(Exercise_{(t-1)i}-\overline{Exercise_{i}}) + \varepsilon_{ti}$$
+
+Level 2: 
+$${\beta}_{0i} = \gamma_{00} + \gamma_{01}\overline{Exercise_{i}} + U_{0i}$$ 
+
+
+$${\beta}_{1i} = \gamma_{10} + \gamma_{11}\overline{Exercise_{i}} + U_{1i}$$  
+
+$${\beta}_{2i} = \gamma_{20}$$ 
+
+---
+
+How does this model differ from the above model? What does the $\gamma_{21}$ test? Would you want to include this term or not? 
+
+Level 1
+$${Health}_{ti} = \beta_{0i}  + \beta_{1i}Time_{ti} + \beta_{2i}(Exercise_{(t-1)i}-\overline{Exercise_{i}}) + \varepsilon_{ti}$$
+
+Level 2: 
+$${\beta}_{0i} = \gamma_{00} + \gamma_{01}\overline{Exercise_{i}} + U_{0i}$$ 
+
+
+$${\beta}_{1i} = \gamma_{10} + \gamma_{11}\overline{Exercise_{i}} + U_{1i}$$  
+
+
+$${\beta}_{2i} = \gamma_{20} + \gamma_{21}\overline{Exercise_{i}}$$
+
+---
+## Contextual models
+
+Grand mean centering our level 1 variables is another option. We have already seen that when we use time as level 1 predictor. However, for other tvc the interpretation gets a little more complicated. Remember that the between and within person variance is "smushed" together when we do not person center. 
+
+
+Level 1: 
+$${Health}_{ti} = \beta_{0i}  + \beta_{1i}Time_{ti} + \beta_{2i}(Exercise_{ti}-\overline{Exercise_{..}}) + \varepsilon_{ti}$$
+
+Level 2: 
+$${\beta}_{0i} = \gamma_{00} + \gamma_{01}(\overline{Exercise_{i}}-\overline{Exercise_{..}})+ U_{0i}$$  
+
+
+$${\beta}_{1i} = \gamma_{10} +  U_{1i}$$  
+
+$${\beta}_{2i} = \gamma_{20}$$
+
+When $\gamma_{01}\overline{Exercise_{i}}$ is included at level 2 when we have person-centered level 1 the effects separate the between and within. But level 2 controls for between meaning that $\beta_{2i}(Exercise_{ti}-\overline{Exercise_{..}})$ is now the within person effect, same as if we within person centered! 
+
+---
+
+How to interpret  $\gamma_{01}\overline{Exercise_{i}}$ ?
+
+The extent that daily exercise is higher for a given person than for the rest of the sample, we can expect that person’s mean exercise to be higher than the rest of the sample as well. Thus, part of the between-person effect can be captured just by including time-varying, level 1 exercise. As a result, $\gamma_{01}\overline{Exercise_{i}}$ represents the difference needed to get from the part of the between person effect carried by just level 1 to the total between-person effect that belongs in the level-2 model
+
+After controlling for the absolute amount of timevarying exercise, the incremental (unique) effect of average exercise is given by its level-2 contextual effect. For every unit higher person mean exercise, mean daily exercise are expected to be higher by the level-2 contextual effect. 
+
+In summary, similar in interpretation to the within and between separation. The contextual effect = between effect minus within person effect
+
+
+---
+## centering and random effects
+
+Level 1
+$${Health}_{ti} = \beta_{0i}  + \beta_{1i}(Exercise_{ti}-\overline{Exercise_{i}}) + \varepsilon_{ti}$$
+$${Health}_{ti} = \beta_{0i} +  \beta_{1i}(Exercise_{ti}-\overline{Exercise_{..}}) + \varepsilon_{ti}$$
+
+Level 2: 
+$${\beta}_{0i} = \gamma_{00} + \gamma_{01}(\overline{Exercise_{i}}-\overline{Exercise_{..}}) + U_{0i}$$ 
+$${\beta}_{1i} = \gamma_{10} +  U_{1i}$$
+Interpretation: 
+$$U_{1i}$$ 
+For PMC, the effect is relative association compared to typical person centered effect -- maybe some people have an effect where deviations of exercise influences health but others these deviations do not.
+For GMC, the effect contains both within and between person effects, so the interpretation is messier
+
+
+
+
+
+---
+
+## centering and random effects
+
+Level 1
+$${Health}_{ti} = \beta_{0i}  + \beta_{1i}(Exercise_{ti}-\overline{Exercise_{i}}) + \varepsilon_{ti}$$
+$${Health}_{ti} = \beta_{0i} +  \beta_{1i}(Exercise_{ti}-\overline{Exercise_{..}}) + \varepsilon_{ti}$$
+
+Level 2: 
+$${\beta}_{0i} = \gamma_{00} + \gamma_{01}(\overline{Exercise_{i}}-\overline{Exercise_{..}}) + U_{0i}$$ 
+$${\beta}_{1i} = \gamma_{10} +  U_{1i}$$
+Interpretation: 
+
+$$U_{0i}$$ 
+For PMC, the effect represents intercept differences when people are at their person mean. Are they healthier than the avg person, at their avg level of exercise?
+For GMC, the effect when people are at the grand mean. Are they healthier than the at the average level of exercise?
+
+
+
+---
+## categorical TVC
+
+Depending on your goal it might be confusing/difficult to person mean center. The issue is that centering in this manner leads to values that do not exist e.g. -.5 when your TVC = 0, for example. This also leads to potentially strange/uninterpretable intercepts or other lower order terms. 
+
+Suggested to keep raw tvc at level 1 but GMC at level 2.
+
+Sometimes time variables can be like this. For a recent paper we coded a life event as a tvc, which effectively switched on and of when the person encountered a life event. 
+
+
+|ID | wave           | event  |
+| ------------- |:-------------:| -----:|
+| 1    | 0 | 0 |
+| 1     |1      |   1 |
+| 1 | 2     |    1|
+| 2 | 0     |    0 |
+| 2 | 1      |    1|
+
+---
+# Within person mediation
+
+Pick your poison:
+
+1-1-1
+2-1-1
+2-2-1?
+
+see:
+http://quantpsy.org/pubs/bauer_preacher_gil_2006.pdf for a general overview
+https://vuorre.netlify.com/pdf/2017-vuorre-bolger.pdf for a experimental plus Bayesian perspective
+https://www.statmodel.com/download/pzz_012610_for_web.pdf for why MLM might not be best and using SEM along with MLM is preferable. 
+
+We will talk more about longitudinal mediation models when we cover SEM approaches.
+
+
+---
+# Distributional Models
+
+In basic regression with a Gaussian DV, we predict the mean, $\mu$ through some linear model. The second parameter of the normal distribution – the residual standard deviation $\sigma$ – is assumed to be constant across observations. We estimate it but do not try to predict it.
+
+This extends beyond Gaussian DVs, as most response distributions have a "location" parameter and one or more "scale" or "shape" parameters. Instead of only predicting the location parameters, we can also predict the scale parameters
+
+When to use? Well, you've seen this with Welch's t-test, and if you've ever done SEM you can model variance differences with group models all the time. 
+
+---
+
+$$y_{ik} \sim t(\mu_{ik}, \sigma_{ik})$$
+
+
+$$\mu_{ik} = \beta_0 + \beta_1 Group_{ik}$$
+
+$$\sigma_{ik} = \gamma_0 + \gamma_1 Group_{ik}$$
+
+
+
+
+---
+## MLM treatment
+
+$$NA_{ti} \sim \operatorname{Normal}(\mu_{ti}, \sigma_{i})$$
+
+$$\mu_{ti}  = \beta_0 + \beta_1 time_{ti} + u_{0i} + u_{1i} time_{ti}$$
+Standard MLM:
+$$\log(\sigma_i )  = \eta_0 $$
+distributional/melsm:
+$$\log(\sigma_i )  = \eta_0 + u_{2i}$$
+
+---
+
+Sigma, which captures the variation in NA not accounted for by the intercepts, time predictors, and the correlation. An assumption for MLM is that sigma does NOT vary across persons, occasions, or other variables. 
+
+This means that variance in our fitting/prediction are the same for everyone even though it seems inappropriate from person to person
+
+---
+
+
+```{r, messages = FALSE, warning=FALSE}
+library(readr)
+melsm <- read_csv("melsm.csv") %>% 
+  mutate(day01 = (day - 2) / max((day - 2)))
+```
+
+
+````{r}
+library(brms)
+library(tidybayes)
+melsm.1 <-
+  brm(family = gaussian,
+      N_A.std ~ 1 + day01 + (1 + day01 | record_id),
+      prior = c(prior(normal(0, 0.2), class = Intercept),
+                prior(normal(0, 1), class = b),
+                prior(exponential(1), class = sd),
+                prior(exponential(1), class = sigma),
+                prior(lkj(2), class = cor)),
+      iter = 3000, warmup = 1000, chains = 4, cores = 4,
+      data = melsm,
+      file = "melsm.1")
+```
+
+
+---
+
+```{r}
+summary(melsm.1)
+```
+
+---
+## MLM assumptions
+
+.pull-left[
+Sigma, which captures the variation in NA not accounted for by the intercepts, time predictors, and the correlation. An assumption is that sigma does NOT vary across persons, occasions, or other variables. 
+
+Posterior predictive interval is the same (and fitted) even though it seem inappropriate from person to person
+]
+
+.pull-right[
+```{r, echo = FALSE}
+newd <-
+  melsm %>% 
+  filter(record_id %in% c(30, 115)) %>% 
+  dplyr::select(record_id, N_A.std, day01)
+
+fits <- newd %>%
+  add_fitted_draws(melsm.1)
+
+preds <- newd %>%
+  add_predicted_draws(melsm.1)
+
+fits %>% 
+ggplot(aes(x = day01, y = N_A.std)) +
+  stat_lineribbon(aes(y = .value),.width = c(.95), alpha = 1/4, color ="grey") +
+  stat_lineribbon(data = preds, aes(y = .prediction),.width = c(.90), alpha = 1/4, color ="blue") +
+  geom_point(data = newd) +
+  facet_wrap(~record_id)
+```
+]
+
+---
+
+```{r}
+
+melsm.2 <-
+  brm(family = gaussian,
+      bf(N_A.std ~ 1 + day01 + (1 + day01 |i| record_id),
+         sigma ~ 1 + (1 |i| record_id)),
+                prior = c(prior(normal(0, 0.2), class = Intercept),
+                prior(normal(0, 1), class = b),
+                prior(exponential(1), class = sd),
+                prior(normal(0, 1), class = Intercept, dpar = sigma),
+                prior(exponential(1), class = sd, dpar = sigma),
+                prior(lkj(2), class = cor)),
+      iter = 3000, warmup = 1000, chains = 4, cores = 4,
+      data = melsm,
+      file = "melsm.2")
+```
+
+---
+
+
+
+```{r, out.height= '550px'}
+summary(melsm.2)
+```
+
+
+---
+
+```{r}
+
+melsm.2 %>% 
+  spread_draws(b_sigma_Intercept) %>% 
+  exp() %>% 
+  median_qi()
+```
+
+---
+```{r, echo = FALSE}
+melsm.2 %>% 
+spread_draws(b_sigma_Intercept,r_record_id__sigma[ID, term]) %>% 
+  mutate(b_sigma_Intercept = exp(b_sigma_Intercept)) %>% 
+  mutate(r_record_id__sigma = exp(r_record_id__sigma)) %>% 
+   median_qi(estimate = b_sigma_Intercept + r_record_id__sigma) %>% 
+  ggplot(aes(x = reorder(ID, estimate), y = estimate, ymin = .lower, ymax = .upper)) +
+   geom_pointinterval(point_colour = "black", interval_color = "grey", point_alpha = .25) + scale_x_discrete("Participants ranked by posterior SD", breaks = NULL) + ylab("sigma estimate") + theme_light()
+```
+
+---
+
+```{r, echo = FALSE}
+fits2 <- newd %>%
+  add_fitted_draws(melsm.2)
+
+preds2 <- newd %>%
+  add_predicted_draws(melsm.2)
+
+fits2 %>% 
+ggplot(aes(x = day01, y = N_A.std)) +
+  stat_lineribbon(aes(y = .value),.width = c(.95), alpha = 1/4, color ="grey") +
+  stat_lineribbon(data = preds2, aes(y = .prediction),.width = c(.90), alpha = 1/4, color ="blue") +
+  geom_point(data = newd) +
+  facet_wrap(~record_id)
+```
+
+
+---
+# Polynomial and Splines
+
+Polynomials
+level 1: 
+$$ {Y}_{ij} = \beta_{0j}  + \beta_{1j}(Time_{ij} - \bar{X)} + \beta_{2j}(Time_{ij} - \bar{X)}^2 + \varepsilon_{ij} $$
+
+
+Level 2: 
+$$ {\beta}_{0j} = \gamma_{00} +   U_{0j}$$  
+$$ {\beta}_{1j} = \gamma_{10} +  U_{1j} $$ 
+$$ {\beta}_{2j} = \gamma_{20} +  U_{2j} $$ 
+
+
+---
+## polynomial example
+
+
+```{r}
+library(readr)
+cdrs <- read_csv("~/Box/5165 Applied Longitudinal Data Analysis/Longitudinal/cdrs.csv")
+
+personality <- read_csv("~/Box/5165 Applied Longitudinal Data Analysis/Longitudinal/Subject_personality.csv")
+
+
+library(ggplot2) 
+
+
+gg1 <- ggplot(personality,
+   aes(x = neodate, y = neuroticism, group = mapid)) + geom_line()  
+gg1
+```
+
+---
+
+
+```{r}
+
+personality<- personality %>% 
+  group_by(mapid) %>%
+  arrange(neodate) %>% 
+  dplyr::mutate(wave = seq_len(n())) 
+```
+
+```{r}
+gg2 <- ggplot(personality,
+   aes(x = wave, y = neuroticism, group = mapid)) + geom_line()  
+gg2
+```
+
+---
+
+```{r}
+personality$neodate <- as.Date(personality$neodate, origin = "1900-01-01")
+
+gg3 <- ggplot(personality,
+   aes(x = neodate, y = neuroticism, group = mapid)) + geom_line()  
+gg3
+
+```
+
+
+---
+
+```{r, echo = FALSE}
+## convert to days from first assessment
+
+personality.wide <- personality %>% 
+  dplyr::select(mapid, wave, neodate) %>% 
+  spread(wave, neodate) 
+
+personality.wide$wave_1 <- personality.wide$'1'
+personality.wide$wave_2 <- personality.wide$'2'
+personality.wide$wave_3 <- personality.wide$'3'
+personality.wide$wave_4 <- personality.wide$'4'
+personality.wide$wave_5 <- personality.wide$'5'
+
+personality.wide <- personality.wide %>% 
+mutate (w_1 = (wave_1 - wave_1)/365,
+          w_2 = (wave_2 - wave_1)/365,
+          w_3 = (wave_3 - wave_1)/365,
+          w_4 = (wave_4 - wave_1)/365,
+        w_5 = (wave_5 - wave_1)/365)
+
+personality.long <- personality.wide %>% 
+  dplyr::select(mapid, w_1:w_5) %>% 
+  gather(wave, year, -mapid) %>% 
+  separate(wave, c('weeks', 'wave' ), sep="_") %>% 
+ dplyr::select(-weeks) 
+
+personality.long$wave <-  as.numeric(personality.long$wave)
+
+
+personality <- personality %>% 
+   left_join(personality.long, by = c('mapid', 'wave' )) 
+
+```
+
+
+```{r}
+gg4 <- ggplot(personality,
+   aes(x = year, y = neuroticism, group = mapid)) + geom_line()  
+gg4
+```
+
+---
+
+```{r}
+library(lme4)
+
+p1 <- lmer(neuroticism ~ year + (1 | mapid), data=personality)
+summary(p1)
+
+```
+
+
+---
+
+
+```{r}
+personality.s <- personality %>% 
+  group_by(mapid) %>% 
+  tally() %>% 
+   filter(n >=2) 
+
+ personality <- personality %>% 
+   filter(mapid %in% personality.s$mapid)
+
+p2 <- lmer(neuroticism ~ year + (1 | mapid), data=personality)
+summary(p2)
+
+```
+
+---
+
+```{r}
+p3 <- lmer(neuroticism ~ year + (year | mapid), data=personality)
+summary(p3)
+```
+
+---
+### importance of centering
+
+
+
+```{r}
+
+personality$year <- as.numeric(personality$year)
+  
+p4 <- lmer(neuroticism ~ year + I(year^2) + (year | mapid), data=personality)
+summary(p4)
+# woah, how do I interpret this? WHy all of a sudden non-sig? 
+# what would happen if I changed my time metric? 
+```
+
+---
+
+
+```{r}
+personality$year.c <- personality$year - 3.1
+
+p5 <- lmer(neuroticism ~ year.c + I(year.c^2) + (year.c | mapid), data=personality)
+summary(p5)
+```
+
+---
+### random terms
+
+
+fitting a random slope plus a random quadratic leads to difficulties ie non-convergence. What does this model say? 
+```{r}
+p6 <- lmer(neuroticism ~ year + I(year^2) + ( I(year^2) | mapid), data=personality)
+summary(p6)
+```
+
+---
+## Splines aka piecewise
+
+
+Fit more than 1 trajectory. Best to use when we have a reason for a qualitative difference at some identified time point. For example, before your health event you may have a different trajectory than after it and thus you would want to model two separate trajectories. Splines allow you to do this in a single model. You can do this in simple regression and the logic follows for growth models. 
+
+We simply replace time with dummy variables that represent different segments we wish to model. The point of separation is called a knot. You can have as many as you want and these can be pre-specified (usually for our case) or in more advanced treatments have the data specify it for you.   
+
+---
+### separate curves
+
+The most common is to create different trajectories that change across knots. The easiest example is to take your time variable and transform it into a Time1 and time2, that represent the different time periods. This is easiest to see if we choose our wave variable as our time metric, though you do not have to necessarily do it this way. 
+
+
+```{r}
+t1 <- tribble(
+  ~time, ~t0, ~t1,~t2,~t3,~t4,~t5,
+  "time 1", 0, 1,2,2,2,2,
+  "time 2", 0, 0,0,1,2,3
+)
+t1
+```
+
+
+The idea is that once you hit the knot your value stays the same. Same logic for the second knot, until you get to that knot you don't have a trajectory. 
+
+---
+###incremental curves
+
+This can be contrasted with a different type of coding, called incremental. Here the first trajectory keeps going, whereas the second trajectory starts at the position of the knot. 
+
+```{r}
+t2 <- tribble(
+  ~time, ~t0, ~t1,~t2,~t3,~t4,~t5,
+  "time 1", 0, 1,2,3,4,5,
+  "time 2", 0, 0,0,1,2,3
+)
+t2
+```
+
+The two coding schemes propose the same type of trajectory, the only thing that differs is the interpretation of the coefficients. 
+
+In the first, the two slope coefficients represent the actual slope in the respective time period. 
+
+In the second, the coefficient for time 2 represents the deviation from the slope in period 1. The positive of this second method is you can easily test whether these two slopes are different from one another. 
+
+---
+
+level 1: 
+
+$$ {Y}_{ij} = \beta_{0j}  + \beta_{1j}Time1_{ij} + \beta_{2j}Time2_{ij} + \varepsilon_{ij} $$
+
+
+
+
+Level 2: 
+$$ {\beta}_{0j} = \gamma_{00} +  U_{0j} $$  
+
+$$ {\beta}_{1j} = \gamma_{10} +  U_{1j} $$ 
+$$ {\beta}_{2j} = \gamma_{20} +  U_{2j} $$ 
+
+
+---
+###splines example
+
+
+```{r}
+
+personality$time1 <- recode(personality$wave, '1' = 0 , '2' = 1,  '3' = 1, '4' = 1,'5' = 1)      
+personality$time2 <- recode(personality$wave, '1' = 0 , '2' = 0,  '3' = 1, '4' = 2,'5' = 3) 
+
+
+```
+
+
+---
+
+```{r}
+p7 <- lmer(conscientiousness ~ time1 + time2 + (time1   | mapid) , data=personality)
+summary(p7)
+```
+
+---
+
+
+```{r}
+
+gg5 <- ggplot(personality, aes(x = wave, y = conscientiousness, group = mapid)) +  stat_smooth(method = 'lm', formula = y ~ poly(x,2, raw = TRUE),data = personality, aes(x = wave, y = conscientiousness, group=1)) + scale_y_continuous(limits = c(30, 40))
+gg5
+
+
+```
+
+---
+## splines + polynomial = polynomial piecewise
+
+
+$$ {Y}_{ij} = \beta_{0j}  + \beta_{1j}Time1_{ij} +  \beta_{2j}Time1_{ij}^2 + \beta_{3j}Time2_{ij} + \varepsilon_{ij} $$
+
+Level 2: 
+$$ {\beta}_{0j} = \gamma_{00} +  U_{0j} $$  
+
+$$ {\beta}_{1j} = \gamma_{10} +  U_{1j} $$ 
+$$ {\beta}_{2j} = \gamma_{20} +  U_{2j} $$
+$$ {\beta}_{3j} = \gamma_{30} +  U_{3j}$$ 
+
+
+
+
+

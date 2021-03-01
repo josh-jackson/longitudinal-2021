@@ -1,0 +1,2280 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>tvc</title>
+    <meta charset="utf-8" />
+    <!--radix_placeholder_navigation_in_header-->
+    <meta name="distill:offset" content=""/>
+
+    <script type="application/javascript">
+
+      window.headroom_prevent_pin = false;
+
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+
+        // initialize headroom for banner
+        var header = $('header').get(0);
+        var headerHeight = header.offsetHeight;
+        var headroom = new Headroom(header, {
+          tolerance: 5,
+          onPin : function() {
+            if (window.headroom_prevent_pin) {
+              window.headroom_prevent_pin = false;
+              headroom.unpin();
+            }
+          }
+        });
+        headroom.init();
+        if(window.location.hash)
+          headroom.unpin();
+        $(header).addClass('headroom--transition');
+
+        // offset scroll location for banner on hash change
+        // (see: https://github.com/WickyNilliams/headroom.js/issues/38)
+        window.addEventListener("hashchange", function(event) {
+          window.scrollTo(0, window.pageYOffset - (headerHeight + 25));
+        });
+
+        // responsive menu
+        $('.distill-site-header').each(function(i, val) {
+          var topnav = $(this);
+          var toggle = topnav.find('.nav-toggle');
+          toggle.on('click', function() {
+            topnav.toggleClass('responsive');
+          });
+        });
+
+        // nav dropdowns
+        $('.nav-dropbtn').click(function(e) {
+          $(this).next('.nav-dropdown-content').toggleClass('nav-dropdown-active');
+          $(this).parent().siblings('.nav-dropdown')
+             .children('.nav-dropdown-content').removeClass('nav-dropdown-active');
+        });
+        $("body").click(function(e){
+          $('.nav-dropdown-content').removeClass('nav-dropdown-active');
+        });
+        $(".nav-dropdown").click(function(e){
+          e.stopPropagation();
+        });
+      });
+    </script>
+
+    <style type="text/css">
+
+    /* Theme (user-documented overrideables for nav appearance) */
+
+    .distill-site-nav {
+      color: rgba(255, 255, 255, 0.8);
+      background-color: #0F2E3D;
+      font-size: 15px;
+      font-weight: 300;
+    }
+
+    .distill-site-nav a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .distill-site-nav a:hover {
+      color: white;
+    }
+
+    @media print {
+      .distill-site-nav {
+        display: none;
+      }
+    }
+
+    .distill-site-header {
+
+    }
+
+    .distill-site-footer {
+
+    }
+
+
+    /* Site Header */
+
+    .distill-site-header {
+      width: 100%;
+      box-sizing: border-box;
+      z-index: 3;
+    }
+
+    .distill-site-header .nav-left {
+      display: inline-block;
+      margin-left: 8px;
+    }
+
+    @media screen and (max-width: 768px) {
+      .distill-site-header .nav-left {
+        margin-left: 0;
+      }
+    }
+
+
+    .distill-site-header .nav-right {
+      float: right;
+      margin-right: 8px;
+    }
+
+    .distill-site-header a,
+    .distill-site-header .title {
+      display: inline-block;
+      text-align: center;
+      padding: 14px 10px 14px 10px;
+    }
+
+    .distill-site-header .title {
+      font-size: 18px;
+      min-width: 150px;
+    }
+
+    .distill-site-header .logo {
+      padding: 0;
+    }
+
+    .distill-site-header .logo img {
+      display: none;
+      max-height: 20px;
+      width: auto;
+      margin-bottom: -4px;
+    }
+
+    .distill-site-header .nav-image img {
+      max-height: 18px;
+      width: auto;
+      display: inline-block;
+      margin-bottom: -3px;
+    }
+
+
+
+    @media screen and (min-width: 1000px) {
+      .distill-site-header .logo img {
+        display: inline-block;
+      }
+      .distill-site-header .nav-left {
+        margin-left: 20px;
+      }
+      .distill-site-header .nav-right {
+        margin-right: 20px;
+      }
+      .distill-site-header .title {
+        padding-left: 12px;
+      }
+    }
+
+
+    .distill-site-header .nav-toggle {
+      display: none;
+    }
+
+    .nav-dropdown {
+      display: inline-block;
+      position: relative;
+    }
+
+    .nav-dropdown .nav-dropbtn {
+      border: none;
+      outline: none;
+      color: rgba(255, 255, 255, 0.8);
+      padding: 16px 10px;
+      background-color: transparent;
+      font-family: inherit;
+      font-size: inherit;
+      font-weight: inherit;
+      margin: 0;
+      margin-top: 1px;
+      z-index: 2;
+    }
+
+    .nav-dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: white;
+      min-width: 200px;
+      border: 1px solid rgba(0,0,0,0.15);
+      border-radius: 4px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.1);
+      z-index: 1;
+      margin-top: 2px;
+      white-space: nowrap;
+      padding-top: 4px;
+      padding-bottom: 4px;
+    }
+
+    .nav-dropdown-content hr {
+      margin-top: 4px;
+      margin-bottom: 4px;
+      border: none;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-dropdown-active {
+      display: block;
+    }
+
+    .nav-dropdown-content a, .nav-dropdown-content .nav-dropdown-header {
+      color: black;
+      padding: 6px 24px;
+      text-decoration: none;
+      display: block;
+      text-align: left;
+    }
+
+    .nav-dropdown-content .nav-dropdown-header {
+      display: block;
+      padding: 5px 24px;
+      padding-bottom: 0;
+      text-transform: uppercase;
+      font-size: 14px;
+      color: #999999;
+      white-space: nowrap;
+    }
+
+    .nav-dropdown:hover .nav-dropbtn {
+      color: white;
+    }
+
+    .nav-dropdown-content a:hover {
+      background-color: #ddd;
+      color: black;
+    }
+
+    .nav-right .nav-dropdown-content {
+      margin-left: -45%;
+      right: 0;
+    }
+
+    @media screen and (max-width: 768px) {
+      .distill-site-header a, .distill-site-header .nav-dropdown  {display: none;}
+      .distill-site-header a.nav-toggle {
+        float: right;
+        display: block;
+      }
+      .distill-site-header .title {
+        margin-left: 0;
+      }
+      .distill-site-header .nav-right {
+        margin-right: 0;
+      }
+      .distill-site-header {
+        overflow: hidden;
+      }
+      .nav-right .nav-dropdown-content {
+        margin-left: 0;
+      }
+    }
+
+
+    @media screen and (max-width: 768px) {
+      .distill-site-header.responsive {position: relative; min-height: 500px; }
+      .distill-site-header.responsive a.nav-toggle {
+        position: absolute;
+        right: 0;
+        top: 0;
+      }
+      .distill-site-header.responsive a,
+      .distill-site-header.responsive .nav-dropdown {
+        display: block;
+        text-align: left;
+      }
+      .distill-site-header.responsive .nav-left,
+      .distill-site-header.responsive .nav-right {
+        width: 100%;
+      }
+      .distill-site-header.responsive .nav-dropdown {float: none;}
+      .distill-site-header.responsive .nav-dropdown-content {position: relative;}
+      .distill-site-header.responsive .nav-dropdown .nav-dropbtn {
+        display: block;
+        width: 100%;
+        text-align: left;
+      }
+    }
+
+    /* Site Footer */
+
+    .distill-site-footer {
+      width: 100%;
+      overflow: hidden;
+      box-sizing: border-box;
+      z-index: 3;
+      margin-top: 30px;
+      padding-top: 30px;
+      padding-bottom: 30px;
+      text-align: center;
+    }
+
+    /* Headroom */
+
+    d-title {
+      padding-top: 6rem;
+    }
+
+    @media print {
+      d-title {
+        padding-top: 4rem;
+      }
+    }
+
+    .headroom {
+      z-index: 1000;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+    }
+
+    .headroom--transition {
+      transition: all .4s ease-in-out;
+    }
+
+    .headroom--unpinned {
+      top: -100px;
+    }
+
+    .headroom--pinned {
+      top: 0;
+    }
+
+    /* adjust viewport for navbar height */
+    /* helps vertically center bootstrap (non-distill) content */
+    .min-vh-100 {
+      min-height: calc(100vh - 100px) !important;
+    }
+
+    </style>
+
+    <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+    <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet"/>
+    <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet"/>
+    <script src="site_libs/headroom-0.9.4/headroom.min.js"></script>
+    <script src="site_libs/autocomplete-0.37.1/autocomplete.min.js"></script>
+    <script src="site_libs/fuse-6.4.1/fuse.min.js"></script>
+
+    <script type="application/javascript">
+
+    function getMeta(metaName) {
+      var metas = document.getElementsByTagName('meta');
+      for (let i = 0; i < metas.length; i++) {
+        if (metas[i].getAttribute('name') === metaName) {
+          return metas[i].getAttribute('content');
+        }
+      }
+      return '';
+    }
+
+    function offsetURL(url) {
+      var offset = getMeta('distill:offset');
+      return offset ? offset + '/' + url : url;
+    }
+
+    function createFuseIndex() {
+
+      // create fuse index
+      var options = {
+        keys: [
+          { name: 'title', weight: 20 },
+          { name: 'categories', weight: 15 },
+          { name: 'description', weight: 10 },
+          { name: 'contents', weight: 5 },
+        ],
+        ignoreLocation: true,
+        threshold: 0
+      };
+      var fuse = new window.Fuse([], options);
+
+      // fetch the main search.json
+      return fetch(offsetURL('search.json'))
+        .then(function(response) {
+          if (response.status == 200) {
+            return response.json().then(function(json) {
+              // index main articles
+              json.articles.forEach(function(article) {
+                fuse.add(article);
+              });
+              // download collections and index their articles
+              return Promise.all(json.collections.map(function(collection) {
+                return fetch(offsetURL(collection)).then(function(response) {
+                  if (response.status === 200) {
+                    return response.json().then(function(articles) {
+                      articles.forEach(function(article) {
+                        fuse.add(article);
+                      });
+                    })
+                  } else {
+                    return Promise.reject(
+                      new Error('Unexpected status from search index request: ' +
+                                response.status)
+                    );
+                  }
+                });
+              })).then(function() {
+                return fuse;
+              });
+            });
+
+          } else {
+            return Promise.reject(
+              new Error('Unexpected status from search index request: ' +
+                          response.status)
+            );
+          }
+        });
+    }
+
+    window.document.addEventListener("DOMContentLoaded", function (event) {
+
+      // get search element (bail if we don't have one)
+      var searchEl = window.document.getElementById('distill-search');
+      if (!searchEl)
+        return;
+
+      createFuseIndex()
+        .then(function(fuse) {
+
+          // make search box visible
+          searchEl.classList.remove('hidden');
+
+          // initialize autocomplete
+          var options = {
+            autoselect: true,
+            hint: false,
+            minLength: 2,
+          };
+          window.autocomplete(searchEl, options, [{
+            source: function(query, callback) {
+              const searchOptions = {
+                isCaseSensitive: false,
+                shouldSort: true,
+                minMatchCharLength: 2,
+                limit: 10,
+              };
+              var results = fuse.search(query, searchOptions);
+              callback(results
+                .map(function(result) { return result.item; })
+              );
+            },
+            templates: {
+              suggestion: function(suggestion) {
+                var img = suggestion.preview && Object.keys(suggestion.preview).length > 0
+                  ? `<img src="${offsetURL(suggestion.preview)}"</img>`
+                  : '';
+                var html = `
+                  <div class="search-item">
+                    <h3>${suggestion.title}</h3>
+                    <div class="search-item-description">
+                      ${suggestion.description || ''}
+                    </div>
+                    <div class="search-item-preview">
+                      ${img}
+                    </div>
+                  </div>
+                `;
+                return html;
+              }
+            }
+          }]).on('autocomplete:selected', function(event, suggestion) {
+            window.location.href = offsetURL(suggestion.path);
+          });
+          // remove inline display style on autocompleter (we want to
+          // manage responsive display via css)
+          $('.algolia-autocomplete').css("display", "");
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+
+    });
+
+    </script>
+
+    <style type="text/css">
+
+    .nav-search {
+      font-size: x-small;
+    }
+
+    /* Algolioa Autocomplete */
+
+    .algolia-autocomplete {
+      display: inline-block;
+      margin-left: 10px;
+      vertical-align: sub;
+      background-color: white;
+      color: black;
+      padding: 6px;
+      padding-top: 8px;
+      padding-bottom: 0;
+      border-radius: 6px;
+      border: 1px #0F2E3D solid;
+      width: 180px;
+    }
+
+
+    @media screen and (max-width: 768px) {
+      .distill-site-nav .algolia-autocomplete {
+        display: none;
+        visibility: hidden;
+      }
+      .distill-site-nav.responsive .algolia-autocomplete {
+        display: inline-block;
+        visibility: visible;
+      }
+      .distill-site-nav.responsive .algolia-autocomplete .aa-dropdown-menu {
+        margin-left: 0;
+        width: 400px;
+        max-height: 400px;
+      }
+    }
+
+    .algolia-autocomplete .aa-input, .algolia-autocomplete .aa-hint {
+      width: 90%;
+      outline: none;
+      border: none;
+    }
+
+    .algolia-autocomplete .aa-hint {
+      color: #999;
+    }
+    .algolia-autocomplete .aa-dropdown-menu {
+      width: 550px;
+      max-height: 70vh;
+      overflow-x: visible;
+      overflow-y: scroll;
+      padding: 5px;
+      margin-top: 3px;
+      margin-left: -150px;
+      background-color: #fff;
+      border-radius: 5px;
+      border: 1px solid #999;
+      border-top: none;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion {
+      cursor: pointer;
+      padding: 5px 4px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion:last-of-type {
+      border-bottom: none;
+      margin-bottom: 2px;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item {
+      overflow: hidden;
+      font-size: 0.8em;
+      line-height: 1.4em;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item h3 {
+      font-size: 1rem;
+      margin-block-start: 0;
+      margin-block-end: 5px;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-description {
+      display: inline-block;
+      overflow: hidden;
+      height: 2.8em;
+      width: 80%;
+      margin-right: 4%;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-preview {
+      display: inline-block;
+      width: 15%;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-preview img {
+      height: 3em;
+      width: auto;
+      display: none;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-preview img[src] {
+      display: initial;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion.aa-cursor {
+      background-color: #eee;
+    }
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion em {
+      font-weight: bold;
+      font-style: normal;
+    }
+
+    </style>
+
+
+    <!--/radix_placeholder_navigation_in_header-->
+    <!--radix_placeholder_site_in_header-->
+    <!--/radix_placeholder_site_in_header-->
+    
+    <style type="text/css">
+    body {
+      padding-top: 60px;
+    }
+    </style>
+    <style type="text/css">
+    /* base variables */
+
+    /* Edit the CSS properties in this file to create a custom
+       Distill theme. Only edit values in the right column
+       for each row; values shown are the CSS defaults.
+       To return any property to the default,
+       you may set its value to: unset
+       All rows must end with a semi-colon.                      */
+
+    /* Optional: embed custom fonts here with `@import`          */
+    /* This must remain at the top of this file.                 */
+
+
+
+    html {
+      /*-- Main font sizes --*/
+      --title-size:      50px;
+      --body-size:       1.06rem;
+      --code-size:       14px;
+      --aside-size:      12px;
+      --fig-cap-size:    13px;
+      /*-- Main font colors --*/
+      --title-color:     #000000;
+      --header-color:    rgba(0, 0, 0, 0.8);
+      --body-color:      rgba(0, 0, 0, 0.8);
+      --aside-color:     rgba(0, 0, 0, 0.6);
+      --fig-cap-color:   rgba(0, 0, 0, 0.6);
+      /*-- Specify custom fonts ~~~ must be imported above   --*/
+      --heading-font:    sans-serif;
+      --mono-font:       monospace;
+      --body-font:       sans-serif;
+      --navbar-font:     sans-serif;  /* websites + blogs only */
+    }
+
+    /*-- ARTICLE METADATA --*/
+    d-byline {
+      --heading-size:    0.6rem;
+      --heading-color:   rgba(0, 0, 0, 0.5);
+      --body-size:       0.8rem;
+      --body-color:      rgba(0, 0, 0, 0.8);
+    }
+
+    /*-- ARTICLE TABLE OF CONTENTS --*/
+    .d-contents {
+      --heading-size:    18px;
+      --contents-size:   13px;
+    }
+
+    /*-- ARTICLE APPENDIX --*/
+    d-appendix {
+      --heading-size:    15px;
+      --heading-color:   rgba(0, 0, 0, 0.65);
+      --text-size:       0.8em;
+      --text-color:      rgba(0, 0, 0, 0.5);
+    }
+
+    /*-- WEBSITE HEADER + FOOTER --*/
+    /* These properties only apply to Distill sites and blogs  */
+
+    .distill-site-header {
+      --title-size:       18px;
+      --text-color:       rgba(255, 255, 255, 0.8);
+      --text-size:        15px;
+      --hover-color:      white;
+      --bkgd-color:       #0F2E3D;
+    }
+
+    .distill-site-footer {
+      --text-color:       rgba(255, 255, 255, 0.8);
+      --text-size:        15px;
+      --hover-color:      white;
+      --bkgd-color:       #0F2E3D;
+    }
+
+    /*-- Additional custom styles --*/
+    /* Add any additional CSS rules below                      */
+    </style>
+    <style type="text/css">
+    /* base variables */
+
+    /* Edit the CSS properties in this file to create a custom
+       Distill theme. Only edit values in the right column
+       for each row; values shown are the CSS defaults.
+       To return any property to the default,
+       you may set its value to: unset
+       All rows must end with a semi-colon.                      */
+
+    /* Optional: embed custom fonts here with `@import`          */
+    /* This must remain at the top of this file.                 */
+    @import url('https://fonts.googleapis.com/css2?family=Amiri');
+    @import url('https://fonts.googleapis.com/css2?family=Bitter');
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono');
+
+
+
+    html {
+      /*-- Main font sizes --*/
+      --title-size:      50px;
+      --body-size:       1.06rem;
+      --code-size:       14px;
+      --aside-size:      12px;
+      --fig-cap-size:    13px;
+      /*-- Main font colors --*/
+      --title-color:     #000000;
+      --header-color:    rgba(0, 0, 0, 0.8);
+      --body-color:      rgba(0, 0, 0, 0.8);
+      --aside-color:     rgba(0, 0, 0, 0.6);
+      --fig-cap-color:   rgba(0, 0, 0, 0.6);
+      /*-- Specify custom fonts ~~~ must be imported above   --*/
+      --heading-font:    "Amiri", serif;
+      --mono-font:       "DM Mono", monospace;
+      --body-font:       "Bitter", sans-serif;
+      --navbar-font:     "Amiri", sans-serif;  /* websites + blogs only */
+    }
+
+    /*-- ARTICLE METADATA --*/
+    d-byline {
+      --heading-size:    0.6rem;
+      --heading-color:   rgba(0, 0, 0, 0.5);
+      --body-size:       0.8rem;
+      --body-color:      rgba(0, 0, 0, 0.8);
+    }
+
+    /*-- ARTICLE TABLE OF CONTENTS --*/
+    .d-contents {
+      --heading-size:    18px;
+      --contents-size:   13px;
+    }
+
+    /*-- ARTICLE APPENDIX --*/
+    d-appendix {
+      --heading-size:    15px;
+      --heading-color:   rgba(0, 0, 0, 0.65);
+      --text-size:       0.8em;
+      --text-color:      rgba(0, 0, 0, 0.5);
+    }
+
+    /*-- WEBSITE HEADER + FOOTER --*/
+    /* These properties only apply to Distill sites and blogs  */
+
+    .distill-site-header {
+      --title-size:       18px;
+      --text-color:       rgba(255, 255, 255, 0.8);
+      --text-size:        15px;
+      --hover-color:      white;
+      --bkgd-color:       #0F2E3D;
+    }
+
+    .distill-site-footer {
+      --text-color:       rgba(255, 255, 255, 0.8);
+      --text-size:        15px;
+      --hover-color:      white;
+      --bkgd-color:       #0F2E3D;
+    }
+
+    /*-- Additional custom styles --*/
+    /* Add any additional CSS rules below                      */
+    </style>
+    <style type="text/css">
+    /* base style */
+
+    /* FONT FAMILIES */
+
+    :root {
+      --heading-default: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+      --mono-default: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+      --body-default: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body,
+    .posts-list .post-preview p,
+    .posts-list .description p {
+      font-family: var(--body-font), var(--body-default);
+    }
+
+    h1, h2, h3, h4, h5, h6,
+    .posts-list .post-preview h2,
+    .posts-list .description h2 {
+      font-family: var(--heading-font), var(--heading-default);
+    }
+
+    d-article div.sourceCode code,
+    d-article pre code {
+      font-family: var(--mono-font), var(--mono-default);
+    }
+
+
+    /*-- TITLE --*/
+    d-title h1,
+    .posts-list > h1 {
+      color: var(--title-color, black);
+    }
+
+    d-title h1 {
+      font-size: var(--title-size, 50px);
+    }
+
+    /*-- HEADERS --*/
+    d-article h1,
+    d-article h2,
+    d-article h3,
+    d-article h4,
+    d-article h5,
+    d-article h6 {
+      color: var(--header-color, rgba(0, 0, 0, 0.8));
+    }
+
+    /*-- BODY --*/
+    d-article > p,  /* only text inside of <p> tags */
+    d-article > ul, /* lists */
+    d-article > ol {
+      color: var(--body-color, rgba(0, 0, 0, 0.8));
+      font-size: var(--body-size, 1.06rem);
+    }
+
+
+    /*-- CODE --*/
+    d-article div.sourceCode code,
+    d-article pre code {
+      font-size: var(--code-size, 14px);
+    }
+
+    /*-- ASIDE --*/
+    d-article aside {
+      font-size: var(--aside-size, 12px);
+      color: var(--aside-color, rgba(0, 0, 0, 0.6));
+    }
+
+    /*-- FIGURE CAPTIONS --*/
+    figure .caption,
+    figure figcaption,
+    .figure .caption {
+      font-size: var(--fig-cap-size, 13px);
+      color: var(--fig-cap-color, rgba(0, 0, 0, 0.6));
+    }
+
+    /*-- METADATA --*/
+    d-byline h3 {
+      font-size: var(--heading-size, 0.6rem);
+      color: var(--heading-color, rgba(0, 0, 0, 0.5));
+    }
+
+    d-byline {
+      font-size: var(--body-size, 0.8rem);
+      color: var(--body-color, rgba(0, 0, 0, 0.8));
+    }
+
+    d-byline a,
+    d-article d-byline a {
+      color: var(--body-color, rgba(0, 0, 0, 0.8));
+    }
+
+    /*-- TABLE OF CONTENTS --*/
+    .d-contents nav h3 {
+      font-size: var(--heading-size, 18px);
+    }
+
+    .d-contents nav a {
+      font-size: var(--contents-size, 13px);
+    }
+
+    /*-- APPENDIX --*/
+    d-appendix h3 {
+      font-size: var(--heading-size, 15px);
+      color: var(--heading-color, rgba(0, 0, 0, 0.65));
+    }
+
+    d-appendix {
+      font-size: var(--text-size, 0.8em);
+      color: var(--text-color, rgba(0, 0, 0, 0.5));
+    }
+
+    d-appendix d-footnote-list a.footnote-backlink {
+      color: var(--text-color, rgba(0, 0, 0, 0.5));
+    }
+
+    /*-- WEBSITE HEADER + FOOTER --*/
+    .distill-site-header .title {
+      font-size: var(--title-size, 18px);
+      font-family: var(--navbar-font), var(--heading-default);
+    }
+
+    .distill-site-header a,
+    .nav-dropdown .nav-dropbtn {
+      font-family: var(--navbar-font), var(--heading-default);
+    }
+
+    .nav-dropdown .nav-dropbtn {
+      color: var(--text-color, rgba(255, 255, 255, 0.8));
+      font-size: var(--text-size, 15px);
+    }
+
+    .distill-site-header a:hover,
+    .nav-dropdown:hover .nav-dropbtn {
+      color: var(--hover-color, white);
+    }
+
+    .distill-site-header {
+      font-size: var(--text-size, 15px);
+      color: var(--text-color, rgba(255, 255, 255, 0.8));
+      background-color: var(--bkgd-color, #0F2E3D);
+    }
+
+    .distill-site-footer {
+      font-size: var(--text-size, 15px);
+      color: var(--text-color, rgba(255, 255, 255, 0.8));
+      background-color: var(--bkgd-color, #0F2E3D);
+    }
+
+    .distill-site-footer a:hover {
+      color: var(--hover-color, white);
+    }</style>
+    <script src="tvc_files/header-attrs-2.6.6/header-attrs.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+<!--radix_placeholder_navigation_before_body-->
+<header class="header header--fixed" role="banner">
+<nav class="distill-site-nav distill-site-header">
+<div class="nav-left">
+<a href="index.html" class="title">Applied Longitudinal Data Analysis</a>
+</div>
+<div class="nav-right">
+<a href="index.html">Home</a>
+<div class="nav-dropdown">
+<button class="nav-dropbtn">
+Lectures
+ 
+<span class="down-arrow">&#x25BE;</span>
+</button>
+<div class="nav-dropdown-content">
+<a href="intro-1.html">Intro to longitudinal</a>
+<a href="mlm.html">MLM</a>
+<a href="conditional.html">conditional models</a>
+<a href="tvc.html">time varying conditional models</a>
+</div>
+</div>
+<div class="nav-dropdown">
+<button class="nav-dropbtn">
+Workshops
+ 
+<span class="down-arrow">&#x25BE;</span>
+</button>
+<div class="nav-dropdown-content">
+<a href="data.html">data</a>
+<a href="lme4.html">lme4</a>
+<a href="plotting.html">plotting</a>
+</div>
+</div>
+<a href="syllabus.html">Syllabus</a>
+<div class="nav-dropdown">
+<button class="nav-dropbtn">
+Homeworks
+ 
+<span class="down-arrow">&#x25BE;</span>
+</button>
+<div class="nav-dropdown-content">
+<a href="hw-1.html">homework 1</a>
+<a href="hw-2.html">homework 2</a>
+</div>
+</div>
+<a href="https://github.com/josh-jackson/longitudinal-2021">
+<i class="fab fa-github" aria-hidden="true"></i>
+</a>
+<a href="javascript:void(0);" class="nav-toggle">&#9776;</a>
+</div>
+</nav>
+</header>
+<!--/radix_placeholder_navigation_before_body-->
+<!--radix_placeholder_site_before_body-->
+<!--/radix_placeholder_site_before_body-->
+
+
+
+
+
+
+# Level 1 predictors 
+
+
+AKA Time-varying covariates (TVCs)  
+
+We have already have a predictor at level 1, time. The introduction of other level 1 predictors adds some complexity. 
+
+As a reminder, level 1 predictors repeat whereas level 2 predictors are constant. Level 1 is within person, whereas level 2 is between person. 
+
+---
+# Categorical (structured) vs continuous (unstructured) 
+
+Our repeated assessments are often collected based on some sort of structure. You have enough funding for three waves of data, and you proceed to call participants. These three waves may be specified to occur every 6 months, for example. However, it rarely works out that nicely. What to do? 
+
+Well, we could ignore the timing differences. Do we think that a few weeks difference will make or break your general conclusions? Sticking with wave is seen as treating time as categorical. 
+
+We could also treat it as continuous. This is usually preferred because why get rid of meaningful information? Within MLMs there is practically no downside to doing so. 
+
+Treating time as categorical, however, is standard with SEM based longitudinal methods. 
+
+---
+## Balanced vs unbalanced
+
+Balanced for longitudinal models means that everyone has the same number of repeated assessments. As with ANOVA/experimental designs, balance makes the math easier. 
+
+In longitudinal designs it is important  where this unbalance comes from. Does the unbalance occur because of dumb luck or is it systematically related to some variable e.g., attrition via death/health?
+
+The downfalls from unbalanced designs come from difficulties in convergence and interpretation. This is especially true when time is categorical rather than continuous (as continuous time makes estimation of variance components easier as it is more likely to be separated from the fixed effects).
+
+---
+# TVCs
+
+Consider health across time predicted by a level 1 exercise variable (1 = yes, exercised). 
+
+level 1: 
+`$${Health}_{ti} = \beta_{0i}  + \beta_{1i}Time_{ti} + \beta_{2i}Exercise_{ti} + \varepsilon_{ti}$$`
+
+Level 2: 
+`$${\beta}_{0i} = \gamma_{00} +   U_{0i}$$`  
+
+
+`$${\beta}_{1i} = \gamma_{10} +  U_{1i}$$`  
+
+`$${\beta}_{2i} = \gamma_{20}$$`  
+
+Combined: 
+
+`$${Health}_{ti} =  [\gamma_{00} +   \gamma_{10}Time_{ti}   + \gamma_{20}Exercise_{ti}] + [ U_{0i}  + U_{1i}Time_{ti}+ \varepsilon_{ti}]$$`
+
+---
+## interpretation 
+
+
+Tvs can be treated as another predictor with the effect of "controlling" for some TVC. Thus the regression coefficients in the model are conditional on this covariate. 
+
+`\(\gamma_{10}\)` is the average rate of change in health, controlling for exercise
+
+`\(\gamma_{20}\)` is the average difference in health when exercising vs when not, across time (so controlling for) 
+
+`\(\gamma_{00}\)` is the average health at Time = 0 for those that do not exercise. Ie when both predictors are at zero.  
+
+
+---
+
+How would you visualize the fixed effects for varying combinations of exercise? 
+
+---
+## What if time is not focal?
+
+Usually time is not an important factor for studies that last for weeks where we want to look at repeated associations or correlations across time. What happens to the time variable? Two options: 
+
+1. Ignore it. 
+
+2. Use it to control to increases in your DV across time, but mostly disregard.
+
+
+---
+## Introducing a random slope for a TVC
+
+Person specific residuals make the interpretation of parameters a little more difficult as the model says that the gap between exercise and not exercise is the same for everyone. Should we allow it to be this way? 
+
+
+level 1: 
+`$${Health}_{ti} = \beta_{0i}  + \beta_{1i}Time_{ti} + \beta_{2i}Exercise_{ti} + \varepsilon_{ti}$$`
+
+Level 2: 
+`$${\beta}_{0i} = \gamma_{00} +   U_{0i}$$`  
+
+
+`$${\beta}_{1i} = \gamma_{10} +  U_{1i}$$`  
+
+`$${\beta}_{2i} = \gamma_{20} +  U_{2i}$$`  
+
+Level 2 variance-covariance matrix: 
+
+`$$\begin{pmatrix} {U}_{0i} \\ {U}_{1i} \\ {U}_{2i} \end{pmatrix}
+\sim \mathcal{N} \begin{pmatrix} 
+  0,  &amp;  \tau_{0}^{2} &amp; \tau_{01}   &amp; \tau_{02}   \\ 
+  0, &amp; \tau_{10} &amp; \tau_{1}^{2} &amp; \tau_{12}  \\
+  0, &amp; \tau_{20} &amp; \tau_{21} &amp; \tau_{2}^{2}
+\end{pmatrix}$$`
+
+
+
+Residual variance at level 1
+
+`$${R}_{ti} \sim \mathcal{N}(0, \sigma^{2})$$`
+
+---
+## Where does the variance go? 
+
+Compared to time invariant (level 2) predictors, tvc/level 1 predictors are likely to explain variance level 1 and level 2 variance terms. This is because level 1 predictors can include both level 1 and level 2 information. 
+
+Typically level 2 predictors tend to only reduce level 2 variance. It is possible, however, that including a level 1 predictor will increase the variance in level 2 variance components. 
+
+
+---
+## Interactions among level 1 variables
+
+Couldn't exercise levels influence the slope of health? The previous models constrained the slopes to be the same, saying that people differ on level when exercising vs not but not on rate of change. 
+
+
+`$${Health}_{ti} =  [\gamma_{00} +   \gamma_{10}Time_{ti}   + \gamma_{20}Exercise_{ti} + \gamma_{30}TimeXExercise_{ti}] + [ U_{0i}  + U_{1i}Time_{ti}+ \varepsilon_{ti}]$$`
+
+How could you visualize this model? 
+
+How do you interpret each of the terms (knowing what you know about interactions)?
+
+How would all of this change if our level 1 variable was continuous? 
+
+
+---
+# Centering redux
+
+If we just leave the exercise variable by itself there is often a combination of within and between person information. The two sources are "smushed" together. 
+
+I could exercise more than the average person (between person) but my research question is about what happens when i exercise a lot, does that correspond to health. Because my excercise level varies there is within person information. 
+
+Together it is not clear whether exercise is associated with health BECAUSE people who exercise tend to be healthier (a between person question that could be addressed with cross sectional data) or is it because when someone exercises they feel healthier. 
+
+How is `\(\gamma_{20}Exercise_{ti}\)` interpreted? 
+
+
+---
+## person mean centering
+
+Typically for level 1 we will want to within person-mean center to help with the issue of "smushed" variance. Especially when you are working with level 1 interactions, centering is important to interpret your lower order terms. 
+
+However, this gets rid of all mean level information for a person. The question at hand is not whether you exercise more or less it is compared to your typical levels, what happens when you exercise more or less. 
+
+If you are including a level 1 person centered variable in the model, note that 1) the average level of exercise is not controlled for and 2) the variation around the level will likely be related to the persons mean score. In other words, the within and between person variance of exercise is not neatly decomposed.
+
+To do so, we will have to create a new variable out of the existing level 1 variable, a person mean. This makes the effects of the person level uncorrelated with the effects of the between person level
+
+---
+## Seperating between and within person effects
+
+Level 1: 
+
+`$${Health}_{ti} = \beta_{0i}  + \beta_{1i}Time_{ti} + \beta_{2i}(Exercise_{ti}-\overline{Exercise_{i}}) + \varepsilon_{ti}$$`
+
+Level 2: 
+`$${\beta}_{0i} = \gamma_{00} + \gamma_{01}\overline{Exercise_{i}} + U_{0i}$$`  
+
+
+`$${\beta}_{1i} = \gamma_{10} +  U_{1i}$$`  
+
+`$${\beta}_{2i} = \gamma_{20}$$`
+
+---
+
+If we leave out out the level 2 exercise mean as a predictor that assumes there are no between person effects. 
+
+What would we be testing if we included included person mean exercise to the person level effect? 
+
+`$${\beta}_{2i} = \gamma_{20}+ \gamma_{21}\overline{Exercise_{i}}$$`
+
+
+---
+## Multiple level 1 predictors
+
+`$${Health}_{ti} =  [\gamma_{00} +   \gamma_{10}Time_{ti}   + \gamma_{20}(Exercise_{ti}-\overline{Exercise_{i}}) + \gamma_{30}Mood_{ti}$$`
+`$$+\gamma_{40}(Mood*(Exercise_{ti}-\overline{Exercise_{i}}))_{ti} ] + [ U_{0i}  + U_{1i}Time_{ti}+ \varepsilon_{ti}]$$`
+ 
+How would `\(\gamma_{20}\)` and `\(\gamma_{40}\)` change in interpretation if exercise was not person centered?
+ 
+---
+Level 1: 
+`$${Health}_{ti} = \beta_{0i}  + \beta_{1i}Time_{ti} + \beta_{2i}(Exercise_{ti}-\overline{Exercise_{i}}) +$$`
+`$$\beta_{3i}Mood_{ti}+\beta_{4i}Mood_{ti}*(Exercise_{ti}-\overline{Exercise_{i}})  +\varepsilon_{ti}$$`
+
+Level 2: 
+`$${\beta}_{0i} = \gamma_{00} + \gamma_{01}\overline{Exercise_{i}} + U_{0i}$$`  
+
+
+`$${\beta}_{1i} = \gamma_{10} +  U_{1i}$$`  
+
+`$${\beta}_{2i} = \gamma_{20}$$`
+`$${\beta}_{3i} = \gamma_{30}$$`
+`$${\beta}_{4i} = \gamma_{40}$$`
+
+---
+##What happens if we want to add a level 2 predictor? 
+ 
+`$${Health}_{ti} =  [\gamma_{00} + \gamma_{10}Time_{ti} + \gamma_{20}(Exercise_{ti}-\overline{Exercise_{i}}) +\gamma_{30}Mood_{ti}+\gamma_{31}(Mood*\overline{Exercise_{i}})_{ti}$$` 
+ 
+ `$$+\gamma_{40}(Mood*(Exercise_{ti}-\overline{Exercise_{i}}))_{ti} ] + [ U_{0i}  + U_{1i}Time_{ti}+ \varepsilon_{ti}]$$`
+ 
+---
+
+Level 1: 
+`$${Health}_{ti} = \beta_{0i}  + \beta_{1i}Time_{ti} + \beta_{2i}(Exercise_{ti}-\overline{Exercise_{i}}) + \beta_{3i}Mood_{ti} +\varepsilon_{ti}$$`
+
+Level 2: 
+`$${\beta}_{0i} = \gamma_{00} + \gamma_{01}\overline{Exercise_{i}} + U_{0i}$$`  
+
+
+`$${\beta}_{1i} = \gamma_{10} +  U_{1i}$$`  
+
+`$${\beta}_{2i} = \gamma_{20}$$`
+`$${\beta}_{3i} = \gamma_{30} + \gamma_{31}  (\overline{Exercise_{i}})$$`
+
+
+
+---
+## Lagged models
+  
+What if I want to predict something in the future? Such that my exercise today is associated with future health gains. 
+
+Level 1
+`$${Health}_{ti} = \beta_{0i}  + \beta_{1i}Time_{ti} + \beta_{2i}(Exercise_{(t-1)i}-\overline{Exercise_{i}}) + \varepsilon_{ti}$$`
+
+Level 2: 
+`$${\beta}_{0i} = \gamma_{00} + \gamma_{01}\overline{Exercise_{i}} + U_{0i}$$` 
+
+
+`$${\beta}_{1i} = \gamma_{10} + \gamma_{11}\overline{Exercise_{i}} + U_{1i}$$`  
+
+`$${\beta}_{2i} = \gamma_{20}$$` 
+
+---
+
+How does this model differ from the above model? What does the `\(\gamma_{21}\)` test? Would you want to include this term or not? 
+
+Level 1
+`$${Health}_{ti} = \beta_{0i}  + \beta_{1i}Time_{ti} + \beta_{2i}(Exercise_{(t-1)i}-\overline{Exercise_{i}}) + \varepsilon_{ti}$$`
+
+Level 2: 
+`$${\beta}_{0i} = \gamma_{00} + \gamma_{01}\overline{Exercise_{i}} + U_{0i}$$` 
+
+
+`$${\beta}_{1i} = \gamma_{10} + \gamma_{11}\overline{Exercise_{i}} + U_{1i}$$`  
+
+
+`$${\beta}_{2i} = \gamma_{20} + \gamma_{21}\overline{Exercise_{i}}$$`
+
+---
+## Contextual models
+
+Grand mean centering our level 1 variables is another option. We have already seen that when we use time as level 1 predictor. However, for other tvc the interpretation gets a little more complicated. Remember that the between and within person variance is "smushed" together when we do not person center. 
+
+
+Level 1: 
+`$${Health}_{ti} = \beta_{0i}  + \beta_{1i}Time_{ti} + \beta_{2i}(Exercise_{ti}-\overline{Exercise_{..}}) + \varepsilon_{ti}$$`
+
+Level 2: 
+`$${\beta}_{0i} = \gamma_{00} + \gamma_{01}(\overline{Exercise_{i}}-\overline{Exercise_{..}})+ U_{0i}$$`  
+
+
+`$${\beta}_{1i} = \gamma_{10} +  U_{1i}$$`  
+
+`$${\beta}_{2i} = \gamma_{20}$$`
+
+When `\(\gamma_{01}\overline{Exercise_{i}}\)` is included at level 2 when we have person-centered level 1 the effects separate the between and within. But level 2 controls for between meaning that `\(\beta_{2i}(Exercise_{ti}-\overline{Exercise_{..}})\)` is now the within person effect, same as if we within person centered! 
+
+---
+
+How to interpret  `\(\gamma_{01}\overline{Exercise_{i}}\)` ?
+
+The extent that daily exercise is higher for a given person than for the rest of the sample, we can expect that person’s mean exercise to be higher than the rest of the sample as well. Thus, part of the between-person effect can be captured just by including time-varying, level 1 exercise. As a result, `\(\gamma_{01}\overline{Exercise_{i}}\)` represents the difference needed to get from the part of the between person effect carried by just level 1 to the total between-person effect that belongs in the level-2 model
+
+After controlling for the absolute amount of timevarying exercise, the incremental (unique) effect of average exercise is given by its level-2 contextual effect. For every unit higher person mean exercise, mean daily exercise are expected to be higher by the level-2 contextual effect. 
+
+In summary, similar in interpretation to the within and between separation. The contextual effect = between effect minus within person effect
+
+
+---
+## centering and random effects
+
+Level 1
+`$${Health}_{ti} = \beta_{0i}  + \beta_{1i}(Exercise_{ti}-\overline{Exercise_{i}}) + \varepsilon_{ti}$$`
+`$${Health}_{ti} = \beta_{0i} +  \beta_{1i}(Exercise_{ti}-\overline{Exercise_{..}}) + \varepsilon_{ti}$$`
+
+Level 2: 
+`$${\beta}_{0i} = \gamma_{00} + \gamma_{01}(\overline{Exercise_{i}}-\overline{Exercise_{..}}) + U_{0i}$$` 
+`$${\beta}_{1i} = \gamma_{10} +  U_{1i}$$`
+Interpretation: 
+`$$U_{1i}$$` 
+For PMC, the effect is relative association compared to typical person centered effect -- maybe some people have an effect where deviations of exercise influences health but others these deviations do not.
+For GMC, the effect contains both within and between person effects, so the interpretation is messier
+
+
+
+
+
+---
+
+## centering and random effects
+
+Level 1
+`$${Health}_{ti} = \beta_{0i}  + \beta_{1i}(Exercise_{ti}-\overline{Exercise_{i}}) + \varepsilon_{ti}$$`
+`$${Health}_{ti} = \beta_{0i} +  \beta_{1i}(Exercise_{ti}-\overline{Exercise_{..}}) + \varepsilon_{ti}$$`
+
+Level 2: 
+`$${\beta}_{0i} = \gamma_{00} + \gamma_{01}(\overline{Exercise_{i}}-\overline{Exercise_{..}}) + U_{0i}$$` 
+`$${\beta}_{1i} = \gamma_{10} +  U_{1i}$$`
+Interpretation: 
+
+`$$U_{0i}$$` 
+For PMC, the effect represents intercept differences when people are at their person mean. Are they healthier than the avg person, at their avg level of exercise?
+For GMC, the effect when people are at the grand mean. Are they healthier than the at the average level of exercise?
+
+
+
+---
+## categorical TVC
+
+Depending on your goal it might be confusing/difficult to person mean center. The issue is that centering in this manner leads to values that do not exist e.g. -.5 when your TVC = 0, for example. This also leads to potentially strange/uninterpretable intercepts or other lower order terms. 
+
+Suggested to keep raw tvc at level 1 but GMC at level 2.
+
+Sometimes time variables can be like this. For a recent paper we coded a life event as a tvc, which effectively switched on and of when the person encountered a life event. 
+
+
+|ID | wave           | event  |
+| ------------- |:-------------:| -----:|
+| 1    | 0 | 0 |
+| 1     |1      |   1 |
+| 1 | 2     |    1|
+| 2 | 0     |    0 |
+| 2 | 1      |    1|
+
+---
+# Within person mediation
+
+Pick your poison:
+
+1-1-1
+2-1-1
+2-2-1?
+
+see:
+http://quantpsy.org/pubs/bauer_preacher_gil_2006.pdf for a general overview
+https://vuorre.netlify.com/pdf/2017-vuorre-bolger.pdf for a experimental plus Bayesian perspective
+https://www.statmodel.com/download/pzz_012610_for_web.pdf for why MLM might not be best and using SEM along with MLM is preferable. 
+
+We will talk more about longitudinal mediation models when we cover SEM approaches.
+
+
+---
+# Distributional Models
+
+In basic regression with a Gaussian DV, we predict the mean, `\(\mu\)` through some linear model. The second parameter of the normal distribution – the residual standard deviation `\(\sigma\)` – is assumed to be constant across observations. We estimate it but do not try to predict it.
+
+This extends beyond Gaussian DVs, as most response distributions have a "location" parameter and one or more "scale" or "shape" parameters. Instead of only predicting the location parameters, we can also predict the scale parameters
+
+When to use? Well, you've seen this with Welch's t-test, and if you've ever done SEM you can model variance differences with group models all the time. 
+
+---
+
+`$$y_{ik} \sim t(\mu_{ik}, \sigma_{ik})$$`
+
+
+`$$\mu_{ik} = \beta_0 + \beta_1 Group_{ik}$$`
+
+`$$\sigma_{ik} = \gamma_0 + \gamma_1 Group_{ik}$$`
+
+
+
+
+---
+## MLM treatment
+
+`$$NA_{ti} \sim \operatorname{Normal}(\mu_{ti}, \sigma_{i})$$`
+
+`$$\mu_{ti}  = \beta_0 + \beta_1 time_{ti} + u_{0i} + u_{1i} time_{ti}$$`
+Standard MLM:
+$$\log(\sigma_i )  = \eta_0 $$
+distributional/melsm:
+`$$\log(\sigma_i )  = \eta_0 + u_{2i}$$`
+
+---
+
+Sigma, which captures the variation in NA not accounted for by the intercepts, time predictors, and the correlation. An assumption for MLM is that sigma does NOT vary across persons, occasions, or other variables. 
+
+This means that variance in our fitting/prediction are the same for everyone even though it seems inappropriate from person to person
+
+---
+
+
+
+```r
+library(readr)
+melsm &lt;- read_csv("melsm.csv") %&gt;% 
+  mutate(day01 = (day - 2) / max((day - 2)))
+```
+
+```
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   X1 = col_double(),
+##   P_A.std = col_double(),
+##   day = col_double(),
+##   P_A.lag = col_double(),
+##   N_A.lag = col_double(),
+##   steps.pm = col_double(),
+##   steps.pmd = col_double(),
+##   record_id = col_double(),
+##   N_A.std = col_double()
+## )
+```
+
+
+
+```r
+library(brms)
+library(tidybayes)
+melsm.1 &lt;-
+  brm(family = gaussian,
+      N_A.std ~ 1 + day01 + (1 + day01 | record_id),
+      prior = c(prior(normal(0, 0.2), class = Intercept),
+                prior(normal(0, 1), class = b),
+                prior(exponential(1), class = sd),
+                prior(exponential(1), class = sigma),
+                prior(lkj(2), class = cor)),
+      iter = 3000, warmup = 1000, chains = 4, cores = 4,
+      data = melsm,
+      file = "melsm.1")
+```
+
+
+---
+
+
+```r
+summary(melsm.1)
+```
+
+```
+##  Family: gaussian 
+##   Links: mu = identity; sigma = identity 
+## Formula: N_A.std ~ 1 + day01 + (1 + day01 | record_id) 
+##    Data: melsm (Number of observations: 13033) 
+## Samples: 4 chains, each with iter = 3000; warmup = 1000; thin = 1;
+##          total post-warmup samples = 8000
+## 
+## Group-Level Effects: 
+## ~record_id (Number of levels: 193) 
+##                      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS
+## sd(Intercept)            0.77      0.04     0.70     0.86 1.00     1447
+## sd(day01)                0.65      0.05     0.57     0.75 1.00     2782
+## cor(Intercept,day01)    -0.34      0.08    -0.49    -0.18 1.00     2855
+##                      Tail_ESS
+## sd(Intercept)            2864
+## sd(day01)                4965
+## cor(Intercept,day01)     4221
+## 
+## Population-Level Effects: 
+##           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## Intercept     0.03      0.06    -0.08     0.15 1.00      707     1450
+## day01        -0.16      0.06    -0.27    -0.05 1.00     2426     4367
+## 
+## Family Specific Parameters: 
+##       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## sigma     0.61      0.00     0.60     0.62 1.00    14365     4831
+## 
+## Samples were drawn using sampling(NUTS). For each parameter, Bulk_ESS
+## and Tail_ESS are effective sample size measures, and Rhat is the potential
+## scale reduction factor on split chains (at convergence, Rhat = 1).
+```
+
+---
+## MLM assumptions
+
+.pull-left[
+Sigma, which captures the variation in NA not accounted for by the intercepts, time predictors, and the correlation. An assumption is that sigma does NOT vary across persons, occasions, or other variables. 
+
+Posterior predictive interval is the same (and fitted) even though it seem inappropriate from person to person
+]
+
+.pull-right[
+![](tvc_files/figure-html/unnamed-chunk-4-1.png)&lt;!-- --&gt;
+]
+
+---
+
+
+```r
+melsm.2 &lt;-
+  brm(family = gaussian,
+      bf(N_A.std ~ 1 + day01 + (1 + day01 |i| record_id),
+         sigma ~ 1 + (1 |i| record_id)),
+                prior = c(prior(normal(0, 0.2), class = Intercept),
+                prior(normal(0, 1), class = b),
+                prior(exponential(1), class = sd),
+                prior(normal(0, 1), class = Intercept, dpar = sigma),
+                prior(exponential(1), class = sd, dpar = sigma),
+                prior(lkj(2), class = cor)),
+      iter = 3000, warmup = 1000, chains = 4, cores = 4,
+      data = melsm,
+      file = "melsm.2")
+```
+
+---
+
+
+
+
+```r
+summary(melsm.2)
+```
+
+```
+##  Family: gaussian 
+##   Links: mu = identity; sigma = log 
+## Formula: N_A.std ~ 1 + day01 + (1 + day01 | i | record_id) 
+##          sigma ~ 1 + (1 | i | record_id)
+##    Data: melsm (Number of observations: 13033) 
+## Samples: 4 chains, each with iter = 3000; warmup = 1000; thin = 1;
+##          total post-warmup samples = 8000
+## 
+## Group-Level Effects: 
+## ~record_id (Number of levels: 193) 
+##                                Estimate Est.Error l-95% CI u-95% CI Rhat
+## sd(Intercept)                      0.76      0.04     0.69     0.84 1.00
+## sd(day01)                          0.60      0.04     0.52     0.69 1.00
+## sd(sigma_Intercept)                0.69      0.04     0.63     0.77 1.00
+## cor(Intercept,day01)              -0.33      0.08    -0.49    -0.17 1.00
+## cor(Intercept,sigma_Intercept)     0.61      0.05     0.51     0.70 1.01
+## cor(day01,sigma_Intercept)        -0.10      0.08    -0.26     0.06 1.01
+##                                Bulk_ESS Tail_ESS
+## sd(Intercept)                       708     1265
+## sd(day01)                          1644     3365
+## sd(sigma_Intercept)                 694     1520
+## cor(Intercept,day01)                735     1374
+## cor(Intercept,sigma_Intercept)      800     1466
+## cor(day01,sigma_Intercept)          542     1343
+## 
+## Population-Level Effects: 
+##                 Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## Intercept           0.04      0.05    -0.07     0.14 1.01      283      574
+## sigma_Intercept    -0.78      0.05    -0.88    -0.68 1.00      339      713
+## day01              -0.16      0.05    -0.26    -0.05 1.00      477     1023
+## 
+## Samples were drawn using sampling(NUTS). For each parameter, Bulk_ESS
+## and Tail_ESS are effective sample size measures, and Rhat is the potential
+## scale reduction factor on split chains (at convergence, Rhat = 1).
+```
+
+
+---
+
+
+```r
+melsm.2 %&gt;% 
+  spread_draws(b_sigma_Intercept) %&gt;% 
+  exp() %&gt;% 
+  median_qi()
+```
+
+```
+## # A tibble: 1 x 6
+##   b_sigma_Intercept .lower .upper .width .point .interval
+##               &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;    
+## 1             0.459  0.413  0.507   0.95 median qi
+```
+
+---
+![](tvc_files/figure-html/unnamed-chunk-8-1.png)&lt;!-- --&gt;
+
+---
+
+![](tvc_files/figure-html/unnamed-chunk-9-1.png)&lt;!-- --&gt;
+
+
+---
+# Polynomial and Splines
+
+Polynomials
+level 1: 
+$$ {Y}_{ij} = \beta_{0j}  + \beta_{1j}(Time_{ij} - \bar{X)} + \beta_{2j}(Time_{ij} - \bar{X)}^2 + \varepsilon_{ij} $$
+
+
+Level 2: 
+$$ {\beta}_{0j} = \gamma_{00} +   U_{0j}$$  
+$$ {\beta}_{1j} = \gamma_{10} +  U_{1j} $$ 
+$$ {\beta}_{2j} = \gamma_{20} +  U_{2j} $$ 
+
+
+---
+## polynomial example
+
+
+
+```r
+library(readr)
+cdrs &lt;- read_csv("~/Box/5165 Applied Longitudinal Data Analysis/Longitudinal/cdrs.csv")
+```
+
+```
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   mapid = col_double(),
+##   exclude = col_character(),
+##   cdr = col_double(),
+##   testdate = col_double()
+## )
+```
+
+```r
+personality &lt;- read_csv("~/Box/5165 Applied Longitudinal Data Analysis/Longitudinal/Subject_personality.csv")
+```
+
+```
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   mapid = col_double(),
+##   age = col_double(),
+##   neodate = col_double(),
+##   neuroticism = col_double(),
+##   extraversion = col_double(),
+##   openness = col_double(),
+##   agreeablness = col_double(),
+##   conscientiousness = col_double(),
+##   gender = col_character()
+## )
+```
+
+```r
+library(ggplot2) 
+
+
+gg1 &lt;- ggplot(personality,
+   aes(x = neodate, y = neuroticism, group = mapid)) + geom_line()  
+gg1
+```
+
+```
+## Warning: Removed 1 row(s) containing missing values (geom_path).
+```
+
+![](tvc_files/figure-html/unnamed-chunk-10-1.png)&lt;!-- --&gt;
+
+---
+
+
+
+```r
+personality&lt;- personality %&gt;% 
+  group_by(mapid) %&gt;%
+  arrange(neodate) %&gt;% 
+  dplyr::mutate(wave = seq_len(n())) 
+```
+
+
+```r
+gg2 &lt;- ggplot(personality,
+   aes(x = wave, y = neuroticism, group = mapid)) + geom_line()  
+gg2
+```
+
+![](tvc_files/figure-html/unnamed-chunk-12-1.png)&lt;!-- --&gt;
+
+---
+
+
+```r
+personality$neodate &lt;- as.Date(personality$neodate, origin = "1900-01-01")
+
+gg3 &lt;- ggplot(personality,
+   aes(x = neodate, y = neuroticism, group = mapid)) + geom_line()  
+gg3
+```
+
+```
+## Warning: Removed 1 row(s) containing missing values (geom_path).
+```
+
+![](tvc_files/figure-html/unnamed-chunk-13-1.png)&lt;!-- --&gt;
+
+
+---
+
+
+
+
+
+```r
+gg4 &lt;- ggplot(personality,
+   aes(x = year, y = neuroticism, group = mapid)) + geom_line()  
+gg4
+```
+
+```
+## Don't know how to automatically pick scale for object of type difftime. Defaulting to continuous.
+```
+
+```
+## Warning: Removed 1 row(s) containing missing values (geom_path).
+```
+
+![](tvc_files/figure-html/unnamed-chunk-15-1.png)&lt;!-- --&gt;
+
+---
+
+
+```r
+library(lme4)
+
+p1 &lt;- lmer(neuroticism ~ year + (1 | mapid), data=personality)
+summary(p1)
+```
+
+```
+## Linear mixed model fit by REML ['lmerMod']
+## Formula: neuroticism ~ year + (1 | mapid)
+##    Data: personality
+## 
+## REML criterion at convergence: 13657.4
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -2.7877 -0.4675 -0.0227  0.4289  3.3166 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev.
+##  mapid    (Intercept) 42.16    6.493   
+##  Residual             15.65    3.956   
+## Number of obs: 2105, groups:  mapid, 1090
+## 
+## Fixed effects:
+##             Estimate Std. Error t value
+## (Intercept) 16.05632    0.22577  71.118
+## year        -0.13204    0.03247  -4.067
+## 
+## Correlation of Fixed Effects:
+##      (Intr)
+## year -0.247
+```
+
+
+---
+
+
+
+```r
+personality.s &lt;- personality %&gt;% 
+  group_by(mapid) %&gt;% 
+  tally() %&gt;% 
+   filter(n &gt;=2) 
+
+ personality &lt;- personality %&gt;% 
+   filter(mapid %in% personality.s$mapid)
+
+p2 &lt;- lmer(neuroticism ~ year + (1 | mapid), data=personality)
+summary(p2)
+```
+
+```
+## Linear mixed model fit by REML ['lmerMod']
+## Formula: neuroticism ~ year + (1 | mapid)
+##    Data: personality
+## 
+## REML criterion at convergence: 10396.9
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -2.7542 -0.5122 -0.0282  0.4698  3.3369 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev.
+##  mapid    (Intercept) 40.92    6.397   
+##  Residual             15.61    3.950   
+## Number of obs: 1635, groups:  mapid, 620
+## 
+## Fixed effects:
+##             Estimate Std. Error t value
+## (Intercept)  15.3797     0.2915  52.761
+## year         -0.1083     0.0331  -3.271
+## 
+## Correlation of Fixed Effects:
+##      (Intr)
+## year -0.320
+```
+
+---
+
+
+```r
+p3 &lt;- lmer(neuroticism ~ year + (year | mapid), data=personality)
+summary(p3)
+```
+
+```
+## Linear mixed model fit by REML ['lmerMod']
+## Formula: neuroticism ~ year + (year | mapid)
+##    Data: personality
+## 
+## REML criterion at convergence: 10389.2
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -2.7440 -0.4825 -0.0304  0.4443  3.3453 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev. Corr 
+##  mapid    (Intercept) 41.6916  6.4569        
+##           year         0.0983  0.3135   -0.10
+##  Residual             14.2561  3.7757        
+## Number of obs: 1635, groups:  mapid, 620
+## 
+## Fixed effects:
+##             Estimate Std. Error t value
+## (Intercept) 15.37237    0.29136  52.760
+## year        -0.10271    0.03602  -2.851
+## 
+## Correlation of Fixed Effects:
+##      (Intr)
+## year -0.317
+```
+
+---
+### importance of centering
+
+
+
+
+```r
+personality$year &lt;- as.numeric(personality$year)
+  
+p4 &lt;- lmer(neuroticism ~ year + I(year^2) + (year | mapid), data=personality)
+```
+
+```
+## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, :
+## Model failed to converge with max|grad| = 0.00216391 (tol = 0.002, component 1)
+```
+
+```r
+summary(p4)
+```
+
+```
+## Linear mixed model fit by REML ['lmerMod']
+## Formula: neuroticism ~ year + I(year^2) + (year | mapid)
+##    Data: personality
+## 
+## REML criterion at convergence: 10395.8
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -2.7664 -0.4836 -0.0251  0.4422  3.3259 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev. Corr 
+##  mapid    (Intercept) 41.73017 6.4599        
+##           year         0.09818 0.3133   -0.10
+##  Residual             14.26174 3.7765        
+## Number of obs: 1635, groups:  mapid, 620
+## 
+## Fixed effects:
+##              Estimate Std. Error t value
+## (Intercept) 15.324317   0.297096  51.580
+## year        -0.031791   0.092090  -0.345
+## I(year^2)   -0.008789   0.010490  -0.838
+## 
+## Correlation of Fixed Effects:
+##           (Intr) year  
+## year      -0.300       
+## I(year^2)  0.194 -0.920
+## optimizer (nloptwrap) convergence code: 0 (OK)
+## Model failed to converge with max|grad| = 0.00216391 (tol = 0.002, component 1)
+```
+
+```r
+# woah, how do I interpret this? WHy all of a sudden non-sig? 
+# what would happen if I changed my time metric? 
+```
+
+---
+
+
+
+```r
+personality$year.c &lt;- personality$year - 3.1
+
+p5 &lt;- lmer(neuroticism ~ year.c + I(year.c^2) + (year.c | mapid), data=personality)
+summary(p5)
+```
+
+```
+## Linear mixed model fit by REML ['lmerMod']
+## Formula: neuroticism ~ year.c + I(year.c^2) + (year.c | mapid)
+##    Data: personality
+## 
+## REML criterion at convergence: 10395.8
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -2.7663 -0.4836 -0.0251  0.4422  3.3258 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev. Corr
+##  mapid    (Intercept) 41.42901 6.4365       
+##           year.c       0.09812 0.3132   0.05
+##  Residual             14.26278 3.7766       
+## Number of obs: 1635, groups:  mapid, 620
+## 
+## Fixed effects:
+##              Estimate Std. Error t value
+## (Intercept) 15.141297   0.296070  51.141
+## year.c      -0.086286   0.041061  -2.101
+## I(year.c^2) -0.008789   0.010490  -0.838
+## 
+## Correlation of Fixed Effects:
+##             (Intr) year.c
+## year.c       0.226       
+## I(year.c^2) -0.353 -0.480
+```
+
+---
+### random terms
+
+
+fitting a random slope plus a random quadratic leads to difficulties ie non-convergence. What does this model say? 
+
+```r
+p6 &lt;- lmer(neuroticism ~ year + I(year^2) + ( I(year^2) | mapid), data=personality)
+```
+
+```
+## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, :
+## Model failed to converge with max|grad| = 0.167875 (tol = 0.002, component 1)
+```
+
+```
+## Warning in checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv, : Model is nearly unidentifiable: very large eigenvalue
+##  - Rescale variables?
+```
+
+```r
+summary(p6)
+```
+
+```
+## Linear mixed model fit by REML ['lmerMod']
+## Formula: neuroticism ~ year + I(year^2) + (I(year^2) | mapid)
+##    Data: personality
+## 
+## REML criterion at convergence: 10398.9
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -2.7747 -0.4937 -0.0197  0.4525  3.3481 
+## 
+## Random effects:
+##  Groups   Name        Variance  Std.Dev. Corr
+##  mapid    (Intercept) 4.082e+01 6.38890      
+##           I(year^2)   4.851e-04 0.02203  0.02
+##  Residual             1.505e+01 3.87965      
+## Number of obs: 1635, groups:  mapid, 620
+## 
+## Fixed effects:
+##              Estimate Std. Error t value
+## (Intercept) 15.321498   0.296523  51.670
+## year        -0.026955   0.093386  -0.289
+## I(year^2)   -0.009488   0.010729  -0.884
+## 
+## Correlation of Fixed Effects:
+##           (Intr) year  
+## year      -0.300       
+## I(year^2)  0.202 -0.928
+## optimizer (nloptwrap) convergence code: 0 (OK)
+## Model failed to converge with max|grad| = 0.167875 (tol = 0.002, component 1)
+## Model is nearly unidentifiable: very large eigenvalue
+##  - Rescale variables?
+```
+
+---
+## Splines aka piecewise
+
+
+Fit more than 1 trajectory. Best to use when we have a reason for a qualitative difference at some identified time point. For example, before your health event you may have a different trajectory than after it and thus you would want to model two separate trajectories. Splines allow you to do this in a single model. You can do this in simple regression and the logic follows for growth models. 
+
+We simply replace time with dummy variables that represent different segments we wish to model. The point of separation is called a knot. You can have as many as you want and these can be pre-specified (usually for our case) or in more advanced treatments have the data specify it for you.   
+
+---
+### separate curves
+
+The most common is to create different trajectories that change across knots. The easiest example is to take your time variable and transform it into a Time1 and time2, that represent the different time periods. This is easiest to see if we choose our wave variable as our time metric, though you do not have to necessarily do it this way. 
+
+
+
+```r
+t1 &lt;- tribble(
+  ~time, ~t0, ~t1,~t2,~t3,~t4,~t5,
+  "time 1", 0, 1,2,2,2,2,
+  "time 2", 0, 0,0,1,2,3
+)
+t1
+```
+
+```
+## # A tibble: 2 x 7
+##   time      t0    t1    t2    t3    t4    t5
+##   &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 time 1     0     1     2     2     2     2
+## 2 time 2     0     0     0     1     2     3
+```
+
+
+The idea is that once you hit the knot your value stays the same. Same logic for the second knot, until you get to that knot you don't have a trajectory. 
+
+---
+###incremental curves
+
+This can be contrasted with a different type of coding, called incremental. Here the first trajectory keeps going, whereas the second trajectory starts at the position of the knot. 
+
+
+```r
+t2 &lt;- tribble(
+  ~time, ~t0, ~t1,~t2,~t3,~t4,~t5,
+  "time 1", 0, 1,2,3,4,5,
+  "time 2", 0, 0,0,1,2,3
+)
+t2
+```
+
+```
+## # A tibble: 2 x 7
+##   time      t0    t1    t2    t3    t4    t5
+##   &lt;chr&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 time 1     0     1     2     3     4     5
+## 2 time 2     0     0     0     1     2     3
+```
+
+The two coding schemes propose the same type of trajectory, the only thing that differs is the interpretation of the coefficients. 
+
+In the first, the two slope coefficients represent the actual slope in the respective time period. 
+
+In the second, the coefficient for time 2 represents the deviation from the slope in period 1. The positive of this second method is you can easily test whether these two slopes are different from one another. 
+
+---
+
+level 1: 
+
+$$ {Y}_{ij} = \beta_{0j}  + \beta_{1j}Time1_{ij} + \beta_{2j}Time2_{ij} + \varepsilon_{ij} $$
+
+
+
+
+Level 2: 
+$$ {\beta}_{0j} = \gamma_{00} +  U_{0j} $$  
+
+$$ {\beta}_{1j} = \gamma_{10} +  U_{1j} $$ 
+$$ {\beta}_{2j} = \gamma_{20} +  U_{2j} $$ 
+
+
+---
+###splines example
+
+
+
+```r
+personality$time1 &lt;- recode(personality$wave, '1' = 0 , '2' = 1,  '3' = 1, '4' = 1,'5' = 1)      
+personality$time2 &lt;- recode(personality$wave, '1' = 0 , '2' = 0,  '3' = 1, '4' = 2,'5' = 3) 
+```
+
+
+---
+
+
+```r
+p7 &lt;- lmer(conscientiousness ~ time1 + time2 + (time1   | mapid) , data=personality)
+summary(p7)
+```
+
+```
+## Linear mixed model fit by REML ['lmerMod']
+## Formula: conscientiousness ~ time1 + time2 + (time1 | mapid)
+##    Data: personality
+## 
+## REML criterion at convergence: 10003.8
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -5.2558 -0.4068  0.0272  0.4304  4.5854 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev. Corr 
+##  mapid    (Intercept) 32.979   5.743         
+##           time1        4.729   2.175    -0.13
+##  Residual             10.702   3.271         
+## Number of obs: 1635, groups:  mapid, 620
+## 
+## Fixed effects:
+##             Estimate Std. Error t value
+## (Intercept)  34.1871     0.2654 128.800
+## time1        -0.5365     0.2018  -2.658
+## time2         0.2184     0.1561   1.399
+## 
+## Correlation of Fixed Effects:
+##       (Intr) time1 
+## time1 -0.370       
+## time2  0.000 -0.301
+```
+
+---
+
+
+
+```r
+gg5 &lt;- ggplot(personality, aes(x = wave, y = conscientiousness, group = mapid)) +  stat_smooth(method = 'lm', formula = y ~ poly(x,2, raw = TRUE),data = personality, aes(x = wave, y = conscientiousness, group=1)) + scale_y_continuous(limits = c(30, 40))
+gg5
+```
+
+```
+## Warning: Removed 609 rows containing non-finite values (stat_smooth).
+```
+
+![](tvc_files/figure-html/unnamed-chunk-26-1.png)&lt;!-- --&gt;
+
+---
+## splines + polynomial = polynomial piecewise
+
+
+$$ {Y}_{ij} = \beta_{0j}  + \beta_{1j}Time1_{ij} +  \beta_{2j}Time1_{ij}^2 + \beta_{3j}Time2_{ij} + \varepsilon_{ij} $$
+
+Level 2: 
+$$ {\beta}_{0j} = \gamma_{00} +  U_{0j} $$  
+
+$$ {\beta}_{1j} = \gamma_{10} +  U_{1j} $$ 
+$$ {\beta}_{2j} = \gamma_{20} +  U_{2j} $$
+$$ {\beta}_{3j} = \gamma_{30} +  U_{3j}$$ 
+
+
+
+
+
+    </textarea>
+<!--radix_placeholder_site_after_body-->
+<!--/radix_placeholder_site_after_body-->
+<!--radix_placeholder_navigation_after_body-->
+<!--/radix_placeholder_navigation_after_body-->
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

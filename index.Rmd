@@ -4,6 +4,11 @@ description: Updates and Announcements
 site: distill::distill_website
 ---
 
+
+Homework 2 is posted. Due 3/8  
+
+
+
 Feb 4. Lecture for Feb 3: https://wustl.zoom.us/rec/play/fvshjETnV4CNvGB6qfVFTU5rIjrAZ3XAeuT31NTpNpQ-lIbWuHBBvkrkhBTQyymy6lXA-Mt4Gu8JBVI4._ga_AhdIEmeOvbkg?continueMode=true&_x_zm_rtaid=--Sid4i3Rre6WDZks1SP3g.1612447880263.03585642967cd968d01c39ac863664b2&_x_zm_rhtaid=74
 
 
