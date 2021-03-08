@@ -421,8 +421,9 @@ $$NA_{ti} \sim \operatorname{Normal}(\mu_{ti}, \sigma_{i})$$
 
 $$\mu_{ti}  = \beta_0 + \beta_1 time_{ti} + u_{0i} + u_{1i} time_{ti}$$
 Standard MLM:
-$$\log(\sigma_i )  = \eta_0 $$
+$$\log(\sigma_i )  = \eta_0$$
 distributional/melsm:
+
 $$\log(\sigma_i )  = \eta_0 + u_{2i}$$
 
 ---
@@ -460,7 +461,7 @@ melsm.1 <-
 
 ---
 
-```{r}
+```{r, out.height= '450px'}
 summary(melsm.1)
 ```
 
@@ -518,7 +519,7 @@ melsm.2 <-
 
 
 
-```{r, out.height= '550px'}
+```{r, out.height= '350px'}
 summary(melsm.2)
 ```
 
@@ -541,8 +542,11 @@ spread_draws(b_sigma_Intercept,r_record_id__sigma[ID, term]) %>%
   mutate(r_record_id__sigma = exp(r_record_id__sigma)) %>% 
    median_qi(estimate = b_sigma_Intercept + r_record_id__sigma) %>% 
   ggplot(aes(x = reorder(ID, estimate), y = estimate, ymin = .lower, ymax = .upper)) +
-   geom_pointinterval(point_colour = "black", interval_color = "grey", point_alpha = .25) + scale_x_discrete("Participants ranked by posterior SD", breaks = NULL) + ylab("sigma estimate") + theme_light()
+   geom_pointinterval(point_colour = "black", interval_color = "grey", point_alpha = .25) + scale_x_discrete("Participants ranked by posterior SD", breaks = NULL) + ylab("sigma estimate") + 
+  geom_hline(yintercept= 1.84) + theme_light() + annotate("text", x = 34, y = 2, label = "sigma mlm")
 ```
+
+
 
 ---
 
@@ -567,20 +571,36 @@ ggplot(aes(x = day01, y = N_A.std)) +
 
 Polynomials
 level 1: 
-$$ {Y}_{ij} = \beta_{0j}  + \beta_{1j}(Time_{ij} - \bar{X)} + \beta_{2j}(Time_{ij} - \bar{X)}^2 + \varepsilon_{ij} $$
+$${Y}_{ij} = \beta_{0j}  + \beta_{1j}(Time_{ij} - \bar{X)} + \beta_{2j}(Time_{ij} - \bar{X)}^2 + \varepsilon_{ij}$$
 
 
 Level 2: 
-$$ {\beta}_{0j} = \gamma_{00} +   U_{0j}$$  
-$$ {\beta}_{1j} = \gamma_{10} +  U_{1j} $$ 
-$$ {\beta}_{2j} = \gamma_{20} +  U_{2j} $$ 
+$${\beta}_{0j} = \gamma_{00} +   U_{0j}$$  
+$${\beta}_{1j} = \gamma_{10} +  U_{1j}$$ 
+$${\beta}_{2j} = \gamma_{20} +  U_{2j}$$ 
 
 
 ---
 ## polynomial example
 
+. pull-left[
+```{r, eval = FALSE}
+library(readr)
+cdrs <- read_csv("~/Box/5165 Applied Longitudinal Data Analysis/Longitudinal/cdrs.csv")
 
-```{r}
+personality <- read_csv("~/Box/5165 Applied Longitudinal Data Analysis/Longitudinal/Subject_personality.csv")
+
+
+library(ggplot2) 
+
+gg1 <- ggplot(personality,
+   aes(x = neodate, y = neuroticism, group = mapid)) + geom_line()  
+
+```
+]
+
+.pull-right[
+```{r, echo = FALSE}
 library(readr)
 cdrs <- read_csv("~/Box/5165 Applied Longitudinal Data Analysis/Longitudinal/cdrs.csv")
 
@@ -594,11 +614,14 @@ gg1 <- ggplot(personality,
    aes(x = neodate, y = neuroticism, group = mapid)) + geom_line()  
 gg1
 ```
+]
+
+
 
 ---
 
-
-```{r}
+.pull-left[
+```{r, eval = FALSE}
 
 personality<- personality %>% 
   group_by(mapid) %>%
@@ -606,15 +629,34 @@ personality<- personality %>%
   dplyr::mutate(wave = seq_len(n())) 
 ```
 
-```{r}
+```{r, eval = FALSE}
+gg2 <- ggplot(personality,
+   aes(x = wave, y = neuroticism, group = mapid)) + geom_line()  
+gg2
+```
+]
+
+.pull-right[
+```{r, echo = FALSE}
+
+personality<- personality %>% 
+  group_by(mapid) %>%
+  arrange(neodate) %>% 
+  dplyr::mutate(wave = seq_len(n())) 
+```
+
+```{r, echo = FALSE}
 gg2 <- ggplot(personality,
    aes(x = wave, y = neuroticism, group = mapid)) + geom_line()  
 gg2
 ```
 
+]
+
 ---
 
-```{r}
+.pull-left[
+```{r, eval = FALSE}
 personality$neodate <- as.Date(personality$neodate, origin = "1900-01-01")
 
 gg3 <- ggplot(personality,
@@ -622,7 +664,18 @@ gg3 <- ggplot(personality,
 gg3
 
 ```
+]
 
+.pull-right[
+```{r, echo = FALSE, warning = FALSE}
+personality$neodate <- as.Date(personality$neodate, origin = "1900-01-01")
+
+gg3 <- ggplot(personality,
+   aes(x = neodate, y = neuroticism, group = mapid)) + geom_line()  
+gg3
+
+```
+]
 
 ---
 
@@ -661,7 +714,7 @@ personality <- personality %>%
 ```
 
 
-```{r}
+```{r, warning = FALSE}
 gg4 <- ggplot(personality,
    aes(x = year, y = neuroticism, group = mapid)) + geom_line()  
 gg4
@@ -669,9 +722,11 @@ gg4
 
 ---
 
-```{r}
+```{r, echo = FALSE}
 library(lme4)
+```
 
+```{r}
 p1 <- lmer(neuroticism ~ year + (1 | mapid), data=personality)
 summary(p1)
 
@@ -680,7 +735,7 @@ summary(p1)
 
 ---
 
-
+.pull-left[
 ```{r}
 personality.s <- personality %>% 
   group_by(mapid) %>% 
@@ -691,9 +746,15 @@ personality.s <- personality %>%
    filter(mapid %in% personality.s$mapid)
 
 p2 <- lmer(neuroticism ~ year + (1 | mapid), data=personality)
-summary(p2)
-
 ```
+]
+
+.pull-right[
+```{r}
+summary(p2)
+```
+
+]
 
 ---
 
@@ -705,34 +766,61 @@ summary(p3)
 ---
 ### importance of centering
 
-
-
-```{r}
-
+```{r, echo = FALSE}
 personality$year <- as.numeric(personality$year)
-  
+```
+
+```{r, message = FALSE, warning = FALSE}
 p4 <- lmer(neuroticism ~ year + I(year^2) + (year | mapid), data=personality)
 summary(p4)
-# woah, how do I interpret this? WHy all of a sudden non-sig? 
-# what would happen if I changed my time metric? 
+
 ```
 
 ---
 
-
 ```{r}
 personality$year.c <- personality$year - 3.1
-
 p5 <- lmer(neuroticism ~ year.c + I(year.c^2) + (year.c | mapid), data=personality)
 summary(p5)
 ```
 
+
+---
+
+.pull-left[
+```{r, eval = FALSE}
+library(modelr)
+personality %>% 
+  data_grid(year.c = seq(-4,10, 1), mapid ) %>% 
+  add_predictions(p5) %>% 
+   group_by(year.c) %>% 
+  dplyr::summarize(pred = mean(pred)) %>% 
+  ggplot(aes(x = year.c, y = pred)) +
+  geom_line()
+  
+```
+]
+
+
+.pull-right[
+```{r, echo = FALSE}
+library(modelr)
+personality %>% 
+  data_grid(year.c = seq(-4,10, 1), mapid ) %>% 
+  add_predictions(p5) %>% 
+   group_by(year.c) %>% 
+  dplyr::summarize(pred = mean(pred)) %>% 
+  ggplot(aes(x = year.c, y = pred)) +
+  geom_line()
+
+```
+]
+
+
+
 ---
 ### random terms
-
-
-fitting a random slope plus a random quadratic leads to difficulties ie non-convergence. What does this model say? 
-```{r}
+```{r, message= FALSE, warning = FALSE}
 p6 <- lmer(neuroticism ~ year + I(year^2) + ( I(year^2) | mapid), data=personality)
 summary(p6)
 ```
@@ -741,9 +829,11 @@ summary(p6)
 ## Splines aka piecewise
 
 
-Fit more than 1 trajectory. Best to use when we have a reason for a qualitative difference at some identified time point. For example, before your health event you may have a different trajectory than after it and thus you would want to model two separate trajectories. Splines allow you to do this in a single model. You can do this in simple regression and the logic follows for growth models. 
+Fit more than 1 trajectory. 
 
-We simply replace time with dummy variables that represent different segments we wish to model. The point of separation is called a knot. You can have as many as you want and these can be pre-specified (usually for our case) or in more advanced treatments have the data specify it for you.   
+Best to use when we have a reason for a qualitative difference at some identified time point. For example, before your health event you may have a different trajectory than after it and thus you would want to model two separate trajectories.
+
+We replace time with dummy variables that represent different segments we wish to model. The point of separation is called a knot. You can have as many as you want and these can be pre-specified (usually for our case) or in more advanced treatments have the data specify it for you.   
 
 ---
 ### separate curves
@@ -777,36 +867,35 @@ t2 <- tribble(
 t2
 ```
 
-The two coding schemes propose the same type of trajectory, the only thing that differs is the interpretation of the coefficients. 
-
-In the first, the two slope coefficients represent the actual slope in the respective time period. 
-
-In the second, the coefficient for time 2 represents the deviation from the slope in period 1. The positive of this second method is you can easily test whether these two slopes are different from one another. 
+The two coding schemes propose the same type of trajectory, the difference is in interpretation. In the first, the two slope coefficients represent the actual slope in the respective time period. 
+In the second, the coefficient for time 2 represents the deviation from the slope in period 1. 
 
 ---
 
 level 1: 
 
-$$ {Y}_{ij} = \beta_{0j}  + \beta_{1j}Time1_{ij} + \beta_{2j}Time2_{ij} + \varepsilon_{ij} $$
+$${Y}_{ij} = \beta_{0j}  + \beta_{1j}Time1_{ij} + \beta_{2j}Time2_{ij} + \varepsilon_{ij}$$
 
 
 
 
 Level 2: 
-$$ {\beta}_{0j} = \gamma_{00} +  U_{0j} $$  
+$${\beta}_{0j} = \gamma_{00} +  U_{0j}$$  
 
-$$ {\beta}_{1j} = \gamma_{10} +  U_{1j} $$ 
-$$ {\beta}_{2j} = \gamma_{20} +  U_{2j} $$ 
+$${\beta}_{1j} = \gamma_{10} +  U_{1j}$$ 
+$${\beta}_{2j} = \gamma_{20} +  U_{2j}$$ 
 
 
 ---
 ###splines example
 
+0 1 2 2 2   
+0 0 0 1 2
 
 ```{r}
 
-personality$time1 <- recode(personality$wave, '1' = 0 , '2' = 1,  '3' = 1, '4' = 1,'5' = 1)      
-personality$time2 <- recode(personality$wave, '1' = 0 , '2' = 0,  '3' = 1, '4' = 2,'5' = 3) 
+personality$time1 <- recode(personality$wave, '1' = 0 , '2' = 1,  '3' = 2, '4' = 2,'5' = 2)      
+personality$time2 <- recode(personality$wave, '1' = 0 , '2' = 0,  '3' = 0, '4' = 1,'5' = 2) 
 
 
 ```
@@ -815,33 +904,30 @@ personality$time2 <- recode(personality$wave, '1' = 0 , '2' = 0,  '3' = 1, '4' =
 ---
 
 ```{r}
-p7 <- lmer(conscientiousness ~ time1 + time2 + (time1   | mapid) , data=personality)
+p7 <- lmer(neuroticism ~ time1 + time2 + (time1   | mapid) , data=personality)
 summary(p7)
 ```
 
+
 ---
 
-
-```{r}
-
-gg5 <- ggplot(personality, aes(x = wave, y = conscientiousness, group = mapid)) +  stat_smooth(method = 'lm', formula = y ~ poly(x,2, raw = TRUE),data = personality, aes(x = wave, y = conscientiousness, group=1)) + scale_y_continuous(limits = c(30, 40))
-gg5
-
-
+```{r, eval = FALSE}
+p8 <- lmer(neuroticism ~ time1 + time2 + (time1 + time2   | mapid) , data=personality)
+summary(p8)
 ```
 
 ---
 ## splines + polynomial = polynomial piecewise
 
 
-$$ {Y}_{ij} = \beta_{0j}  + \beta_{1j}Time1_{ij} +  \beta_{2j}Time1_{ij}^2 + \beta_{3j}Time2_{ij} + \varepsilon_{ij} $$
+$${Y}_{ij} = \beta_{0j}  + \beta_{1j}Time1_{ij} +  \beta_{2j}Time1_{ij}^2 + \beta_{3j}Time2_{ij} + \varepsilon_{ij}$$
 
 Level 2: 
-$$ {\beta}_{0j} = \gamma_{00} +  U_{0j} $$  
+$${\beta}_{0j} = \gamma_{00} +  U_{0j}$$  
 
-$$ {\beta}_{1j} = \gamma_{10} +  U_{1j} $$ 
-$$ {\beta}_{2j} = \gamma_{20} +  U_{2j} $$
-$$ {\beta}_{3j} = \gamma_{30} +  U_{3j}$$ 
+$${\beta}_{1j} = \gamma_{10} +  U_{1j}$$ 
+$${\beta}_{2j} = \gamma_{20} +  U_{2j}$$
+$${\beta}_{3j} = \gamma_{30} +  U_{3j}$$ 
 
 
 

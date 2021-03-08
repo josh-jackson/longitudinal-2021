@@ -2533,9 +2533,9 @@ Fixed effects:
 </div>
 <pre><code># Indices of model performance
 
-AIC     |     BIC | R2 (cond.) | R2 (marg.) |  ICC | RMSE | Sigma
------------------------------------------------------------------
--708.14 | -697.89 |       0.58 |       0.00 | 0.58 | 0.03 |  0.04</code></pre>
+AIC      |      BIC | R2 (cond.) | R2 (marg.) |   ICC |  RMSE | Sigma
+---------------------------------------------------------------------
+-708.136 | -697.887 |      0.583 |      0.000 | 0.583 | 0.030 | 0.036</code></pre>
 </div>
 <h2 id="exploring-beyond-the-summary">Exploring beyond the summary</h2>
 <div class="layout-chunk" data-layout="l-body">
@@ -2886,12 +2886,10 @@ mod.2     6 -685.45 -665.20 348.73  -697.45 2.5248  2      0.283</code></pre>
 </div>
 <pre><code># Comparison of Model Performance Indices
 
-Model  |    Type |     AIC |     BIC | R2 (cond.) | R2 (marg.) |  ICC | RMSE | Sigma |    BF | Statistic |     p
-----------------------------------------------------------------------------------------------------------------
-mod.2f | lmerMod | -667.38 | -653.88 |       0.58 |   1.24e-03 | 0.58 | 0.03 |  0.04 |  1.00 |           |      
-mod.2  | lmerMod | -666.06 | -645.80 |       0.65 |   1.66e-04 | 0.65 | 0.03 |  0.03 | 0.018 |           |      
-mod.2f | lmerMod | -686.93 | -673.43 |            |            |      |      |       |  1.00 |           |      
-mod.2  | lmerMod | -685.45 | -665.20 |            |            |      |      |       |  1.00 |      2.52 | 0.283</code></pre>
+Name   |   Model |      AIC |      BIC | R2 (cond.) | R2 (marg.) |   ICC |  RMSE | Sigma
+----------------------------------------------------------------------------------------
+mod.2f | lmerMod | -667.381 | -653.880 |      0.583 |      0.001 | 0.583 | 0.030 | 0.036
+mod.2  | lmerMod | -666.057 | -645.805 |      0.646 |  1.663e-04 | 0.646 | 0.026 | 0.033</code></pre>
 </div>
 <h3 id="why-treating-time-is-so-important">Why treating time is so important</h3>
 <p>Time with a different scale. How do we interpret? And what changes?</p>
