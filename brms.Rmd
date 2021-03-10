@@ -1,0 +1,1049 @@
+---
+title: "brms"
+output:
+  xaringan::moon_reader:
+    mathjax: https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML
+    css: xaringan-themer.css
+    seal: no
+    nature:
+      highlightStyle: github
+      highlightLines: yes
+      ratio: '16:9'
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r xaringan-themer, include = FALSE}
+library(xaringanthemer)
+mono_light(
+  base_color = "#23395b",
+  header_font_google = google_font("Josefin Sans"),
+  text_font_google   = google_font("Montserrat", "300", "300i"),
+  code_font_google   = google_font("Droid Mono"),
+)
+
+library(tidyverse)
+library(broom)
+library(tidybayes)
+library(modelr)
+library(viridis)
+library(brms)
+```
+
+
+
+#Why Bayesian? 
+The models we have been working with can easily be done in a Bayesian Framework. Why Bayes? For at least 3 reasons: 1. Better convergence. 2. More flexibility. 3. Fewer assumptions. We will go through each of these ideas throughout the course in more detail, so what I want to do is sell you not on the benefits but on the lack of difference. 
+
+
+Many places to read up on this. Try Kruschke's Bayesian new statistics: https://rdcu.be/bRUvW
+
+Simple blog post on why Bayesian should be default: 
+http://babieslearninglanguage.blogspot.com/2018/02/mixed-effects-models-is-it-time-to-go.html
+
+
+---
+# How is this different? 
+Bayesian analysis differs in two ways from our traditional MLMs that we have been working with.  
+
+1. Prior distribution
+
+2. Posterior distribution. 
+
+Distributions (typically) reflect the likelihood/frequency/probability of some thing. For the prior, it is a distribution of plausible values. For the Posterior, it is the distribution of plausible values given our prior distribution and our data. 
+
+---
+```{r, echo = FALSE}
+
+N10 <- ggplot(data.frame(x = c(-35, 35)), aes(x)) +
+  stat_function(fun = dnorm, n = 100, args = list(0, 10))+
+  labs(title = "B ~ Normal(0, 10)")
+
+N5 <- ggplot(data.frame(x = c(-35, 35)), aes(x)) +
+  stat_function(fun = dnorm, n = 100, args = list(0, 5)) +
+  labs(title = "B ~ Normal(0, 5)")
+
+N1 <- ggplot(data.frame(x = c(-35, 35)), aes(x)) +
+  stat_function(fun = dnorm, n = 100, args = list(0, 1)) +
+  labs(title = " B ~ Normal(0, 1)")
+
+N2 <- ggplot(data.frame(x = c(-35, 35)), aes(x)) +
+  stat_function(fun = dnorm, n = 100, args = list(0, 2)) +
+  labs(title = "B ~ Normal(0, 2)")
+library(patchwork)
+(N10 | N5 )/
+  (N1 | N2 )
+```
+
+
+---
+## priors
+
+Useful to incorporate previous knowledge into your model. The alternative is not doing so, which is also imbuing the model with some outside subjectivity e.g., an effect of infinity is equally likely as an effect of 0.  
+
+We often know plausible ranges that are reasonable -- and those that are unreasonable--, even before we run the experiment. 
+
+Priors are often "overwhelmed with data", the robustness able to be checked, and created in a manner that will regularize the estimates -- all good things if you are concerned with the subjective nature of priors. 
+---
+
+## Bayes theorm 
+$$posterior \propto likelihood * prior$$
+
+---
+Likelihood - Distribution of the likelihood of various hypothesis. Probability attaches to possible results; likelihood attaches to hypotheses. Maximum likelihood is a likelihood. 
+
+
+```{r, echo = FALSE}
+
+ggplot(tibble(x = c(0, 1)), 
+       aes(x = x)) + 
+  stat_function(fun = dbinom, args = list(x = 3, size = 10)) + 
+  labs(x = expression(theta), 
+       y = "likelihood")
+```
+
+---
+## Posterior
+
+Distribution of our belief about the parameter values after taking into account the likelihood and one's priors. In regression terms, it is not a specific value of b that would make the data most likely, but a probability distribution for b that serves as a weighted combination of the likelihood and prior. 
+
+
+```{r, echo = FALSE}
+
+library(psychTools)
+galton.data <- galton
+m.1 <- 
+  brm(family = gaussian,
+      child ~ 1 + parent,
+      prior = c(prior(normal(68, 5), class = Intercept),
+                prior(normal(0, 5), class = b),
+                prior(cauchy(0, 1), class = sigma)),
+      data = galton.data, 
+      iter = 1000, warmup = 500, chains = 2, cores = 2, 
+      file = "m.1")
+
+```
+
+```{r}
+library(tidybayes)
+m.1 %>% 
+  gather_draws(b_parent)%>% 
+ggplot(aes(y = .variable, x = .value)) +
+    stat_halfeye()
+```
+
+
+---
+
+```{r, message = FALSE, echo = FALSE}
+library(gridExtra)
+library(tidyverse)
+sequence_length <- 1e3
+
+d <-
+  tibble(probability = seq(from = 0, to = 1, length.out = sequence_length)) %>% 
+  tidyr::expand(probability, row = c("flat", "stepped", "Laplace")) %>% 
+  arrange(row, probability) %>% 
+  mutate(prior = ifelse(row == "flat", 1,
+                        ifelse(row == "stepped", rep(0:1, each = sequence_length / 2),
+                               exp(-abs(probability - .5) / .25) / ( 2 * .25))),
+         likelihood = dbinom(x = 6, size = 9, prob = probability)) %>% 
+  group_by(row) %>% 
+  mutate(posterior = prior * likelihood / sum(prior * likelihood)) %>% 
+  gather(key, value, -probability, -row) %>% 
+  ungroup() %>% 
+  mutate(key = factor(key, levels = c("prior", "likelihood", "posterior")),
+         row = factor(row, levels = c("flat", "stepped", "Laplace"))) 
+
+p1 <-
+  d %>%
+  filter(key == "prior") %>% 
+  ggplot(aes(x = probability, y = value)) +
+  geom_line() +
+  scale_x_continuous(NULL, breaks = c(0, .5, 1)) +
+  scale_y_continuous(NULL, breaks = NULL) +
+  labs(subtitle = "prior") +
+  theme(panel.grid       = element_blank(),
+        strip.background = element_blank(),
+        strip.text       = element_blank()) +
+  facet_wrap(row ~ ., scales = "free_y", ncol = 1)
+
+p2 <-
+  d %>%
+  filter(key == "likelihood") %>% 
+  ggplot(aes(x = probability, y = value)) +
+  geom_line() +
+  scale_x_continuous(NULL, breaks = c(0, .5, 1)) +
+  scale_y_continuous(NULL, breaks = NULL) +
+  labs(subtitle = "likelihood") +
+  theme(panel.grid       = element_blank(),
+        strip.background = element_blank(),
+        strip.text       = element_blank()) +
+  facet_wrap(row ~ ., scales = "free_y", ncol = 1)
+
+p3 <-
+  d %>%
+  filter(key == "posterior") %>% 
+  ggplot(aes(x = probability, y = value)) +
+  geom_line() +
+  scale_x_continuous(NULL, breaks = c(0, .5, 1)) +
+  scale_y_continuous(NULL, breaks = NULL) +
+  labs(subtitle = "posterior") +
+  theme(panel.grid       = element_blank(),
+        strip.background = element_blank(),
+        strip.text       = element_blank()) +
+  facet_wrap(row ~ ., scales = "free_y", ncol = 1)
+
+library(gridExtra)
+
+grid.arrange(p1, p2, p3, ncol = 3)
+```
+
+
+
+---
+# How to think about these models
+
+In standard regression, we can state some expectations up front: 
+
+$$y_i  \sim \text{Normal}(\mu_i, \sigma) \\
+\mu_i  = \alpha + \beta x_i \\
+\alpha  \sim \text{Normal}(0, 10) \\
+\beta  \sim \text{Normal}(0, 10) \\
+\sigma  \sim \text{Half Cauchy}(0, 50)$$
+
+
+---
+
+
+$\alpha  \sim \text{Normal}(0, 10)$
+This says we have a prior idea bout the distribution of the intercept. Namely that it is centered around 0 with a possible range above and below that. 
+
+$\beta   \sim \text{Normal}(0, 10)$
+This says that we have a prior idea about the possible distribution of the regression coefficient. 
+
+```{r, echo = FALSE}
+ggplot() +
+  aes() +
+  stat_function(fun = dnorm, n = 200, args = list(0, 10)) +
+  labs(title = "Normal (Gaussian) distribution") +xlim(-30,30) + ylim(-.001, .05)
+```
+
+
+---
+Now for the priors for our residual. 
+$\sigma  \sim \text{HalfCauchy}(0, 1)$
+Same idea for the residual, the prior specifies what we expect is plausible. 
+
+```{r}
+ggplot() +
+  aes() +
+  stat_function(fun = dcauchy, n = 200, args = list(0, 1)) +
+  labs(title = "Half Cauchy distribution")
+```
+
+
+
+---
+Note that we do two important things when specifying the model First, we describe the data generating processes (DGP) we think our data are coming from. Often we will just assume Gaussian normal, but this does not need to be the case. For our residual we specify a half Cauchy to make sure it is above zero and that lower terms are more likely than higher terms.
+ 
+
+Second, we are specifying a prior. Here we are saying we expect our regression parameter to be centered around zero but that it could vary widely from that and we wouldn't be surprised. The prior distribution for Beta is defined by a mean of 0 and an SD of 10. But we have control if we want to make this different. Same thing with the half Cauchy for the variance. 
+
+
+---
+## visualizing it in practice
+
+```{r, echo = FALSE, message = FALSE}
+m.1p <- 
+  brm(family = gaussian,
+      child ~ 1 + parent,
+      prior = c(prior(normal(0, 5), class = Intercept),
+                prior(normal(0, 2), class = b),
+                prior(cauchy(0, 1), class = sigma)),
+      data = galton.data,
+      sample_prior = "only",
+      iter = 1000, warmup = 500, chains = 2, cores = 2, 
+      file = "m.1p")
+
+library(tidybayes)
+library(modelr)
+
+draws_prior <- galton.data %>%
+  tidyr::expand(parent = 64:74) %>%
+  tidybayes::add_fitted_draws(m.1p, n = 100)
+
+p1 <- ggplot(draws_prior) +
+  aes(x = parent, y = .value) +
+  geom_line(aes(group = .draw), alpha = .2) +
+  theme(
+    axis.ticks = element_blank(), 
+    axis.text = element_blank(), 
+    axis.title = element_blank()
+  ) +
+  ggtitle("Plausible curves before seeing data")
+
+
+library(ggeffects)
+p2p <- ggpredict(m.1, terms = "parent")
+
+p2 <- p2p %>% 
+  ggplot(aes(x = x, y = predicted)) + 
+  geom_line() + 
+  theme(
+    axis.ticks = element_blank(), 
+    axis.text = element_blank(), 
+    axis.title = element_blank()
+  ) +
+  geom_point(data = galton.data, aes( y = child, x = parent), alpha = .1) +
+  ggtitle("How well do the curves fit the data") 
+
+
+p3 <- galton.data %>%
+  data_grid(parent = seq_range(parent, n = 50), .model = galton.data) %>%
+  add_fitted_draws(m.1, n = 100) %>%
+  ggplot(aes(x = parent, y = child)) +
+  geom_line(aes(y = .value, group = paste(.draw)), alpha = .1) +
+  theme(
+    axis.ticks = element_blank(), 
+    axis.text = element_blank(), 
+    axis.title = element_blank()
+  ) +
+  geom_point(data = galton.data, aes( y = child, x = parent), alpha =.1) +
+  ggtitle("Plausible curves after seeing data") 
+
+(p1 / p2 / p3)
+```
+
+
+---
+# MCMC Estimation 
+
+Posterior is analytically intractable. So the only option is sample in an iterative fashion. 
+
+The simulation process is referred to as Markov Chain Monte Carlo, or MCMC for short. In MCMC, all of the simulated draws from the posterior are based on and correlated with previous draws. As a safety check, we will run the the process multiple times, what is known as having multiple chains. If multiple chains converge towards the same answer we are more confident in our results.
+
+---
+# Comparing lmer with brms 
+
+Lets do a mixed effects model to test this out. We will use the sleepstudy dataset that is loaded with lme4
+```{r}
+library(tidyverse)
+library(lme4)
+data("sleepstudy")
+head(sleepstudy)
+write.csv(sleepstudy, file = "sleepstudy")
+```
+
+---
+```{r}
+sleep_lmer <- lmer(Reaction ~ Days + (1 + Days|Subject), data = sleepstudy)
+summary(sleep_lmer)
+```
+
+---
+
+```{r, cache=TRUE}
+library(brms)
+
+sleep_brm <- brm(Reaction ~ Days + (1 + Days|Subject), data = sleepstudy, file = "fit1")
+
+```
+
+---
+
+
+```{r}
+summary(sleep_brm)
+```
+
+---
+## What priors did we use? 
+
+```{r}
+brms::get_prior(Reaction ~ Days + (1 + Days|Subject), data = sleepstudy)
+```
+*Note that there are flat priors as the default for fixed effects. This essentially disregards the prior and spits back the likelihood, equivalent to the ML estimate. 
+
+ The ts have three parameters: degrees of freedom, mean, and then an SD.
+
+---
+
+```{r}
+plot(sleep_brm)
+```
+
+
+
+---
+
+# More models
+## Ex 1 
+Here we'll use a dataset from Singer & Willet, chapter 3, looking at cognitive performance across time for children who under went an intervention or not. 
+
+```{r, echo = FALSE}
+
+
+early_int <-
+  tibble(id      = rep(c(68, 70:72, 902, 904, 906, 908), each = 3),
+         age     = rep(c(1, 1.5, 2), times = 8),
+         cog     = c(103, 119, 96, 106, 107, 96, 112, 86, 73, 100, 93, 87, 
+                     119, 93, 99, 112, 98, 79, 89, 66, 81, 117, 90, 76),
+         program = rep(1:0, each = 12))
+
+
+
+# Later on, we also fit models using $age - 1$. Here we'll compute that and save it as `age_c`
+
+early_int <-
+  early_int %>% 
+  mutate(age_c = age - 1)
+
+# What makes our task difficult is the multilevel model we’d like to simulate our data for has both varying intercepts and slopes. And worst yet, those varying intercepts and slopes have a correlation structure. Also of note, Singer and Willett presented their summary statistics in the form of a variance/covariance matrix in Table 3.3. 
+# 
+# As it turns out, the `mvnorm()` function from the [**MASS** package](https://cran.r-project.org/web/packages/MASS/index.html) will allow us to simulate multivariate normal data from a given mean structure and variance/covariance matrix. So our first step in simulating our data is to simulate the $103 – 8 = 95$ $\zeta$ values. We’ll name the results `z`.
+
+# how many people are we simulating?
+n <- 103 - 8
+
+# what's the variance/covariance matrix?
+sigma <- matrix(c(124.64, -36.41,
+                  -36.41, 12.29),
+                ncol = 2)
+
+# what's our mean structure?
+mu <- c(0, 0)
+
+# set the seed and simulate!
+set.seed(3)
+z <-
+  MASS::mvrnorm(n = n, mu = mu, Sigma = sigma) %>% 
+  data.frame() %>% 
+  set_names("zeta_0", "zeta_1")
+
+head(z)
+
+#For our next step, we'll define our $\gamma$ parameters. These are also taken from Table 3.3.
+
+g <-
+  tibble(id = 1:n,
+         gamma_00 = 107.84,
+         gamma_01 = 6.85,
+         gamma_10 = -21.13,
+         gamma_11 = 5.27)
+
+head(g)
+
+# Note how they’re the same for each row. That’s the essence of the meaning of a fixed effect.
+# 
+# Anyway, this next block is a big one. After we combine `g` and `z`, we add in the appropriate `program` and `age_c` values. You can figure out those from pages 46 and 47. We then insert our final model parameter, $\epsilon$, and combine the $\gamma$s and $\zeta$s to make our two $\pi$ parameters (see page 60). Once that’s all in place, we’re ready to use the model formula to calculate the expected `cog` values from the $\pi$s, `age_c`, and $\epsilon$. 
+# set the seed for the second `mutate()` line
+
+set.seed(3)
+
+early_int_sim <-
+  bind_cols(g, z) %>% 
+  mutate(program = rep(1:0, times = c(54, 41))) %>% 
+  tidyr::expand(nesting(id, gamma_00, gamma_01, gamma_10, gamma_11, zeta_0, zeta_1, program),
+         age_c   = c(0, 0.5, 1)) %>% 
+  mutate(epsilon = rnorm(n(), mean = 0, sd = sqrt(74.24))) %>% 
+  mutate(pi_0    = gamma_00 + gamma_01 * program + zeta_0,
+         pi_1    = gamma_10 + gamma_11 * program + zeta_1) %>% 
+  mutate(cog     = pi_0 + pi_1 * age_c + epsilon)
+
+head(early_int_sim)
+
+# But before we do, we’ll want to wrangle a little. We need an `age` column. If you look closely at Table 3.3, you’ll see all the `cog` values are integers. So we’ll round ours to match. Finally, we’ll want to renumber our `id` values to match up better with those in Table 3.3.
+
+early_int_sim <-
+  early_int_sim %>% 
+  mutate(age = age_c + 1,
+         cog = round(cog, digits = 0),
+         id  = ifelse(id > 54, id + 900, id))
+
+head(early_int_sim)
+
+# Finally, now we just need to prune the columns with the model parameters, rearrange the order of the columns we'd like to keep, and join these data with those from Table 3.3.
+
+early_int_sim <-
+  early_int_sim %>% 
+  select(id, age, cog, program, age_c) %>% 
+  full_join(early_int) %>% 
+  arrange(id, age)
+
+glimpse(early_int_sim)
+
+#Here we save our results in an external file for use later.
+
+save(early_int_sim,
+     file = "early_int_sim.rda")
+```
+
+```{r, echo = FALSE}
+load("early_int_sim.rda")
+```
+
+
+```{r, fig.width = 6, fig.height = 4, warning = F, message = F, echo = FALSE}
+early_int_sim <-
+  early_int_sim %>% 
+  mutate(label = str_c("program = ", program)) 
+
+early_int_sim %>% 
+  ggplot(aes(x = age, y = cog, color = label)) +
+  stat_smooth(aes(group = id),
+              method = "lm", se = F, size = 1/6) +
+  stat_smooth(method = "lm", se = F, size = 2) +
+  scale_x_continuous(breaks = c(1, 1.5, 2)) +
+  scale_color_viridis_d(option = "B", begin = .33, end = .67) +
+  ylim(50, 150) +
+  theme(panel.grid = element_blank(),
+        legend.position = "none") +
+  facet_wrap(~label)
+
+
+```
+
+
+---
+
+This is our assumed data generating model, with some relatively random priors thrown in. 
+
+$$cog  \sim \text{Normal} (\mu_{ij}, \sigma_{ij}) \\
+\mu_{ij}    = \gamma_{00j} + \gamma_{10j} ({age}_{ij} - 1) + \gamma_{11j} Program \\
+\gamma_{00}      \sim \text{Normal}(0, 20) \\
+\gamma_{10}      \sim \text{Normal}(0, 5) \\
+\gamma_{11}      \sim \text{Normal}(0, 5) \\
+\sigma_{ij}  \sim \text{Student-t} (3, 0, 1)\\ 
+\sigma_0         \sim \text{Student-t} (3, 0, 1) \\
+\sigma_1         \sim \text{Student-t} (3, 0, 1) \\
+\rho_{01}        \sim \text{LKJ} (4) \\$$
+
+
+---
+
+```{r, cache = T, warning = F, message = F, results = "hide"}
+ex1 <-
+  brm(data = early_int_sim,
+      file = "fit2",
+      family = gaussian,
+      formula = cog ~ 0 + intercept + age_c + program + age_c:program + (1 + age_c | id),
+      iter = 2000, warmup = 1000, chains = 4, cores = 4,
+      control = list(adapt_delta = 0.9),
+      seed = 3)
+```
+
+
+---
+## Intercepts are different because of priors
+Another important part of the syntax concerns the intercept. Normally we include a 1 (or lmer does it for us automatically) to reflect we want to fit an intercept. If we did that here, we would have made the assumption that our predictors are mean centered. The default priors set by `brms::brm()` are  set based on this assumption. SO, if we want to use non mean centered predictors (eg setting time at initial wave or dummy variables), we need to re-specify our model. Neither our variables are mean centered. 
+
+With a `0 + intercept`, we told `brm()` to suppress the default intercept and replace it with our smartly-named `intercept` parameter. This is our fixed effect for the population intercept and, importantly, `brms()` will assign default priors to it based on the data themselves without assumptions about centering. We will speak later about changing these default priors.  
+
+---
+
+```{r, echo = FALSE}
+print(ex1)
+```
+
+---
+## What does the posterior look like? 
+
+```{r}
+plot(ex1)
+```
+
+---
+
+```{r}
+fixef(ex1)
+```
+
+---
+
+```{r}
+post <- brms::posterior_samples(ex1)
+```
+
+Here's a look at the first 10 columns.
+
+```{r}
+ post[, 1:10] %>%
+glimpse()
+```
+
+We saved our results as `post`, which is a data frame with 4000 rows (i.e., 1000 post-warmup iterations times 4 chains) and 215 columns, each depicting one of the model parameters. With **brms**, the $\gamma$ parameters (i.e., the fixed effects or population parameters) get `b_` prefixes in the `posterior_samples()` output. 
+
+
+---
+
+.pull-left[
+```{r}
+post %>%
+  select(starts_with("b_")) %>%
+  gather() %>%
+  ggplot(aes(x = value)) +
+  geom_density(color = "transparent", fill = "grey") +
+  scale_y_continuous(NULL, breaks = NULL) +
+  theme(panel.grid = element_blank()) +
+  facet_wrap(~key, scales = "free")
+```
+Notice how this is exactly the same as using the `plot` function. But you have more control now. 
+
+]
+
+
+.pull-right[
+```{r, echo = FALSE}
+post %>%
+  select(starts_with("b_")) %>%
+  gather() %>%
+  ggplot(aes(x = value)) +
+  geom_density(color = "transparent", fill = "grey") +
+  scale_y_continuous(NULL, breaks = NULL) +
+  theme(panel.grid = element_blank()) +
+  facet_wrap(~key, scales = "free")
+```
+]
+
+
+---
+## Random effects
+
+```{r}
+posterior_samples(ex1) %>%
+  transmute(`sigma[0]^2`  = sd_id__Intercept^2,
+            `sigma[1]^2`  = sd_id__age_c^2,
+            `r[0][1]` = cor_id__Intercept__age_c,
+            `sigma[epsilon]^2` = sigma^2) %>%
+  gather(key, posterior) %>%
+
+  ggplot(aes(x = posterior)) +
+  geom_density(color = "transparent", fill = "grey") +
+  scale_y_continuous(NULL, breaks = NULL) +
+  theme(panel.grid = element_blank(),
+        strip.text = element_text(size = 12)) +
+  facet_wrap(~key, scales = "free", labeller = label_parsed)
+```
+
+
+---
+
+## Ex 2
+Load the data, here from chapter 4 of Singer and Willet. It is a three wave longitudinal study of adolescents. We are looking at alcohol use during the previous year, measured from 0 - 7. COA is a variable indicating the child's parents are alcoholics. 
+
+```{r, warning = F, message = F, echo = F}
+
+library(tidyverse)
+alcohol1_pp <- read_csv("alcohol1_pp.csv")
+```
+
+
+---
+
+Data generating model we are fitting. You can also write this with L1 and L2 convention. 
+
+
+$$alcuse  \sim \text{Normal} (\mu_{ij}, \sigma_{ij}) \\
+\mu_{ij}  =  \gamma_{00} +  U_{0j} + \epsilon_{ij} \\
+\gamma_{00} \sim \text{Student t} (1, 10) \\
+U_{0i}  \sim \text{Student t} (0, 10) \\
+\epsilon_{ij}  \sim \text{Student t} (0, 10) \\$$
+
+---
+### Using priors
+How can we put that in directly to our code? 
+
+```{r fit1, cache = T, message = F, warning = F, results = "hide"}
+ex2 <-
+  brm(data = alcohol1_pp,
+      file = "fit3",
+      family = gaussian,
+      alcuse ~ 1 + (1 | id),
+      prior = c(prior(student_t(3, 1, 10), class = Intercept),
+                prior(student_t(3, 0, 10), class = sd),
+                prior(student_t(3, 0, 10), class = sigma)),
+      iter = 2000, warmup = 1000, chains = 4, cores = 4,
+      seed = 4)
+```
+
+---
+Visualizing priors. 
+
+```{r, echo = FALSE}
+library(metRology)
+tibble(x = seq(from = -100, to = 100, length.out = 1e3)) %>%
+  mutate(density = metRology::dt.scaled(x, df = 3, mean = 1, sd = 10)) %>% 
+  
+  ggplot(aes(x = x, y = density)) +
+  geom_vline(xintercept = 0, color = "white") +
+  geom_line() +
+  labs(title = expression(paste("prior for ", gamma[0][0])),
+       x = "parameter space") +
+  theme(panel.grid = element_blank())
+```
+
+Note a few things: First, this is a broad space for our intercept based on what we are looking at. This would be considering minimally informative. 
+
+Second, consider the variance priors -- they go below zero. Does this make sense? Luckily brms automatically cuts it off for us at zero. 
+
+---
+
+```{r}
+summary(ex2)
+```
+
+---
+
+```{r}
+plot(ex2)
+```
+
+---
+
+
+```{r}
+post2 <- posterior_samples(ex2)
+```
+
+Since all we’re interested in are the variance components, we’ll `select()` out the relevant columns from `post2`, and save the results in a mini data frame, `v`.
+
+```{r}
+v <-
+  post2 %>%
+  select(sigma, sd_id__Intercept)
+
+head(v)
+```
+
+```{r}
+dim(v)
+```
+
+---
+
+```{r, warning = F, message = F}
+v %>%
+  gather() %>%
+  ggplot(aes(x = value)) +
+  geom_vline(xintercept = c(.25, .5, .75, 1), color = "white") +
+  geom_density(size = 0, fill = "grey") +
+  scale_x_continuous(NULL, limits = c(0, 1.25),
+                     breaks = seq(from = 0, to = 1.25, by = .25)) +
+  scale_y_continuous(NULL, breaks = NULL) +
+  theme(panel.grid = element_blank()) +
+  facet_wrap(~key, scales = "free_y")
+```
+
+---
+### Calculate ICC. 
+.pull-left[
+Note that the formula uses variances. 'brms' gives us SDs
+$$
+ICC = \frac{\sigma_0^2}{\sigma_0^2 + \sigma_\epsilon^2}
+$$
+
+```{r, eval = FALSE}
+v %>%
+  transmute(ICC = sd_id__Intercept^2 / (sd_id__Intercept^2 + sigma^2)) %>%
+  ggplot(aes(x = ICC)) +
+  geom_density(size = 0, fill = "grey") +
+  scale_x_continuous( limits = 0:1) +
+  scale_y_continuous(NULL, breaks = NULL)
+```
+]
+
+
+.pull-right[
+Note we get a distribution of ICCs, not just a singular score! Note that measuring this dispersion is a feature, not a problem. 
+
+```{r, echo = FALSE}
+v %>%
+  transmute(ICC = sd_id__Intercept^2 / (sd_id__Intercept^2 + sigma^2)) %>%
+  ggplot(aes(x = ICC)) +
+  geom_density(size = 0, fill = "grey") +
+  scale_x_continuous( limits = 0:1) +
+  scale_y_continuous(NULL, breaks = NULL)
+```
+
+]
+
+---
+### Adding predictors
+
+Using the composite formula, our next model, the unconditional growth model, follows the form
+
+$$\begin{align*}
+\text{alcuse}_{ij} & = \gamma_{00} + \gamma_{10} \text{age_14}_{ij} + U_{0j} + U_{1j} \text{age_14}_{ij} + e_{ij} \\
+\epsilon_{ij} & \sim \text{Normal} (0, \sigma_\epsilon^2) \\
+\begin{bmatrix} U_{0j} \\ U_{1j} \end{bmatrix} & \sim \text{MVN} 
+\Bigg ( 
+\begin{bmatrix} 0 \\ 0 \end{bmatrix}, 
+\begin{bmatrix} \sigma_0^2 & \sigma_{01} \\ \sigma_{01} & \sigma_1^2 \end{bmatrix}
+\Bigg )
+\end{align*}$$
+
+---
+
+
+
+```{r fit2, cache = T, warning = F, message = F, results = "hide"}
+ex2.fit2 <-
+  brm(data = alcohol1_pp, 
+      file = "fit4",
+      family = gaussian,
+      alcuse ~ 0 + intercept + age_14 + (1 + age_14 | id),
+      prior = c(prior(normal(0, 4), class = b),
+                prior(student_t(3, 0, 10), class = sd),
+                prior(student_t(3, 0, 10), class = sigma),
+                prior(lkj(1), class = cor)),
+      iter = 2000, warmup = 1000, chains = 4, cores = 4,
+      seed = 4)
+```
+
+---
+```{r}
+plot(ex2.fit2)
+```
+
+---
+
+### Marginal effects
+
+```{r}
+conditional_effects(ex2.fit2)
+```
+
+---
+
+
+```{r fit3, cache = T, warning = F, message = F, results = "hide"}
+ex2.fit3 <-
+  brm(data = alcohol1_pp, 
+      file = "fit5",
+      family = gaussian,
+      alcuse ~ 0 + intercept + age_14 + coa + age_14:coa + (1 + age_14 |id),
+      prior = c(prior(normal(0, 4), class = b),
+                prior(student_t(3, 0, 10), class = sd),
+                prior(student_t(3, 0, 10), class = sigma),
+                prior(lkj(1), class = cor)),
+      iter = 2000, warmup = 1000, chains = 4, cores = 4,
+      seed = 4)
+```
+
+
+---
+```{r}
+summary(ex2.fit3)
+```
+
+---
+```{r}
+plot(ex2.fit3)
+```
+
+---
+```{r marg.ex2.fit3, cache=TRUE}
+marginal_effects(ex2.fit3)
+```
+
+
+```{r fit3_update, cache = T, warning = F, message = F, results = "hide"}
+fit3_f <-
+  update(ex2.fit3,
+         newdata = alcohol1_pp %>% mutate(coa = factor(coa)))
+```
+
+---
+
+
+```{r, message = FALSE}
+conditional_effects(fit3_f,
+                 effects = "coa")
+```
+
+
+---
+
+```{r, message = FALSE}
+marginal_effects(fit3_f,
+                 effects = "coa:age_14")
+```
+
+---
+
+```{r}
+marginal_effects(fit3_f,
+                 effects = "age_14:coa")
+```
+
+
+---
+We can use fitted function to create "predicted" values, much like we did with lmer
+```{r}
+nd <- 
+  tibble(age_14 = seq(from = 0, to = 2, length.out = 30))
+
+f <- 
+  fitted(ex2.fit2, 
+         newdata = nd,
+         re_formula = NA) %>%
+  data.frame() %>%
+  bind_cols(nd) %>% 
+  mutate(age = age_14 + 14)
+
+head(f)
+```
+
+---
+```{r}  
+f %>%
+  ggplot(aes(x = age)) +
+  geom_ribbon(aes(ymin = Q2.5, ymax = Q97.5),
+              fill = "grey75", alpha = 3/4) +
+  geom_line(aes(y = Estimate)) +
+  scale_y_continuous("alcuse", breaks = 0:2, limits = c(0, 2)) 
+```  
+
+---
+### Comparing models
+
+As it turns out, we Bayesian use the log-likelihood (LL), too. When you’re working with **brms**, you can extract the LL with the `log_lik()` function. Here’s an example with `fit1`, our unconditional means model.
+
+```{r}
+log_lik(ex2) %>%
+  str()
+```
+
+You may have noticed we didn’t just get a single value back. Rather, we got an array of 4000 rows and 246 columns. The reason we got 4000 rows is because that’s how many post-warmup iterations we drew from the posterior. I.e., we set `brm(..., iter = 2000, warmup = 1000, chains = 4)`. With respect to the 246 columns, that’s how many rows there are in the `alcohol1_pp` data. So for each person in the data set, we get an entire posterior distribution of LL values.
+
+---
+
+```{r}
+ll <-
+  log_lik(ex2) %>%
+  data.frame() %>%
+  mutate(sums     = rowSums(.)) %>%
+  mutate(deviance = -2 * sums) %>%
+  select(sums, deviance, everything())
+
+```
+
+
+```{r, fig.width = 6, fig.height = 2}
+ll %>%
+  ggplot(aes(x = deviance)) +
+  geom_density(fill = "grey25", size = 0) +
+  scale_y_continuous(NULL, breaks = NULL) +
+  theme(panel.grid = element_blank())
+```
+
+---
+ The AIC is frequentist and cannot handle models with priors. The BIC isis a  misnomer as it is not Bayesian. The Widely Applicable Information Criterion (WAIC) is used instead. 
+
+The distinguishing feature of WAIC is that it is *point wise*. This means that uncertainty in prediction is considered case-by-case, or point-by-point, in the data. This is useful, because some observations are much harder to predict than others and may also have different uncertainty. You can think of WAIC as handling uncertainty where it actually matters: for each independent observation.
+
+---
+```{r}
+waic(ex2)
+```
+
+For the statistic in each row, you get a point estimate and a standard error. The WAIC is on the bottom. The effective number of parameters, the $p_\text{WAIC}$, is in the middle. Notice the `elpd_waic` on the top. That's what you get without the $-2 \times ...$ in the formula. Remember how that part is just to put things in a metric amenable to $\chi^2$ difference testing? Well, not all Bayesians like that and within the **Stan** ecosystem you'll also see the WAIC expressed instead as the $\text{elpd}_\text{WAIC}$.
+
+---
+Leave-one-out cross-validation (LOO-CV).
+
+Cross validation is quickly becoming the primary method to examine fit and utility of one's model. 
+
+k-fold is a common type of CV. As $k$ increases, the number of cases with a fold get smaller. In the extreme, $k = N$, the number of cases within the data. At that point, $k$-fold cross-validation turns into leave-one-out cross-validation (LOO-CV).
+
+But there’s a practical difficulty with LOO-CV: it's costly. As you may have noticed, it takes some time to fit a Bayesian multilevel model. For large data and/or complicated models, sometimes it takes hours or days. Most of us just don’t have enough time or computational resources to fit that many models. Pareto smoothed importance-sampling leave-one-out cross-validation (PSIS-LOO) as an efficient way to approximate true LOO-CV. 
+---
+
+```{r}
+l_fit1 <- loo(ex2)
+
+print(l_fit1)
+```
+
+---
+Comparing models with the WAIC and LOO.
+
+
+```{r, warning = F, message = F}
+ex2 <- add_criterion(ex2, c("loo", "waic"))
+ex2.fit2 <- add_criterion(ex2.fit2, c("loo", "waic"))
+ex2.fit3 <- add_criterion(ex2.fit3, c("loo", "waic"))
+
+```
+
+
+The point to focus on, here, is we can use the `loo_compare()` function to compare fits by their WAIC or LOO. Let's practice with the WAIC.
+
+```{r}
+ws <- loo_compare(ex2, ex2.fit2, ex2.fit3, criterion = "waic")
+
+print(ws)
+```
+
+---
+### Random effects revisited
+
+For one person
+```{r}
+alcohol1_pp %>% 
+  select(id:coa, cpeer, alcuse) %>% 
+  filter(id == 23)
+```
+
+---
+
+```{r}
+library(tidybayes)
+get_variables(fit3_f)
+```
+
+---
+```{r}
+fit3_f %>% 
+spread_draws(`b_age_14`, r_id[id,])
+```
+
+
+---
+```{r}
+fit3_f %>% 
+spread_draws(`b_age_14`, r_id[id,]) %>% 
+   median_qi(slope_mean = b_age_14 + r_id) 
+
+```
+
+---
+
+```{r}
+fit3_f %>% 
+spread_draws(`b_age_14`, r_id[id,]) %>% 
+   mutate(b_age_14 = b_age_14 + r_id) %>% 
+  mutate(id = reorder(id, b_age_14)) %>% 
+    ggplot(aes(y = id, x = b_age_14)) +
+    stat_pointinterval() 
+
+
+```
+
+---
+### Level 1 predictors
+### Variance explained
+### Hypothesis function
+### Posterior-predictive checks
+### Missing data
+### Nonlinear
+
+
+## Thanks
+Many thanks to Solomon Kurz's github for code
+

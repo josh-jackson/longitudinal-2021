@@ -25,6 +25,8 @@ navbar:
           href: lme4.html  
         - text: "plotting"
           href: plotting.html 
+        - text: "brms"
+          href: brms.html
     - text: "Syllabus"
       href: syllabus.html
     - text: "Homeworks"
