@@ -109,10 +109,11 @@ ggplot(tibble(x = c(0, 1)),
 ---
 ## Posterior
 
+.pull-left[
 Distribution of our belief about the parameter values after taking into account the likelihood and one's priors. In regression terms, it is not a specific value of b that would make the data most likely, but a probability distribution for b that serves as a weighted combination of the likelihood and prior. 
 
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
 
 library(psychTools)
 galton.data <- galton
@@ -127,14 +128,18 @@ m.1 <-
       file = "m.1")
 
 ```
+]
 
-```{r}
+.pull-right[
+
+```{r, echo = FALSE}
 library(tidybayes)
 m.1 %>% 
   gather_draws(b_parent)%>% 
 ggplot(aes(y = .variable, x = .value)) +
     stat_halfeye()
 ```
+]
 
 
 ---
@@ -331,7 +336,7 @@ The simulation process is referred to as Markov Chain Monte Carlo, or MCMC for s
 # Comparing lmer with brms 
 
 Lets do a mixed effects model to test this out. We will use the sleepstudy dataset that is loaded with lme4
-```{r}
+```{r, message = FALSE, echo = FALSE}
 library(tidyverse)
 library(lme4)
 data("sleepstudy")
@@ -425,7 +430,7 @@ z <-
   data.frame() %>% 
   set_names("zeta_0", "zeta_1")
 
-head(z)
+
 
 #For our next step, we'll define our $\gamma$ parameters. These are also taken from Table 3.3.
 
@@ -436,7 +441,7 @@ g <-
          gamma_10 = -21.13,
          gamma_11 = 5.27)
 
-head(g)
+
 
 # Note how they’re the same for each row. That’s the essence of the meaning of a fixed effect.
 # 
@@ -455,7 +460,7 @@ early_int_sim <-
          pi_1    = gamma_10 + gamma_11 * program + zeta_1) %>% 
   mutate(cog     = pi_0 + pi_1 * age_c + epsilon)
 
-head(early_int_sim)
+
 
 # But before we do, we’ll want to wrangle a little. We need an `age` column. If you look closely at Table 3.3, you’ll see all the `cog` values are integers. So we’ll round ours to match. Finally, we’ll want to renumber our `id` values to match up better with those in Table 3.3.
 
@@ -465,7 +470,7 @@ early_int_sim <-
          cog = round(cog, digits = 0),
          id  = ifelse(id > 54, id + 900, id))
 
-head(early_int_sim)
+
 
 # Finally, now we just need to prune the columns with the model parameters, rearrange the order of the columns we'd like to keep, and join these data with those from Table 3.3.
 
@@ -475,7 +480,7 @@ early_int_sim <-
   full_join(early_int) %>% 
   arrange(id, age)
 
-glimpse(early_int_sim)
+
 
 #Here we save our results in an external file for use later.
 
@@ -582,7 +587,7 @@ We saved our results as `post`, which is a data frame with 4000 rows (i.e., 1000
 ---
 
 .pull-left[
-```{r}
+```{r, eval = FALSE}
 post %>%
   select(starts_with("b_")) %>%
   gather() %>%
@@ -614,7 +619,8 @@ post %>%
 ---
 ## Random effects
 
-```{r}
+.pull-left[
+```{r, eval = FALSE}
 posterior_samples(ex1) %>%
   transmute(`sigma[0]^2`  = sd_id__Intercept^2,
             `sigma[1]^2`  = sd_id__age_c^2,
@@ -629,7 +635,25 @@ posterior_samples(ex1) %>%
         strip.text = element_text(size = 12)) +
   facet_wrap(~key, scales = "free", labeller = label_parsed)
 ```
+]
 
+.pull-right[
+```{r, echo = FALSE}
+posterior_samples(ex1) %>%
+  transmute(`sigma[0]^2`  = sd_id__Intercept^2,
+            `sigma[1]^2`  = sd_id__age_c^2,
+            `r[0][1]` = cor_id__Intercept__age_c,
+            `sigma[epsilon]^2` = sigma^2) %>%
+  gather(key, posterior) %>%
+
+  ggplot(aes(x = posterior)) +
+  geom_density(color = "transparent", fill = "grey") +
+  scale_y_continuous(NULL, breaks = NULL) +
+  theme(panel.grid = element_blank(),
+        strip.text = element_text(size = 12)) +
+  facet_wrap(~key, scales = "free", labeller = label_parsed)
+```
+]
 
 ---
 
@@ -674,7 +698,7 @@ ex2 <-
 ---
 Visualizing priors. 
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
 library(metRology)
 tibble(x = seq(from = -100, to = 100, length.out = 1e3)) %>%
   mutate(density = metRology::dt.scaled(x, df = 3, mean = 1, sd = 10)) %>% 
@@ -726,7 +750,7 @@ dim(v)
 
 ---
 
-```{r, warning = F, message = F}
+```{r, echo = FALSE, warning = F, message = F}
 v %>%
   gather() %>%
   ggplot(aes(x = value)) +
@@ -743,9 +767,7 @@ v %>%
 ### Calculate ICC. 
 .pull-left[
 Note that the formula uses variances. 'brms' gives us SDs
-$$
-ICC = \frac{\sigma_0^2}{\sigma_0^2 + \sigma_\epsilon^2}
-$$
+$$ICC = \frac{\sigma_0^2}{\sigma_0^2 + \sigma_\epsilon^2}$$
 
 ```{r, eval = FALSE}
 v %>%
@@ -755,12 +777,11 @@ v %>%
   scale_x_continuous( limits = 0:1) +
   scale_y_continuous(NULL, breaks = NULL)
 ```
+Note we get a distribution of ICCs, not just a singular score! Note that measuring this dispersion is a feature, not a problem. 
 ]
 
 
 .pull-right[
-Note we get a distribution of ICCs, not just a singular score! Note that measuring this dispersion is a feature, not a problem. 
-
 ```{r, echo = FALSE}
 v %>%
   transmute(ICC = sd_id__Intercept^2 / (sd_id__Intercept^2 + sigma^2)) %>%
@@ -769,7 +790,6 @@ v %>%
   scale_x_continuous( limits = 0:1) +
   scale_y_continuous(NULL, breaks = NULL)
 ```
-
 ]
 
 ---
@@ -814,7 +834,7 @@ plot(ex2.fit2)
 
 ### Marginal effects
 
-```{r}
+```{r, warning = FALSE, message = FALSE}
 conditional_effects(ex2.fit2)
 ```
 
@@ -847,8 +867,8 @@ plot(ex2.fit3)
 ```
 
 ---
-```{r marg.ex2.fit3, cache=TRUE}
-marginal_effects(ex2.fit3)
+```{r marg.ex2.fit3, cache=TRUE, message = FALSE, warning = FALSE}
+conditional_effects(ex2.fit3)
 ```
 
 
@@ -861,7 +881,7 @@ fit3_f <-
 ---
 
 
-```{r, message = FALSE}
+```{r, message = FALSE, warning = FALSE}
 conditional_effects(fit3_f,
                  effects = "coa")
 ```
@@ -869,15 +889,15 @@ conditional_effects(fit3_f,
 
 ---
 
-```{r, message = FALSE}
+```{r, message = FALSE, warning = FALSE}
 marginal_effects(fit3_f,
                  effects = "coa:age_14")
 ```
 
 ---
 
-```{r}
-marginal_effects(fit3_f,
+```{r, message = FALSE, warning = FALSE}
+conditional_effects(fit3_f,
                  effects = "age_14:coa")
 ```
 

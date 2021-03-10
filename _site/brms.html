@@ -969,6 +969,7 @@ Workshops
 <a href="data.html">data</a>
 <a href="lme4.html">lme4</a>
 <a href="plotting.html">plotting</a>
+<a href="brms.html">brms</a>
 </div>
 </div>
 <a href="syllabus.html">Syllabus</a>
@@ -1046,31 +1047,17 @@ Likelihood - Distribution of the likelihood of various hypothesis. Probability a
 ---
 ## Posterior
 
+.pull-left[
 Distribution of our belief about the parameter values after taking into account the likelihood and one's priors. In regression terms, it is not a specific value of b that would make the data most likely, but a probability distribution for b that serves as a weighted combination of the likelihood and prior. 
 
 
 
-```
-## 
-## Attaching package: 'psychTools'
-```
+]
 
-```
-## The following object is masked from 'package:modelr':
-## 
-##     heights
-```
-
-
-```r
-library(tidybayes)
-m.1 %&gt;% 
-  gather_draws(b_parent)%&gt;% 
-ggplot(aes(y = .variable, x = .value)) +
-    stat_halfeye()
-```
+.pull-right[
 
 ![](brms_files/figure-html/unnamed-chunk-4-1.png)&lt;!-- --&gt;
+]
 
 
 ---
@@ -1145,42 +1132,6 @@ The simulation process is referred to as Markov Chain Monte Carlo, or MCMC for s
 
 Lets do a mixed effects model to test this out. We will use the sleepstudy dataset that is loaded with lme4
 
-```r
-library(tidyverse)
-library(lme4)
-```
-
-```
-## Loading required package: Matrix
-```
-
-```
-## 
-## Attaching package: 'Matrix'
-```
-
-```
-## The following objects are masked from 'package:tidyr':
-## 
-##     expand, pack, unpack
-```
-
-```
-## 
-## Attaching package: 'lme4'
-```
-
-```
-## The following object is masked from 'package:brms':
-## 
-##     ngrps
-```
-
-```r
-data("sleepstudy")
-head(sleepstudy)
-```
-
 ```
 ##   Reaction Days Subject
 ## 1 249.5600    0     308
@@ -1189,10 +1140,6 @@ head(sleepstudy)
 ## 4 321.4398    3     308
 ## 5 356.8519    4     308
 ## 6 414.6901    5     308
-```
-
-```r
-write.csv(sleepstudy, file = "sleepstudy")
 ```
 
 ---
@@ -1331,65 +1278,7 @@ Here we'll use a dataset from Singer &amp; Willet, chapter 3, looking at cogniti
 
 
 ```
-##       zeta_0     zeta_1
-## 1 10.7586672 -3.0908765
-## 2  3.4258938 -0.4186497
-## 3 -3.0770183  0.2140130
-## 4 12.5303603 -4.9043416
-## 5 -2.1114641  0.8936950
-## 6 -0.5521597 -0.6310265
-```
-
-```
-## # A tibble: 6 x 5
-##      id gamma_00 gamma_01 gamma_10 gamma_11
-##   &lt;int&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
-## 1     1     108.     6.85    -21.1     5.27
-## 2     2     108.     6.85    -21.1     5.27
-## 3     3     108.     6.85    -21.1     5.27
-## 4     4     108.     6.85    -21.1     5.27
-## 5     5     108.     6.85    -21.1     5.27
-## 6     6     108.     6.85    -21.1     5.27
-```
-
-```
-## # A tibble: 6 x 13
-##      id gamma_00 gamma_01 gamma_10 gamma_11 zeta_0 zeta_1 program age_c epsilon
-##   &lt;int&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;   &lt;int&gt; &lt;dbl&gt;   &lt;dbl&gt;
-## 1     1     108.     6.85    -21.1     5.27  10.8  -3.09        1   0    -8.29 
-## 2     1     108.     6.85    -21.1     5.27  10.8  -3.09        1   0.5  -2.52 
-## 3     1     108.     6.85    -21.1     5.27  10.8  -3.09        1   1     2.23 
-## 4     2     108.     6.85    -21.1     5.27   3.43 -0.419       1   0    -9.93 
-## 5     2     108.     6.85    -21.1     5.27   3.43 -0.419       1   0.5   1.69 
-## 6     2     108.     6.85    -21.1     5.27   3.43 -0.419       1   1     0.260
-## # … with 3 more variables: pi_0 &lt;dbl&gt;, pi_1 &lt;dbl&gt;, cog &lt;dbl&gt;
-```
-
-```
-## # A tibble: 6 x 14
-##      id gamma_00 gamma_01 gamma_10 gamma_11 zeta_0 zeta_1 program age_c epsilon
-##   &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;   &lt;int&gt; &lt;dbl&gt;   &lt;dbl&gt;
-## 1     1     108.     6.85    -21.1     5.27  10.8  -3.09        1   0    -8.29 
-## 2     1     108.     6.85    -21.1     5.27  10.8  -3.09        1   0.5  -2.52 
-## 3     1     108.     6.85    -21.1     5.27  10.8  -3.09        1   1     2.23 
-## 4     2     108.     6.85    -21.1     5.27   3.43 -0.419       1   0    -9.93 
-## 5     2     108.     6.85    -21.1     5.27   3.43 -0.419       1   0.5   1.69 
-## 6     2     108.     6.85    -21.1     5.27   3.43 -0.419       1   1     0.260
-## # … with 4 more variables: pi_0 &lt;dbl&gt;, pi_1 &lt;dbl&gt;, cog &lt;dbl&gt;, age &lt;dbl&gt;
-```
-
-```
 ## Joining, by = c("id", "age", "cog", "program", "age_c")
-```
-
-```
-## Rows: 309
-## Columns: 5
-## $ id      &lt;dbl&gt; 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7…
-## $ age     &lt;dbl&gt; 1.0, 1.5, 2.0, 1.0, 1.5, 2.0, 1.0, 1.5, 2.0, 1.0, 1.5, 2.0, 1…
-## $ cog     &lt;dbl&gt; 117, 113, 109, 108, 112, 102, 112, 113, 85, 138, 110, 97, 106…
-## $ program &lt;int&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…
-## $ age_c   &lt;dbl&gt; 0.0, 0.5, 1.0, 0.0, 0.5, 1.0, 0.0, 0.5, 1.0, 0.0, 0.5, 1.0, 0…
 ```
 
 
@@ -1550,8 +1439,6 @@ post %&gt;%
   theme(panel.grid = element_blank()) +
   facet_wrap(~key, scales = "free")
 ```
-
-![](brms_files/figure-html/unnamed-chunk-24-1.png)&lt;!-- --&gt;
 Notice how this is exactly the same as using the `plot` function. But you have more control now. 
 
 ]
@@ -1565,6 +1452,7 @@ Notice how this is exactly the same as using the `plot` function. But you have m
 ---
 ## Random effects
 
+.pull-left[
 
 ```r
 posterior_samples(ex1) %&gt;%
@@ -1581,9 +1469,11 @@ posterior_samples(ex1) %&gt;%
         strip.text = element_text(size = 12)) +
   facet_wrap(~key, scales = "free", labeller = label_parsed)
 ```
+]
 
-![](brms_files/figure-html/unnamed-chunk-26-1.png)&lt;!-- --&gt;
-
+.pull-right[
+![](brms_files/figure-html/unnamed-chunk-27-1.png)&lt;!-- --&gt;
+]
 
 ---
 
@@ -1625,19 +1515,7 @@ ex2 &lt;-
 ---
 Visualizing priors. 
 
-
-```
-## 
-## Attaching package: 'metRology'
-```
-
-```
-## The following objects are masked from 'package:base':
-## 
-##     cbind, rbind
-```
-
-![](brms_files/figure-html/unnamed-chunk-28-1.png)&lt;!-- --&gt;
+![](brms_files/figure-html/unnamed-chunk-29-1.png)&lt;!-- --&gt;
 
 Note a few things: First, this is a broad space for our intercept based on what we are looking at. This would be considering minimally informative. 
 
@@ -1683,7 +1561,7 @@ summary(ex2)
 plot(ex2)
 ```
 
-![](brms_files/figure-html/unnamed-chunk-30-1.png)&lt;!-- --&gt;
+![](brms_files/figure-html/unnamed-chunk-31-1.png)&lt;!-- --&gt;
 
 ---
 
@@ -1725,29 +1603,13 @@ dim(v)
 
 ---
 
-
-```r
-v %&gt;%
-  gather() %&gt;%
-  ggplot(aes(x = value)) +
-  geom_vline(xintercept = c(.25, .5, .75, 1), color = "white") +
-  geom_density(size = 0, fill = "grey") +
-  scale_x_continuous(NULL, limits = c(0, 1.25),
-                     breaks = seq(from = 0, to = 1.25, by = .25)) +
-  scale_y_continuous(NULL, breaks = NULL) +
-  theme(panel.grid = element_blank()) +
-  facet_wrap(~key, scales = "free_y")
-```
-
-![](brms_files/figure-html/unnamed-chunk-34-1.png)&lt;!-- --&gt;
+![](brms_files/figure-html/unnamed-chunk-35-1.png)&lt;!-- --&gt;
 
 ---
 ### Calculate ICC. 
 .pull-left[
 Note that the formula uses variances. 'brms' gives us SDs
-$$
-ICC = \frac{\sigma_0^2}{\sigma_0^2 + \sigma_\epsilon^2}
-$$
+`$$ICC = \frac{\sigma_0^2}{\sigma_0^2 + \sigma_\epsilon^2}$$`
 
 
 ```r
@@ -1758,14 +1620,12 @@ v %&gt;%
   scale_x_continuous( limits = 0:1) +
   scale_y_continuous(NULL, breaks = NULL)
 ```
+Note we get a distribution of ICCs, not just a singular score! Note that measuring this dispersion is a feature, not a problem. 
 ]
 
 
 .pull-right[
-Note we get a distribution of ICCs, not just a singular score! Note that measuring this dispersion is a feature, not a problem. 
-
-![](brms_files/figure-html/unnamed-chunk-36-1.png)&lt;!-- --&gt;
-
+![](brms_files/figure-html/unnamed-chunk-37-1.png)&lt;!-- --&gt;
 ]
 
 ---
@@ -1808,7 +1668,7 @@ ex2.fit2 &lt;-
 plot(ex2.fit2)
 ```
 
-![](brms_files/figure-html/unnamed-chunk-37-1.png)&lt;!-- --&gt;![](brms_files/figure-html/unnamed-chunk-37-2.png)&lt;!-- --&gt;
+![](brms_files/figure-html/unnamed-chunk-38-1.png)&lt;!-- --&gt;![](brms_files/figure-html/unnamed-chunk-38-2.png)&lt;!-- --&gt;
 
 ---
 
@@ -1819,21 +1679,7 @@ plot(ex2.fit2)
 conditional_effects(ex2.fit2)
 ```
 
-```
-## Warning: Reserved variable name 'intercept' is deprecated. Please use
-## 'Intercept' instead.
-
-## Warning: Reserved variable name 'intercept' is deprecated. Please use
-## 'Intercept' instead.
-
-## Warning: Reserved variable name 'intercept' is deprecated. Please use
-## 'Intercept' instead.
-
-## Warning: Reserved variable name 'intercept' is deprecated. Please use
-## 'Intercept' instead.
-```
-
-![](brms_files/figure-html/unnamed-chunk-38-1.png)&lt;!-- --&gt;
+![](brms_files/figure-html/unnamed-chunk-39-1.png)&lt;!-- --&gt;
 
 ---
 
@@ -1901,43 +1747,12 @@ summary(ex2.fit3)
 plot(ex2.fit3)
 ```
 
-![](brms_files/figure-html/unnamed-chunk-40-1.png)&lt;!-- --&gt;![](brms_files/figure-html/unnamed-chunk-40-2.png)&lt;!-- --&gt;
+![](brms_files/figure-html/unnamed-chunk-41-1.png)&lt;!-- --&gt;![](brms_files/figure-html/unnamed-chunk-41-2.png)&lt;!-- --&gt;
 
 ---
 
 ```r
-marginal_effects(ex2.fit3)
-```
-
-```
-## Warning: Method 'marginal_effects' is deprecated. Please use
-## 'conditional_effects' instead.
-```
-
-```
-## Warning: Reserved variable name 'intercept' is deprecated. Please use
-## 'Intercept' instead.
-
-## Warning: Reserved variable name 'intercept' is deprecated. Please use
-## 'Intercept' instead.
-
-## Warning: Reserved variable name 'intercept' is deprecated. Please use
-## 'Intercept' instead.
-
-## Warning: Reserved variable name 'intercept' is deprecated. Please use
-## 'Intercept' instead.
-
-## Warning: Reserved variable name 'intercept' is deprecated. Please use
-## 'Intercept' instead.
-
-## Warning: Reserved variable name 'intercept' is deprecated. Please use
-## 'Intercept' instead.
-
-## Warning: Reserved variable name 'intercept' is deprecated. Please use
-## 'Intercept' instead.
-
-## Warning: Reserved variable name 'intercept' is deprecated. Please use
-## 'Intercept' instead.
+conditional_effects(ex2.fit3)
 ```
 
 ![](brms_files/figure-html/marg.ex2.fit3-1.png)&lt;!-- --&gt;![](brms_files/figure-html/marg.ex2.fit3-2.png)&lt;!-- --&gt;![](brms_files/figure-html/marg.ex2.fit3-3.png)&lt;!-- --&gt;
@@ -1959,21 +1774,7 @@ conditional_effects(fit3_f,
                  effects = "coa")
 ```
 
-```
-## Warning: Reserved variable name 'intercept' is deprecated. Please use
-## 'Intercept' instead.
-
-## Warning: Reserved variable name 'intercept' is deprecated. Please use
-## 'Intercept' instead.
-
-## Warning: Reserved variable name 'intercept' is deprecated. Please use
-## 'Intercept' instead.
-
-## Warning: Reserved variable name 'intercept' is deprecated. Please use
-## 'Intercept' instead.
-```
-
-![](brms_files/figure-html/unnamed-chunk-41-1.png)&lt;!-- --&gt;
+![](brms_files/figure-html/unnamed-chunk-42-1.png)&lt;!-- --&gt;
 
 
 ---
@@ -1984,55 +1785,17 @@ marginal_effects(fit3_f,
                  effects = "coa:age_14")
 ```
 
-```
-## Warning: Method 'marginal_effects' is deprecated. Please use
-## 'conditional_effects' instead.
-```
-
-```
-## Warning: Reserved variable name 'intercept' is deprecated. Please use
-## 'Intercept' instead.
-
-## Warning: Reserved variable name 'intercept' is deprecated. Please use
-## 'Intercept' instead.
-
-## Warning: Reserved variable name 'intercept' is deprecated. Please use
-## 'Intercept' instead.
-
-## Warning: Reserved variable name 'intercept' is deprecated. Please use
-## 'Intercept' instead.
-```
-
-![](brms_files/figure-html/unnamed-chunk-42-1.png)&lt;!-- --&gt;
+![](brms_files/figure-html/unnamed-chunk-43-1.png)&lt;!-- --&gt;
 
 ---
 
 
 ```r
-marginal_effects(fit3_f,
+conditional_effects(fit3_f,
                  effects = "age_14:coa")
 ```
 
-```
-## Warning: Method 'marginal_effects' is deprecated. Please use
-## 'conditional_effects' instead.
-```
-
-```
-## Warning: Reserved variable name 'intercept' is deprecated. Please use
-## 'Intercept' instead.
-
-## Warning: Reserved variable name 'intercept' is deprecated. Please use
-## 'Intercept' instead.
-
-## Warning: Reserved variable name 'intercept' is deprecated. Please use
-## 'Intercept' instead.
-
-## Warning: Reserved variable name 'intercept' is deprecated. Please use
-## 'Intercept' instead.
-```
-
-![](brms_files/figure-html/unnamed-chunk-43-1.png)&lt;!-- --&gt;
+![](brms_files/figure-html/unnamed-chunk-44-1.png)&lt;!-- --&gt;
 
 
 ---
@@ -2084,7 +1847,7 @@ f %&gt;%
   scale_y_continuous("alcuse", breaks = 0:2, limits = c(0, 2)) 
 ```
 
-![](brms_files/figure-html/unnamed-chunk-45-1.png)&lt;!-- --&gt;
+![](brms_files/figure-html/unnamed-chunk-46-1.png)&lt;!-- --&gt;
 
 ---
 ### Comparing models
@@ -2128,7 +1891,7 @@ ll %&gt;%
   theme(panel.grid = element_blank())
 ```
 
-![](brms_files/figure-html/unnamed-chunk-48-1.png)&lt;!-- --&gt;
+![](brms_files/figure-html/unnamed-chunk-49-1.png)&lt;!-- --&gt;
 
 ---
  The AIC is frequentist and cannot handle models with priors. The BIC isis a  misnomer as it is not Bayesian. The Widely Applicable Information Criterion (WAIC) is used instead. 
@@ -2417,7 +2180,7 @@ spread_draws(`b_age_14`, r_id[id,]) %&gt;%
     stat_pointinterval() 
 ```
 
-![](brms_files/figure-html/unnamed-chunk-57-1.png)&lt;!-- --&gt;
+![](brms_files/figure-html/unnamed-chunk-58-1.png)&lt;!-- --&gt;
 
 ---
 ### Level 1 predictors
