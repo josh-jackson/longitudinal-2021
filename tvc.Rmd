@@ -2,16 +2,16 @@
 title: "tvc"
 output:
   xaringan::moon_reader:
-    mathjax: https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML
+    mathjax: "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML"
     css: xaringan-themer.css
-    seal: no
+    seal: false
     nature:
       highlightStyle: github
-      highlightLines: yes
-      ratio: '16:9'
-  html_document:
-    df_print: paged
+      highlightLines: true
+      ratio: "16:9"
 ---
+
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)

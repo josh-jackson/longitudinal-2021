@@ -23,6 +23,7 @@
 pre > code.sourceCode { white-space: pre; position: relative; }
 pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
@@ -2342,7 +2343,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
     color: var(--hover-color, white);
   }</style>
   <!--/radix_placeholder_distill-->
-  <script src="site_libs/header-attrs-2.6.6/header-attrs.js"></script>
+  <script src="site_libs/header-attrs-2.7/header-attrs.js"></script>
   <link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
   <script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
   <script src="site_libs/popper-2.6.0/popper.min.js"></script>
@@ -2387,6 +2388,7 @@ Lectures
 <a href="mlm.html">MLM</a>
 <a href="conditional.html">conditional models</a>
 <a href="tvc.html">time varying conditional models</a>
+<a href="sem.html">structural equation models</a>
 </div>
 </div>
 <div class="nav-dropdown">
@@ -2412,6 +2414,7 @@ Homeworks
 <div class="nav-dropdown-content">
 <a href="hw-1.html">homework 1</a>
 <a href="hw-2.html">homework 2</a>
+<a href="hw-3.html">homework 3</a>
 </div>
 </div>
 <a href="https://github.com/josh-jackson/longitudinal-2021">
@@ -2553,19 +2556,19 @@ Homeworks
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/load.html'>load</a></span><span class='op'>(</span><span class='st'>"sample.RData"</span><span class='op'>)</span>
 
-<span class='fu'><a href='https://tibble.tidyverse.org/reference/glimpse.html'>glimpse</a></span><span class='op'>(</span><span class='va'>sample_dat</span><span class='op'>)</span>
+<span class='fu'><a href='https://pillar.r-lib.org/reference/glimpse.html'>glimpse</a></span><span class='op'>(</span><span class='va'>sample_dat</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code>Rows: 2,084
 Columns: 8
-$ PROC_CID   &lt;dbl&gt; 1601, 1601, 9102, 9501, 9501, 9501, 9502, 9502, …
-$ age        &lt;dbl&gt; 16, 18, 16, 14, 18, 22, 14, 16, 20, 16, 20, 14, …
-$ year       &lt;dbl&gt; 2006, 2008, 2012, 2000, 2004, 2008, 2002, 2004, …
-$ age0       &lt;dbl&gt; 2, 4, 2, 0, 4, 8, 0, 2, 6, 2, 6, 0, 6, 2, 4, 8, …
-$ groups     &lt;fct&gt; CommServ, CommServ, None, Jail, Jail, Jail, Jail…
-$ CESD       &lt;dbl&gt; 0.4285714, 2.0000000, 0.1818182, 0.5000000, 0.42…
-$ SensSeek   &lt;dbl&gt; 3.666667, 3.000000, 3.333333, 3.000000, 3.000000…
-$ DemPweight &lt;dbl&gt; 0.81593987, 0.81593987, 0.67123972, 0.54775843, …</code></pre>
+$ PROC_CID   &lt;dbl&gt; 1601, 1601, 9102, 9501, 9501, 9501, 9502, 9502, 9…
+$ age        &lt;dbl&gt; 16, 18, 16, 14, 18, 22, 14, 16, 20, 16, 20, 14, 2…
+$ year       &lt;dbl&gt; 2006, 2008, 2012, 2000, 2004, 2008, 2002, 2004, 2…
+$ age0       &lt;dbl&gt; 2, 4, 2, 0, 4, 8, 0, 2, 6, 2, 6, 0, 6, 2, 4, 8, 0…
+$ groups     &lt;fct&gt; CommServ, CommServ, None, Jail, Jail, Jail, Jail,…
+$ CESD       &lt;dbl&gt; 0.4285714, 2.0000000, 0.1818182, 0.5000000, 0.428…
+$ SensSeek   &lt;dbl&gt; 3.666667, 3.000000, 3.333333, 3.000000, 3.000000,…
+$ DemPweight &lt;dbl&gt; 0.81593987, 0.81593987, 0.67123972, 0.54775843, 0…</code></pre>
 </div>
 <h2 id="restructure-data">Restructure Data</h2>
 <p>These data are already largely cleaned as that is not our focus today.First we need to create a time variable centered at zero, so we can interpret our moderators later.</p>
@@ -2574,7 +2577,7 @@ $ DemPweight &lt;dbl&gt; 0.81593987, 0.81593987, 0.67123972, 0.54775843, …</co
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>long.1</span> <span class='op'>&lt;-</span> <span class='va'>sample_dat</span> <span class='op'>%&gt;%</span>
    <span class='fu'><a href='https://rdrr.io/pkg/plyr/man/mutate.html'>mutate</a></span><span class='op'>(</span>wave <span class='op'>=</span> <span class='va'>year</span> <span class='op'>-</span> <span class='fl'>1996</span>,
           age0 <span class='op'>=</span> <span class='va'>age</span><span class='op'>-</span><span class='fl'>16</span><span class='op'>)</span> 
-<span class='fu'><a href='https://rdrr.io/pkg/rmarkdown/man/paged_table.html'>paged_table</a></span><span class='op'>(</span><span class='va'>long.1</span><span class='op'>)</span>
+<span class='fu'><a href='https://pkgs.rstudio.com/rmarkdown/reference/paged_table.html'>paged_table</a></span><span class='op'>(</span><span class='va'>long.1</span><span class='op'>)</span>
 </code></pre>
 </div>
 <div data-pagedtable="false">
@@ -2668,7 +2671,7 @@ age0 -0.312</code></pre>
   <span class='fu'>pivot_longer</span><span class='op'>(</span>cols <span class='op'>=</span> <span class='va'>CESD</span><span class='op'>:</span><span class='va'>SensSeek</span>, names_to <span class='op'>=</span> <span class='st'>"trait"</span>, values_to <span class='op'>=</span> <span class='st'>"value"</span><span class='op'>)</span> <span class='op'>%&gt;%</span>
    <span class='fu'><a href='https://rdrr.io/pkg/plyr/man/mutate.html'>mutate</a></span><span class='op'>(</span>wave <span class='op'>=</span> <span class='va'>year</span> <span class='op'>-</span> <span class='fl'>1996</span>,
           age0 <span class='op'>=</span> <span class='va'>age</span><span class='op'>-</span><span class='fl'>16</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/pkg/rmarkdown/man/paged_table.html'>paged_table</a></span><span class='op'>(</span><span class='va'>long.2</span><span class='op'>)</span>
+<span class='fu'><a href='https://pkgs.rstudio.com/rmarkdown/reference/paged_table.html'>paged_table</a></span><span class='op'>(</span><span class='va'>long.2</span><span class='op'>)</span>
 </code></pre>
 </div>
 <div data-pagedtable="false">
@@ -2795,7 +2798,7 @@ age0 -0.312</code></pre>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>fitted</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/predict.html'>predict</a></span><span class='op'>(</span><span class='va'>sens.1</span><span class='op'>)</span>
-<span class='fu'><a href='https://tibble.tidyverse.org/reference/glimpse.html'>glimpse</a></span><span class='op'>(</span><span class='va'>fitted</span><span class='op'>)</span>
+<span class='fu'><a href='https://pillar.r-lib.org/reference/glimpse.html'>glimpse</a></span><span class='op'>(</span><span class='va'>fitted</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code> Named num [1:2084] 3.1 3.09 3 2.94 2.92 ...
@@ -2804,25 +2807,25 @@ age0 -0.312</code></pre>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>fitted.2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://generics.r-lib.org/reference/augment.html'>augment</a></span><span class='op'>(</span><span class='va'>sens.1</span><span class='op'>)</span>
-<span class='fu'><a href='https://tibble.tidyverse.org/reference/glimpse.html'>glimpse</a></span><span class='op'>(</span><span class='va'>fitted.2</span><span class='op'>)</span>
+<span class='fu'><a href='https://pillar.r-lib.org/reference/glimpse.html'>glimpse</a></span><span class='op'>(</span><span class='va'>fitted.2</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code>Rows: 2,084
 Columns: 14
-$ SensSeek &lt;dbl&gt; 3.666667, 3.000000, 3.333333, 3.000000, 3.000000, …
-$ age0     &lt;dbl&gt; 0, 2, 0, -2, 2, 6, -2, 0, 4, 0, 4, -2, 4, 0, 2, 6,…
-$ PROC_CID &lt;dbl&gt; 1601, 1601, 9102, 9501, 9501, 9501, 9502, 9502, 95…
-$ .fitted  &lt;dbl&gt; 3.103404, 3.085688, 2.998526, 2.936282, 2.919472, …
-$ .resid   &lt;dbl&gt; 0.563262656, -0.085688486, 0.334807697, 0.06371764…
-$ .hat     &lt;dbl&gt; 0.3006265, 0.3011250, 0.4222847, 0.2830384, 0.2289…
-$ .cooksd  &lt;dbl&gt; 5.156301e-01, 1.197017e-02, 3.750386e-01, 5.911267…
-$ .fixed   &lt;dbl&gt; 2.754291, 2.742247, 2.754291, 2.766335, 2.742247, …
-$ .mu      &lt;dbl&gt; 3.103404, 3.085688, 2.998526, 2.936282, 2.919472, …
-$ .offset  &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
-$ .sqrtXwt &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
-$ .sqrtrwt &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
-$ .weights &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,…
-$ .wtres   &lt;dbl&gt; 0.563262656, -0.085688486, 0.334807697, 0.06371764…</code></pre>
+$ SensSeek &lt;dbl&gt; 3.666667, 3.000000, 3.333333, 3.000000, 3.000000, 3…
+$ age0     &lt;dbl&gt; 0, 2, 0, -2, 2, 6, -2, 0, 4, 0, 4, -2, 4, 0, 2, 6, …
+$ PROC_CID &lt;dbl&gt; 1601, 1601, 9102, 9501, 9501, 9501, 9502, 9502, 950…
+$ .fitted  &lt;dbl&gt; 3.103404, 3.085688, 2.998526, 2.936282, 2.919472, 2…
+$ .resid   &lt;dbl&gt; 0.563262656, -0.085688486, 0.334807697, 0.063717648…
+$ .hat     &lt;dbl&gt; 0.3006265, 0.3011250, 0.4222847, 0.2830384, 0.22898…
+$ .cooksd  &lt;dbl&gt; 5.156301e-01, 1.197017e-02, 3.750386e-01, 5.911267e…
+$ .fixed   &lt;dbl&gt; 2.754291, 2.742247, 2.754291, 2.766335, 2.742247, 2…
+$ .mu      &lt;dbl&gt; 3.103404, 3.085688, 2.998526, 2.936282, 2.919472, 2…
+$ .offset  &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, …
+$ .sqrtXwt &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, …
+$ .sqrtrwt &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, …
+$ .weights &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, …
+$ .wtres   &lt;dbl&gt; 0.563262656, -0.085688486, 0.334807697, 0.063717648…</code></pre>
 </div>
 <p>Note how the default of ggpredict doesn’t give fitted values for each person. Instead it provides “marginal effects” which is typically what we want when we want to plot.</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -2965,14 +2968,14 @@ Adjusted for:
 <span class='va'>sens.1f</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lme4/man/lmer.html'>lmer</a></span><span class='op'>(</span><span class='va'>SensSeek</span> <span class='op'>~</span> <span class='fl'>1</span> <span class='op'>+</span> <span class='va'>age0</span> <span class='op'>+</span> <span class='op'>(</span><span class='va'>age0</span> <span class='op'>|</span> <span class='va'>ID</span><span class='op'>)</span>, data <span class='op'>=</span> <span class='va'>long.1</span><span class='op'>)</span>
 
 <span class='va'>ggpred2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://strengejacke.github.io/ggeffects/reference/ggpredict.html'>ggpredict</a></span><span class='op'>(</span><span class='va'>sens.1f</span>, terms <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"age0"</span>, <span class='st'>"ID"</span><span class='op'>)</span>, type <span class='op'>=</span> <span class='st'>"random"</span><span class='op'>)</span>
-<span class='fu'><a href='https://tibble.tidyverse.org/reference/glimpse.html'>glimpse</a></span><span class='op'>(</span><span class='va'>ggpred2</span><span class='op'>)</span>
+<span class='fu'><a href='https://pillar.r-lib.org/reference/glimpse.html'>glimpse</a></span><span class='op'>(</span><span class='va'>ggpred2</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code>Rows: 5,544
 Columns: 3
-$ x         &lt;dbl&gt; -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -…
-$ predicted &lt;dbl&gt; 3.121120, 3.013436, 2.936282, 2.936846, 2.914597,…
-$ group     &lt;fct&gt; 1601, 9102, 9501, 9502, 9503, 10001, 12802, 13801…</code></pre>
+$ x         &lt;dbl&gt; -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2, -2…
+$ predicted &lt;dbl&gt; 3.121120, 3.013436, 2.936282, 2.936846, 2.914597, …
+$ group     &lt;fct&gt; 1601, 9102, 9501, 9502, 9503, 10001, 12802, 13801,…</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -3090,7 +3093,7 @@ $ group     &lt;fct&gt; 1601, 9102, 9501, 9502, 9503, 10001, 12802, 13801…</co
 </div>
 <pre><code># A tibble: 10 x 2
      age0  pred
- *  &lt;dbl&gt; &lt;dbl&gt;
+    &lt;dbl&gt; &lt;dbl&gt;
  1 -2      2.77
  2 -0.889  2.76
  3  0.222  2.75
@@ -3222,18 +3225,18 @@ Adjusted for:
 </code></pre>
 </div>
 <pre><code># A tibble: 100 x 2
-   strap      .id  
-   &lt;list&gt;     &lt;chr&gt;
- 1 &lt;resample&gt; 001  
- 2 &lt;resample&gt; 002  
- 3 &lt;resample&gt; 003  
- 4 &lt;resample&gt; 004  
- 5 &lt;resample&gt; 005  
- 6 &lt;resample&gt; 006  
- 7 &lt;resample&gt; 007  
- 8 &lt;resample&gt; 008  
- 9 &lt;resample&gt; 009  
-10 &lt;resample&gt; 010  
+   strap                  .id  
+   &lt;list&gt;                 &lt;chr&gt;
+ 1 &lt;resample [2,084 x 3]&gt; 001  
+ 2 &lt;resample [2,084 x 3]&gt; 002  
+ 3 &lt;resample [2,084 x 3]&gt; 003  
+ 4 &lt;resample [2,084 x 3]&gt; 004  
+ 5 &lt;resample [2,084 x 3]&gt; 005  
+ 6 &lt;resample [2,084 x 3]&gt; 006  
+ 7 &lt;resample [2,084 x 3]&gt; 007  
+ 8 &lt;resample [2,084 x 3]&gt; 008  
+ 9 &lt;resample [2,084 x 3]&gt; 009  
+10 &lt;resample [2,084 x 3]&gt; 010  
 # … with 90 more rows</code></pre>
 </div>
 <p>We now have 100 samples of our dataset. Think of these as possible datasets if we would go out and collect this study again. Cool huh?</p>
@@ -3251,18 +3254,18 @@ Adjusted for:
 </div>
 <pre><code># A tibble: 100 x 5
 # Groups:   .id [100]
-   strap      .id   models    results          fits                 
-   &lt;list&gt;     &lt;chr&gt; &lt;list&gt;    &lt;list&gt;           &lt;list&gt;               
- 1 &lt;resample&gt; 001   &lt;lmerMod&gt; &lt;tibble [6 × 6]&gt; &lt;tibble [2,084 × 14]&gt;
- 2 &lt;resample&gt; 002   &lt;lmerMod&gt; &lt;tibble [6 × 6]&gt; &lt;tibble [2,084 × 14]&gt;
- 3 &lt;resample&gt; 003   &lt;lmerMod&gt; &lt;tibble [6 × 6]&gt; &lt;tibble [2,084 × 14]&gt;
- 4 &lt;resample&gt; 004   &lt;lmerMod&gt; &lt;tibble [6 × 6]&gt; &lt;tibble [2,084 × 14]&gt;
- 5 &lt;resample&gt; 005   &lt;lmerMod&gt; &lt;tibble [6 × 6]&gt; &lt;tibble [2,084 × 14]&gt;
- 6 &lt;resample&gt; 006   &lt;lmerMod&gt; &lt;tibble [6 × 6]&gt; &lt;tibble [2,084 × 14]&gt;
- 7 &lt;resample&gt; 007   &lt;lmerMod&gt; &lt;tibble [6 × 6]&gt; &lt;tibble [2,084 × 14]&gt;
- 8 &lt;resample&gt; 008   &lt;lmerMod&gt; &lt;tibble [6 × 6]&gt; &lt;tibble [2,084 × 14]&gt;
- 9 &lt;resample&gt; 009   &lt;lmerMod&gt; &lt;tibble [6 × 6]&gt; &lt;tibble [2,084 × 14]&gt;
-10 &lt;resample&gt; 010   &lt;lmerMod&gt; &lt;tibble [6 × 6]&gt; &lt;tibble [2,084 × 14]&gt;
+   strap               .id   models   results        fits             
+   &lt;list&gt;              &lt;chr&gt; &lt;list&gt;   &lt;list&gt;         &lt;list&gt;           
+ 1 &lt;resample [2,084 x… 001   &lt;lmerMo… &lt;tibble [6 × … &lt;tibble [2,084 ×…
+ 2 &lt;resample [2,084 x… 002   &lt;lmerMo… &lt;tibble [6 × … &lt;tibble [2,084 ×…
+ 3 &lt;resample [2,084 x… 003   &lt;lmerMo… &lt;tibble [6 × … &lt;tibble [2,084 ×…
+ 4 &lt;resample [2,084 x… 004   &lt;lmerMo… &lt;tibble [6 × … &lt;tibble [2,084 ×…
+ 5 &lt;resample [2,084 x… 005   &lt;lmerMo… &lt;tibble [6 × … &lt;tibble [2,084 ×…
+ 6 &lt;resample [2,084 x… 006   &lt;lmerMo… &lt;tibble [6 × … &lt;tibble [2,084 ×…
+ 7 &lt;resample [2,084 x… 007   &lt;lmerMo… &lt;tibble [6 × … &lt;tibble [2,084 ×…
+ 8 &lt;resample [2,084 x… 008   &lt;lmerMo… &lt;tibble [6 × … &lt;tibble [2,084 ×…
+ 9 &lt;resample [2,084 x… 009   &lt;lmerMo… &lt;tibble [6 × … &lt;tibble [2,084 ×…
+10 &lt;resample [2,084 x… 010   &lt;lmerMo… &lt;tibble [6 × … &lt;tibble [2,084 ×…
 # … with 90 more rows</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
@@ -3273,18 +3276,18 @@ Adjusted for:
 </div>
 <pre><code># A tibble: 600 x 10
 # Groups:   .id [100]
-   strap .id   models effect group term  estimate std.error statistic
-   &lt;lis&gt; &lt;chr&gt; &lt;list&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
- 1 &lt;res… 001   &lt;lmer… fixed  &lt;NA&gt;  (Int…  2.76      0.0201     137.  
- 2 &lt;res… 001   &lt;lmer… fixed  &lt;NA&gt;  age0  -0.00609   0.00553     -1.10
- 3 &lt;res… 001   &lt;lmer… ran_p… PROC… sd__…  0.494    NA           NA   
- 4 &lt;res… 001   &lt;lmer… ran_p… PROC… cor_… -0.368    NA           NA   
- 5 &lt;res… 001   &lt;lmer… ran_p… PROC… sd__…  0.105    NA           NA   
- 6 &lt;res… 001   &lt;lmer… ran_p… Resi… sd__…  0.242    NA           NA   
- 7 &lt;res… 002   &lt;lmer… fixed  &lt;NA&gt;  (Int…  2.77      0.0208     133.  
- 8 &lt;res… 002   &lt;lmer… fixed  &lt;NA&gt;  age0  -0.00945   0.00516     -1.83
- 9 &lt;res… 002   &lt;lmer… ran_p… PROC… sd__…  0.511    NA           NA   
-10 &lt;res… 002   &lt;lmer… ran_p… PROC… cor_… -0.331    NA           NA   
+   strap  .id   models effect group term  estimate std.error statistic
+   &lt;list&gt; &lt;chr&gt; &lt;list&gt; &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;    &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+ 1 &lt;resa… 001   &lt;lmer… fixed  &lt;NA&gt;  (Int…  2.76      0.0201     137.  
+ 2 &lt;resa… 001   &lt;lmer… fixed  &lt;NA&gt;  age0  -0.00609   0.00553     -1.10
+ 3 &lt;resa… 001   &lt;lmer… ran_p… PROC… sd__…  0.494    NA           NA   
+ 4 &lt;resa… 001   &lt;lmer… ran_p… PROC… cor_… -0.368    NA           NA   
+ 5 &lt;resa… 001   &lt;lmer… ran_p… PROC… sd__…  0.105    NA           NA   
+ 6 &lt;resa… 001   &lt;lmer… ran_p… Resi… sd__…  0.242    NA           NA   
+ 7 &lt;resa… 002   &lt;lmer… fixed  &lt;NA&gt;  (Int…  2.77      0.0208     133.  
+ 8 &lt;resa… 002   &lt;lmer… fixed  &lt;NA&gt;  age0  -0.00945   0.00516     -1.83
+ 9 &lt;resa… 002   &lt;lmer… ran_p… PROC… sd__…  0.511    NA           NA   
+10 &lt;resa… 002   &lt;lmer… ran_p… PROC… cor_… -0.331    NA           NA   
 # … with 590 more rows, and 1 more variable: fits &lt;list&gt;</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
@@ -3376,7 +3379,7 @@ Adjusted for:
 </div>
 <pre><code># A tibble: 6 x 2
    age0  pred
-* &lt;dbl&gt; &lt;dbl&gt;
+  &lt;dbl&gt; &lt;dbl&gt;
 1    -2  2.77
 2     0  2.74
 3     2  2.74

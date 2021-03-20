@@ -17,6 +17,8 @@ navbar:
           href: conditional.html
         - text: "time varying conditional models"
           href: tvc.html
+        - text: "structural equation models"
+          href: sem.html
     - text: "Workshops"
       menu:
         - text: "data"
@@ -35,6 +37,8 @@ navbar:
           href: hw-1.html
         - text: "homework 2"
           href: hw-2.html
+        - text: "homework 3"
+          href: hw-3.html
     - icon: fab fa-github
       href: https://github.com/josh-jackson/longitudinal-2021
 

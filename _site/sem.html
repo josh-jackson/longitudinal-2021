@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>brms</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Josh Jackson" />
+    <!--radix_placeholder_navigation_in_header-->
+    <meta name="distill:offset" content=""/>
+
+    <script type="application/javascript">
+
+      window.headroom_prevent_pin = false;
+
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+
+        // initialize headroom for banner
+        var header = $('header').get(0);
+        var headerHeight = header.offsetHeight;
+        var headroom = new Headroom(header, {
+          tolerance: 5,
+          onPin : function() {
+            if (window.headroom_prevent_pin) {
+              window.headroom_prevent_pin = false;
+              headroom.unpin();
+            }
+          }
+        });
+        headroom.init();
+        if(window.location.hash)
+          headroom.unpin();
+        $(header).addClass('headroom--transition');
+
+        // offset scroll location for banner on hash change
+        // (see: https://github.com/WickyNilliams/headroom.js/issues/38)
+        window.addEventListener("hashchange", function(event) {
+          window.scrollTo(0, window.pageYOffset - (headerHeight + 25));
+        });
+
+        // responsive menu
+        $('.distill-site-header').each(function(i, val) {
+          var topnav = $(this);
+          var toggle = topnav.find('.nav-toggle');
+          toggle.on('click', function() {
+            topnav.toggleClass('responsive');
+          });
+        });
+
+        // nav dropdowns
+        $('.nav-dropbtn').click(function(e) {
+          $(this).next('.nav-dropdown-content').toggleClass('nav-dropdown-active');
+          $(this).parent().siblings('.nav-dropdown')
+             .children('.nav-dropdown-content').removeClass('nav-dropdown-active');
+        });
+        $("body").click(function(e){
+          $('.nav-dropdown-content').removeClass('nav-dropdown-active');
+        });
+        $(".nav-dropdown").click(function(e){
+          e.stopPropagation();
+        });
+      });
+    </script>
+
+    <style type="text/css">
+
+    /* Theme (user-documented overrideables for nav appearance) */
+
+    .distill-site-nav {
+      color: rgba(255, 255, 255, 0.8);
+      background-color: #0F2E3D;
+      font-size: 15px;
+      font-weight: 300;
+    }
+
+    .distill-site-nav a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .distill-site-nav a:hover {
+      color: white;
+    }
+
+    @media print {
+      .distill-site-nav {
+        display: none;
+      }
+    }
+
+    .distill-site-header {
+
+    }
+
+    .distill-site-footer {
+
+    }
+
+
+    /* Site Header */
+
+    .distill-site-header {
+      width: 100%;
+      box-sizing: border-box;
+      z-index: 3;
+    }
+
+    .distill-site-header .nav-left {
+      display: inline-block;
+      margin-left: 8px;
+    }
+
+    @media screen and (max-width: 768px) {
+      .distill-site-header .nav-left {
+        margin-left: 0;
+      }
+    }
+
+
+    .distill-site-header .nav-right {
+      float: right;
+      margin-right: 8px;
+    }
+
+    .distill-site-header a,
+    .distill-site-header .title {
+      display: inline-block;
+      text-align: center;
+      padding: 14px 10px 14px 10px;
+    }
+
+    .distill-site-header .title {
+      font-size: 18px;
+      min-width: 150px;
+    }
+
+    .distill-site-header .logo {
+      padding: 0;
+    }
+
+    .distill-site-header .logo img {
+      display: none;
+      max-height: 20px;
+      width: auto;
+      margin-bottom: -4px;
+    }
+
+    .distill-site-header .nav-image img {
+      max-height: 18px;
+      width: auto;
+      display: inline-block;
+      margin-bottom: -3px;
+    }
+
+
+
+    @media screen and (min-width: 1000px) {
+      .distill-site-header .logo img {
+        display: inline-block;
+      }
+      .distill-site-header .nav-left {
+        margin-left: 20px;
+      }
+      .distill-site-header .nav-right {
+        margin-right: 20px;
+      }
+      .distill-site-header .title {
+        padding-left: 12px;
+      }
+    }
+
+
+    .distill-site-header .nav-toggle {
+      display: none;
+    }
+
+    .nav-dropdown {
+      display: inline-block;
+      position: relative;
+    }
+
+    .nav-dropdown .nav-dropbtn {
+      border: none;
+      outline: none;
+      color: rgba(255, 255, 255, 0.8);
+      padding: 16px 10px;
+      background-color: transparent;
+      font-family: inherit;
+      font-size: inherit;
+      font-weight: inherit;
+      margin: 0;
+      margin-top: 1px;
+      z-index: 2;
+    }
+
+    .nav-dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: white;
+      min-width: 200px;
+      border: 1px solid rgba(0,0,0,0.15);
+      border-radius: 4px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.1);
+      z-index: 1;
+      margin-top: 2px;
+      white-space: nowrap;
+      padding-top: 4px;
+      padding-bottom: 4px;
+    }
+
+    .nav-dropdown-content hr {
+      margin-top: 4px;
+      margin-bottom: 4px;
+      border: none;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-dropdown-active {
+      display: block;
+    }
+
+    .nav-dropdown-content a, .nav-dropdown-content .nav-dropdown-header {
+      color: black;
+      padding: 6px 24px;
+      text-decoration: none;
+      display: block;
+      text-align: left;
+    }
+
+    .nav-dropdown-content .nav-dropdown-header {
+      display: block;
+      padding: 5px 24px;
+      padding-bottom: 0;
+      text-transform: uppercase;
+      font-size: 14px;
+      color: #999999;
+      white-space: nowrap;
+    }
+
+    .nav-dropdown:hover .nav-dropbtn {
+      color: white;
+    }
+
+    .nav-dropdown-content a:hover {
+      background-color: #ddd;
+      color: black;
+    }
+
+    .nav-right .nav-dropdown-content {
+      margin-left: -45%;
+      right: 0;
+    }
+
+    @media screen and (max-width: 768px) {
+      .distill-site-header a, .distill-site-header .nav-dropdown  {display: none;}
+      .distill-site-header a.nav-toggle {
+        float: right;
+        display: block;
+      }
+      .distill-site-header .title {
+        margin-left: 0;
+      }
+      .distill-site-header .nav-right {
+        margin-right: 0;
+      }
+      .distill-site-header {
+        overflow: hidden;
+      }
+      .nav-right .nav-dropdown-content {
+        margin-left: 0;
+      }
+    }
+
+
+    @media screen and (max-width: 768px) {
+      .distill-site-header.responsive {position: relative; min-height: 500px; }
+      .distill-site-header.responsive a.nav-toggle {
+        position: absolute;
+        right: 0;
+        top: 0;
+      }
+      .distill-site-header.responsive a,
+      .distill-site-header.responsive .nav-dropdown {
+        display: block;
+        text-align: left;
+      }
+      .distill-site-header.responsive .nav-left,
+      .distill-site-header.responsive .nav-right {
+        width: 100%;
+      }
+      .distill-site-header.responsive .nav-dropdown {float: none;}
+      .distill-site-header.responsive .nav-dropdown-content {position: relative;}
+      .distill-site-header.responsive .nav-dropdown .nav-dropbtn {
+        display: block;
+        width: 100%;
+        text-align: left;
+      }
+    }
+
+    /* Site Footer */
+
+    .distill-site-footer {
+      width: 100%;
+      overflow: hidden;
+      box-sizing: border-box;
+      z-index: 3;
+      margin-top: 30px;
+      padding-top: 30px;
+      padding-bottom: 30px;
+      text-align: center;
+    }
+
+    /* Headroom */
+
+    d-title {
+      padding-top: 6rem;
+    }
+
+    @media print {
+      d-title {
+        padding-top: 4rem;
+      }
+    }
+
+    .headroom {
+      z-index: 1000;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+    }
+
+    .headroom--transition {
+      transition: all .4s ease-in-out;
+    }
+
+    .headroom--unpinned {
+      top: -100px;
+    }
+
+    .headroom--pinned {
+      top: 0;
+    }
+
+    /* adjust viewport for navbar height */
+    /* helps vertically center bootstrap (non-distill) content */
+    .min-vh-100 {
+      min-height: calc(100vh - 100px) !important;
+    }
+
+    </style>
+
+    <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+    <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet"/>
+    <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet"/>
+    <script src="site_libs/headroom-0.9.4/headroom.min.js"></script>
+    <script src="site_libs/autocomplete-0.37.1/autocomplete.min.js"></script>
+    <script src="site_libs/fuse-6.4.1/fuse.min.js"></script>
+
+    <script type="application/javascript">
+
+    function getMeta(metaName) {
+      var metas = document.getElementsByTagName('meta');
+      for (let i = 0; i < metas.length; i++) {
+        if (metas[i].getAttribute('name') === metaName) {
+          return metas[i].getAttribute('content');
+        }
+      }
+      return '';
+    }
+
+    function offsetURL(url) {
+      var offset = getMeta('distill:offset');
+      return offset ? offset + '/' + url : url;
+    }
+
+    function createFuseIndex() {
+
+      // create fuse index
+      var options = {
+        keys: [
+          { name: 'title', weight: 20 },
+          { name: 'categories', weight: 15 },
+          { name: 'description', weight: 10 },
+          { name: 'contents', weight: 5 },
+        ],
+        ignoreLocation: true,
+        threshold: 0
+      };
+      var fuse = new window.Fuse([], options);
+
+      // fetch the main search.json
+      return fetch(offsetURL('search.json'))
+        .then(function(response) {
+          if (response.status == 200) {
+            return response.json().then(function(json) {
+              // index main articles
+              json.articles.forEach(function(article) {
+                fuse.add(article);
+              });
+              // download collections and index their articles
+              return Promise.all(json.collections.map(function(collection) {
+                return fetch(offsetURL(collection)).then(function(response) {
+                  if (response.status === 200) {
+                    return response.json().then(function(articles) {
+                      articles.forEach(function(article) {
+                        fuse.add(article);
+                      });
+                    })
+                  } else {
+                    return Promise.reject(
+                      new Error('Unexpected status from search index request: ' +
+                                response.status)
+                    );
+                  }
+                });
+              })).then(function() {
+                return fuse;
+              });
+            });
+
+          } else {
+            return Promise.reject(
+              new Error('Unexpected status from search index request: ' +
+                          response.status)
+            );
+          }
+        });
+    }
+
+    window.document.addEventListener("DOMContentLoaded", function (event) {
+
+      // get search element (bail if we don't have one)
+      var searchEl = window.document.getElementById('distill-search');
+      if (!searchEl)
+        return;
+
+      createFuseIndex()
+        .then(function(fuse) {
+
+          // make search box visible
+          searchEl.classList.remove('hidden');
+
+          // initialize autocomplete
+          var options = {
+            autoselect: true,
+            hint: false,
+            minLength: 2,
+          };
+          window.autocomplete(searchEl, options, [{
+            source: function(query, callback) {
+              const searchOptions = {
+                isCaseSensitive: false,
+                shouldSort: true,
+                minMatchCharLength: 2,
+                limit: 10,
+              };
+              var results = fuse.search(query, searchOptions);
+              callback(results
+                .map(function(result) { return result.item; })
+              );
+            },
+            templates: {
+              suggestion: function(suggestion) {
+                var img = suggestion.preview && Object.keys(suggestion.preview).length > 0
+                  ? `<img src="${offsetURL(suggestion.preview)}"</img>`
+                  : '';
+                var html = `
+                  <div class="search-item">
+                    <h3>${suggestion.title}</h3>
+                    <div class="search-item-description">
+                      ${suggestion.description || ''}
+                    </div>
+                    <div class="search-item-preview">
+                      ${img}
+                    </div>
+                  </div>
+                `;
+                return html;
+              }
+            }
+          }]).on('autocomplete:selected', function(event, suggestion) {
+            window.location.href = offsetURL(suggestion.path);
+          });
+          // remove inline display style on autocompleter (we want to
+          // manage responsive display via css)
+          $('.algolia-autocomplete').css("display", "");
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+
+    });
+
+    </script>
+
+    <style type="text/css">
+
+    .nav-search {
+      font-size: x-small;
+    }
+
+    /* Algolioa Autocomplete */
+
+    .algolia-autocomplete {
+      display: inline-block;
+      margin-left: 10px;
+      vertical-align: sub;
+      background-color: white;
+      color: black;
+      padding: 6px;
+      padding-top: 8px;
+      padding-bottom: 0;
+      border-radius: 6px;
+      border: 1px #0F2E3D solid;
+      width: 180px;
+    }
+
+
+    @media screen and (max-width: 768px) {
+      .distill-site-nav .algolia-autocomplete {
+        display: none;
+        visibility: hidden;
+      }
+      .distill-site-nav.responsive .algolia-autocomplete {
+        display: inline-block;
+        visibility: visible;
+      }
+      .distill-site-nav.responsive .algolia-autocomplete .aa-dropdown-menu {
+        margin-left: 0;
+        width: 400px;
+        max-height: 400px;
+      }
+    }
+
+    .algolia-autocomplete .aa-input, .algolia-autocomplete .aa-hint {
+      width: 90%;
+      outline: none;
+      border: none;
+    }
+
+    .algolia-autocomplete .aa-hint {
+      color: #999;
+    }
+    .algolia-autocomplete .aa-dropdown-menu {
+      width: 550px;
+      max-height: 70vh;
+      overflow-x: visible;
+      overflow-y: scroll;
+      padding: 5px;
+      margin-top: 3px;
+      margin-left: -150px;
+      background-color: #fff;
+      border-radius: 5px;
+      border: 1px solid #999;
+      border-top: none;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion {
+      cursor: pointer;
+      padding: 5px 4px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion:last-of-type {
+      border-bottom: none;
+      margin-bottom: 2px;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item {
+      overflow: hidden;
+      font-size: 0.8em;
+      line-height: 1.4em;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item h3 {
+      font-size: 1rem;
+      margin-block-start: 0;
+      margin-block-end: 5px;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-description {
+      display: inline-block;
+      overflow: hidden;
+      height: 2.8em;
+      width: 80%;
+      margin-right: 4%;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-preview {
+      display: inline-block;
+      width: 15%;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-preview img {
+      height: 3em;
+      width: auto;
+      display: none;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-preview img[src] {
+      display: initial;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion.aa-cursor {
+      background-color: #eee;
+    }
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion em {
+      font-weight: bold;
+      font-style: normal;
+    }
+
+    </style>
+
+
+    <!--/radix_placeholder_navigation_in_header-->
+    <!--radix_placeholder_site_in_header-->
+    <!--/radix_placeholder_site_in_header-->
+    
+    <style type="text/css">
+    body {
+      padding-top: 60px;
+    }
+    </style>
+    <style type="text/css">
+    /* base variables */
+
+    /* Edit the CSS properties in this file to create a custom
+       Distill theme. Only edit values in the right column
+       for each row; values shown are the CSS defaults.
+       To return any property to the default,
+       you may set its value to: unset
+       All rows must end with a semi-colon.                      */
+
+    /* Optional: embed custom fonts here with `@import`          */
+    /* This must remain at the top of this file.                 */
+
+
+
+    html {
+      /*-- Main font sizes --*/
+      --title-size:      50px;
+      --body-size:       1.06rem;
+      --code-size:       14px;
+      --aside-size:      12px;
+      --fig-cap-size:    13px;
+      /*-- Main font colors --*/
+      --title-color:     #000000;
+      --header-color:    rgba(0, 0, 0, 0.8);
+      --body-color:      rgba(0, 0, 0, 0.8);
+      --aside-color:     rgba(0, 0, 0, 0.6);
+      --fig-cap-color:   rgba(0, 0, 0, 0.6);
+      /*-- Specify custom fonts ~~~ must be imported above   --*/
+      --heading-font:    sans-serif;
+      --mono-font:       monospace;
+      --body-font:       sans-serif;
+      --navbar-font:     sans-serif;  /* websites + blogs only */
+    }
+
+    /*-- ARTICLE METADATA --*/
+    d-byline {
+      --heading-size:    0.6rem;
+      --heading-color:   rgba(0, 0, 0, 0.5);
+      --body-size:       0.8rem;
+      --body-color:      rgba(0, 0, 0, 0.8);
+    }
+
+    /*-- ARTICLE TABLE OF CONTENTS --*/
+    .d-contents {
+      --heading-size:    18px;
+      --contents-size:   13px;
+    }
+
+    /*-- ARTICLE APPENDIX --*/
+    d-appendix {
+      --heading-size:    15px;
+      --heading-color:   rgba(0, 0, 0, 0.65);
+      --text-size:       0.8em;
+      --text-color:      rgba(0, 0, 0, 0.5);
+    }
+
+    /*-- WEBSITE HEADER + FOOTER --*/
+    /* These properties only apply to Distill sites and blogs  */
+
+    .distill-site-header {
+      --title-size:       18px;
+      --text-color:       rgba(255, 255, 255, 0.8);
+      --text-size:        15px;
+      --hover-color:      white;
+      --bkgd-color:       #0F2E3D;
+    }
+
+    .distill-site-footer {
+      --text-color:       rgba(255, 255, 255, 0.8);
+      --text-size:        15px;
+      --hover-color:      white;
+      --bkgd-color:       #0F2E3D;
+    }
+
+    /*-- Additional custom styles --*/
+    /* Add any additional CSS rules below                      */
+    </style>
+    <style type="text/css">
+    /* base variables */
+
+    /* Edit the CSS properties in this file to create a custom
+       Distill theme. Only edit values in the right column
+       for each row; values shown are the CSS defaults.
+       To return any property to the default,
+       you may set its value to: unset
+       All rows must end with a semi-colon.                      */
+
+    /* Optional: embed custom fonts here with `@import`          */
+    /* This must remain at the top of this file.                 */
+    @import url('https://fonts.googleapis.com/css2?family=Amiri');
+    @import url('https://fonts.googleapis.com/css2?family=Bitter');
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono');
+
+
+
+    html {
+      /*-- Main font sizes --*/
+      --title-size:      50px;
+      --body-size:       1.06rem;
+      --code-size:       14px;
+      --aside-size:      12px;
+      --fig-cap-size:    13px;
+      /*-- Main font colors --*/
+      --title-color:     #000000;
+      --header-color:    rgba(0, 0, 0, 0.8);
+      --body-color:      rgba(0, 0, 0, 0.8);
+      --aside-color:     rgba(0, 0, 0, 0.6);
+      --fig-cap-color:   rgba(0, 0, 0, 0.6);
+      /*-- Specify custom fonts ~~~ must be imported above   --*/
+      --heading-font:    "Amiri", serif;
+      --mono-font:       "DM Mono", monospace;
+      --body-font:       "Bitter", sans-serif;
+      --navbar-font:     "Amiri", sans-serif;  /* websites + blogs only */
+    }
+
+    /*-- ARTICLE METADATA --*/
+    d-byline {
+      --heading-size:    0.6rem;
+      --heading-color:   rgba(0, 0, 0, 0.5);
+      --body-size:       0.8rem;
+      --body-color:      rgba(0, 0, 0, 0.8);
+    }
+
+    /*-- ARTICLE TABLE OF CONTENTS --*/
+    .d-contents {
+      --heading-size:    18px;
+      --contents-size:   13px;
+    }
+
+    /*-- ARTICLE APPENDIX --*/
+    d-appendix {
+      --heading-size:    15px;
+      --heading-color:   rgba(0, 0, 0, 0.65);
+      --text-size:       0.8em;
+      --text-color:      rgba(0, 0, 0, 0.5);
+    }
+
+    /*-- WEBSITE HEADER + FOOTER --*/
+    /* These properties only apply to Distill sites and blogs  */
+
+    .distill-site-header {
+      --title-size:       18px;
+      --text-color:       rgba(255, 255, 255, 0.8);
+      --text-size:        15px;
+      --hover-color:      white;
+      --bkgd-color:       #0F2E3D;
+    }
+
+    .distill-site-footer {
+      --text-color:       rgba(255, 255, 255, 0.8);
+      --text-size:        15px;
+      --hover-color:      white;
+      --bkgd-color:       #0F2E3D;
+    }
+
+    /*-- Additional custom styles --*/
+    /* Add any additional CSS rules below                      */
+    </style>
+    <style type="text/css">
+    /* base style */
+
+    /* FONT FAMILIES */
+
+    :root {
+      --heading-default: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+      --mono-default: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+      --body-default: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body,
+    .posts-list .post-preview p,
+    .posts-list .description p {
+      font-family: var(--body-font), var(--body-default);
+    }
+
+    h1, h2, h3, h4, h5, h6,
+    .posts-list .post-preview h2,
+    .posts-list .description h2 {
+      font-family: var(--heading-font), var(--heading-default);
+    }
+
+    d-article div.sourceCode code,
+    d-article pre code {
+      font-family: var(--mono-font), var(--mono-default);
+    }
+
+
+    /*-- TITLE --*/
+    d-title h1,
+    .posts-list > h1 {
+      color: var(--title-color, black);
+    }
+
+    d-title h1 {
+      font-size: var(--title-size, 50px);
+    }
+
+    /*-- HEADERS --*/
+    d-article h1,
+    d-article h2,
+    d-article h3,
+    d-article h4,
+    d-article h5,
+    d-article h6 {
+      color: var(--header-color, rgba(0, 0, 0, 0.8));
+    }
+
+    /*-- BODY --*/
+    d-article > p,  /* only text inside of <p> tags */
+    d-article > ul, /* lists */
+    d-article > ol {
+      color: var(--body-color, rgba(0, 0, 0, 0.8));
+      font-size: var(--body-size, 1.06rem);
+    }
+
+
+    /*-- CODE --*/
+    d-article div.sourceCode code,
+    d-article pre code {
+      font-size: var(--code-size, 14px);
+    }
+
+    /*-- ASIDE --*/
+    d-article aside {
+      font-size: var(--aside-size, 12px);
+      color: var(--aside-color, rgba(0, 0, 0, 0.6));
+    }
+
+    /*-- FIGURE CAPTIONS --*/
+    figure .caption,
+    figure figcaption,
+    .figure .caption {
+      font-size: var(--fig-cap-size, 13px);
+      color: var(--fig-cap-color, rgba(0, 0, 0, 0.6));
+    }
+
+    /*-- METADATA --*/
+    d-byline h3 {
+      font-size: var(--heading-size, 0.6rem);
+      color: var(--heading-color, rgba(0, 0, 0, 0.5));
+    }
+
+    d-byline {
+      font-size: var(--body-size, 0.8rem);
+      color: var(--body-color, rgba(0, 0, 0, 0.8));
+    }
+
+    d-byline a,
+    d-article d-byline a {
+      color: var(--body-color, rgba(0, 0, 0, 0.8));
+    }
+
+    /*-- TABLE OF CONTENTS --*/
+    .d-contents nav h3 {
+      font-size: var(--heading-size, 18px);
+    }
+
+    .d-contents nav a {
+      font-size: var(--contents-size, 13px);
+    }
+
+    /*-- APPENDIX --*/
+    d-appendix h3 {
+      font-size: var(--heading-size, 15px);
+      color: var(--heading-color, rgba(0, 0, 0, 0.65));
+    }
+
+    d-appendix {
+      font-size: var(--text-size, 0.8em);
+      color: var(--text-color, rgba(0, 0, 0, 0.5));
+    }
+
+    d-appendix d-footnote-list a.footnote-backlink {
+      color: var(--text-color, rgba(0, 0, 0, 0.5));
+    }
+
+    /*-- WEBSITE HEADER + FOOTER --*/
+    .distill-site-header .title {
+      font-size: var(--title-size, 18px);
+      font-family: var(--navbar-font), var(--heading-default);
+    }
+
+    .distill-site-header a,
+    .nav-dropdown .nav-dropbtn {
+      font-family: var(--navbar-font), var(--heading-default);
+    }
+
+    .nav-dropdown .nav-dropbtn {
+      color: var(--text-color, rgba(255, 255, 255, 0.8));
+      font-size: var(--text-size, 15px);
+    }
+
+    .distill-site-header a:hover,
+    .nav-dropdown:hover .nav-dropbtn {
+      color: var(--hover-color, white);
+    }
+
+    .distill-site-header {
+      font-size: var(--text-size, 15px);
+      color: var(--text-color, rgba(255, 255, 255, 0.8));
+      background-color: var(--bkgd-color, #0F2E3D);
+    }
+
+    .distill-site-footer {
+      font-size: var(--text-size, 15px);
+      color: var(--text-color, rgba(255, 255, 255, 0.8));
+      background-color: var(--bkgd-color, #0F2E3D);
+    }
+
+    .distill-site-footer a:hover {
+      color: var(--hover-color, white);
+    }</style>
+    <script src="sem_files/header-attrs-2.7/header-attrs.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+<!--radix_placeholder_navigation_before_body-->
+<header class="header header--fixed" role="banner">
+<nav class="distill-site-nav distill-site-header">
+<div class="nav-left">
+<a href="index.html" class="title">Applied Longitudinal Data Analysis</a>
+</div>
+<div class="nav-right">
+<a href="index.html">Home</a>
+<div class="nav-dropdown">
+<button class="nav-dropbtn">
+Lectures
+ 
+<span class="down-arrow">&#x25BE;</span>
+</button>
+<div class="nav-dropdown-content">
+<a href="intro-1.html">Intro to longitudinal</a>
+<a href="mlm.html">MLM</a>
+<a href="conditional.html">conditional models</a>
+<a href="tvc.html">time varying conditional models</a>
+<a href="sem.html">structural equation models</a>
+</div>
+</div>
+<div class="nav-dropdown">
+<button class="nav-dropbtn">
+Workshops
+ 
+<span class="down-arrow">&#x25BE;</span>
+</button>
+<div class="nav-dropdown-content">
+<a href="data.html">data</a>
+<a href="lme4.html">lme4</a>
+<a href="plotting.html">plotting</a>
+<a href="brms.html">brms</a>
+</div>
+</div>
+<a href="syllabus.html">Syllabus</a>
+<div class="nav-dropdown">
+<button class="nav-dropbtn">
+Homeworks
+ 
+<span class="down-arrow">&#x25BE;</span>
+</button>
+<div class="nav-dropdown-content">
+<a href="hw-1.html">homework 1</a>
+<a href="hw-2.html">homework 2</a>
+<a href="hw-3.html">homework 3</a>
+</div>
+</div>
+<a href="https://github.com/josh-jackson/longitudinal-2021">
+<i class="fab fa-github" aria-hidden="true"></i>
+</a>
+<a href="javascript:void(0);" class="nav-toggle">&#9776;</a>
+</div>
+</nav>
+</header>
+<!--/radix_placeholder_navigation_before_body-->
+<!--radix_placeholder_site_before_body-->
+<!--/radix_placeholder_site_before_body-->
+
+
+
+
+
+
+
+
+# Longitudinal Structural Equation Modeling
+
+SEM is the broader umbrella from the GLM. With it we are able to do two interesting this: 
+
+1. Fit a latent measurement model (e.g., CFA)
+
+2. Fit a structural model (e.g,. path analysis)
+
+These two components allow us to address more difficult research questions involving but not limited to: multiple DVs, mediators, varying effects across time, unmeasured variables, constraints, and measurement invariance. 
+
+
+---
+# SEM terminology
+In our studies some of the variables of interest will be measured and others will be latent or unobserved. Measured variables are the observed scores that are typically collected in a research study.  We will use the general term "indicators" or "items" or "manifest variables" to refer to these measures variables. They will be indicated by boxes in a path diagram. 
+
+Latent variables, in contrast, are not directly observed. A latent variable is something that we assume to exist but we cannot directly measure (see) it. They are typically postulated by theories or inferred from the statistical behavior of measured variables.  Sounds like psychological variables! Examples of latent variables include "depression," "job satisfaction," and "working memory capacity." 
+
+
+---
+# Path diagrams
+
+Circles = latent variables
+
+Boxes = observed indicator variables
+
+Two headed arrows = correlations/covariances/variances
+
+Single head arrows = regressions
+
+Triangle = means
+
+
+
+```
+## This is lavaan 0.6-8
+## lavaan is FREE software! Please report any bugs.
+```
+
+```
+## 
+## Attaching package: 'lavaan'
+```
+
+```
+## The following object is masked from 'package:psych':
+## 
+##     cor2cov
+```
+
+---
+
+```r
+semPaths(fit.1,  intercepts = TRUE)
+```
+
+![](sem_files/figure-html/unnamed-chunk-2-1.png)&lt;!-- --&gt;
+
+
+```r
+semPaths(fit.1, "std", intercepts = TRUE)
+```
+
+![](sem_files/figure-html/unnamed-chunk-3-1.png)&lt;!-- --&gt;
+
+---
+
+# Measurement model
+
+The first step of an SEM model with latent variables is to define them. This is called specifying the measurement model. It is up to you to specify how you think the latent variable is created through the selection of indicators. 
+
+The key components are the a) factor loadings, b) residuals, and c) variance of latent variable. 
+
+---
+## Classical test theory interpretation 
+
+Latent construct = what the indicators share in common
+
+The indicators represent the sum of True Score variance + Item specific variance + Random error
+
+The variance of the latent variable represents the amount of common information in the latent variable. If your indicators are haphazardly chosen then there will be low variance. We want to maximize variance here as variance suggests meaningful differences can be made between people. 
+
+The residual errors (sometimes referred to as disturbances) represent the amount of information unique to each indicator. A combination of error and item-specific variance. 
+
+The extent of the connection between the latent variable and the indicators is represented as a factor loading. 
+
+---
+## Generizability interpretation of latent variables
+True score variance can be thought of as consisting as a combination of 
+1. Construct variance- this is the truest true score variance
+2. Method variance- see Campbell and Fiske or sludge factor of Meehl. 
+3. Occasion- important for longitudinal, aging, and cohort analyses--and for this class. 
+
+For longitudinal models, occasion specific variance can lead to biased estimates. We want to separate the time specific variance from the overall construct variance. Or, we want to make sure that the time specific variance doesn't make it appear that a construct is changing when really it is not. 
+
+---
+### Formative indicators
+
+These pretty pictures imply that the latent variables "cause" the indicators. This is the standard view and are referred to as reflexive indicators. However, there is another approach, formative indicators, were indicators "cause" the latent variable. Or, in other words, the latent variable doesn't actually exist. It is not real, only a combination of variables. 
+
+An example of this is SES. SES does not 'exist' but is a socially constructed idea. Some people have argued that psychological constructs are of this kind, and that reflexive indicators are inappropriate. The arguments are mainly philosophical and thus is beyond the scope of our discussion. Suffice to say, that most of the time there are few analytic differences. You can think of this as similar to the factor analysis vs principal component analysis debates. 
+
+---
+## Measurement error
+
+A major advantage is that each latent variable does not contain measurement error. It is as is if we measured our variable with an alpha = 1. 
+
+What does that do? Well, ideally that gets us closer to the population model, which could yield higher R2 and parameter estimates.
+
+How does this happen? It is a direct result of capturing what is shared among the indicators. The measurement error associated with each indicator is uncorrelated with the latent variable. 
+
+Think about how this situation differs from creating a composite among variables or from creating a factor score among variables within a simple factor analysis approach. 
+
+Remember however, that it is theoretically error free. The latent variable is not only filled with true score variance (see above re: occasion and method variance). Unless you have multiple methods and occasions it is hard to parse them apart. 
+
+---
+### Regarding means
+SEM is also known as covariance structure analysis. You can do SEM using only variance-covariance matrices. These do not necessarily involve any direct information about their means. Means in SEM are optional. This is cool because you can technically reproduce the analyses of a paper if they give you a correlation matrix of study variables. 
+
+Given we are interested in change across time, however, we will be interested in means. Latent variables by themselves do not have any inherent metric, it is up to us to choose the scale they are on. We can standardize them, use the original metric, and more! More later on how we define the mean of a latent variable.
+
+---
+# Path model
+
+The path model component can be in addition to a measurement model or separate from them. You have already worked with path models as a simple regression is a path model, so is a standard mediation. You can make the path models more complex than these though, by specifying relationships among many variables. 
+
+An example with no measurement model
+![](sem_files/figure-html/unnamed-chunk-4-1.png)&lt;!-- --&gt;
+
+---
+### path model with measurement model
+![](sem_files/figure-html/unnamed-chunk-5-1.png)&lt;!-- --&gt;
+
+---
+## Estimating an SEM model
+
+Our goal when doing SEM is a creation of a model that specifies certain relationship among variables. This is done by creating a measurement or path model that we think is driven by the data generating process we are trying to study. In addition to setting the measurement model and paths we may want to put apriori constraining parameters (variances/covariances/regressions) to reflect how we think variables are related. 
+
+E.g., Should these two variables be correlated or not? 
+
+Then we use or ML algorithm to get our model implied covariances/means as close as possible to the observed covariances/means. 
+
+---
+# Setting the scale and defining latent variables
+
+We are trying to measure clouds. Need to define the scale of a latent variable because there is no inherent scale of measurement. Largely irrelevant as to what scale is chosen just as centering or standardizing yield no substantive changes. Instead, scaling serves to establish a point of reference so as to interpret other parameters. 
+
+3 options: 
+
+1. Fixed factor. Here you fix the variance of the latent variable to 1 (standardized).
+
+2. Marker variable. Here you fix one factor loading to 1. All other loadings are relative to this loading. The variance of the latent variable can thus be anything. This is often the default of software programs. 
+
+3. Effect coding. Here you constrain loading to average to 1. This will be helpful for us as we can then put the scale of measurement into our original metric. For longitudinal models this is helpful in terms of how to interpret the amount of change. 
+
+---
+# Identification
+
+Note that we have multiple parameters we are trying to estimate. Paths (regression coefficients), means, variances (of manifest variables and latent variables). This makes estimating a little more tricky as you cannot have more unknowns than knowns. There are some tricks and rules of hand about what you can estimate or not. Typically however, it is suggested that you have 3 indicators per latent variable. 
+
+If you are asking too much for a model you can also constrain parameters to be the same. For example, you may assume that all residual variances are the same. This assumption can be built into your model and reduces the number of parameters you have to estimate. 
+
+More specifically, you need to compare the number of knows (variances and covariances) to the unknowns (model parameters). For example, a three indicator latent variable has 7 unknowns. 3 Loadings, 3 error variances and the variance of the latent variable
+
+The covariance matrix has 6 data points. Thus we need to add in one more known, in this case a fixed factor or a marker variable. 
+
+Knowns - unknowns = df. Note that df in this case df will not directly relate to sample size, so it is a little different than typical degree of freedom concepts. 
+
+---
+## Types of identification
+
+1. Just identified is where the number of knowns equal unknowns. Also known as saturated model. When you evaluate the fit of the model these will be perfect. So while these will estimate, we cannot examine whether or not our model is a good representation of the world, as we are simply recreating the observed covariance matrix (data). For some instances this may not be a problem, for others... 
+
+2. Over identified is when you have more knowns than unknowns. This is good as we can fit a model that is more parsimonious than our data. Moreover, we can examine fit stats. 
+
+3. Under identified is when you have problems and have more unknowns than knowns. this is because there is more than one solution available and the algorithm cannot decide e.g,. 2 + X = Y. If we add a constraint or a known value then it becomes manageable 2 + X = 12
+
+
+---
+## Fit Indices
+
+1. residuals. Good to check.  
+
+2. modification indices. Check to see if missing parameters that residuals may suggest you didn't include or should include. Can test with more advanced techniques. But eh...could be over fitting, relying too much on sig tests...
+
+3. chi-square. (Statistical fit) Implied versus observed data, tests to see if model are exact fit with data. But eh...too impacted by sample size
+
+4. RMSEA or SRMR (Absolute fit). Does not compare to a null model. Judges distance from perfect fit. 
+
+Above .10 poor fit
+Below .08 acceptable
+
+5. CFI, TFI (Relative fit models). Compares relative to a null model. Judges distance from the worse fit ie a null model. Null models have no covariance among observed and latent variables. Range from 0-1. Indicate % of improvement from the null model to a saturated i.e. just identified model. Usually &gt;.9 is okay. Some care about &gt; .95
+
+
+---
+### Parcels
+It is often necessary to simplify your model. One option to do so is with parcels where you combine indicators into a composite. This simplifies the model in that you have fewer parameters to fit. In addition to being a way to get a model identified, it also has benefits in terms of the assumptions of the indicator variables. 
+
+To do so, you can combine items however you want into 3 or 4 groups or parcels, averaging them together. You may balance highly loading with less highly loading items (item to construct technique) or you may pair pos and negatively keyed items together. It is up to you. 
+
+Some dislike it because you are aggregating without taking into account the association between the indicators; it is a blind procedure based on theory/assumptions rather than maths. ¯\_(ツ)_/¯
+
+
+
+    </textarea>
+<!--radix_placeholder_site_after_body-->
+<!--/radix_placeholder_site_after_body-->
+<!--radix_placeholder_navigation_after_body-->
+<!--/radix_placeholder_navigation_after_body-->
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

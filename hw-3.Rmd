@@ -1,0 +1,17 @@
+---
+title: "Homework 3"
+output:
+  distill::distill_article:
+    toc: true
+    toc_depth: 2
+---
+
+1. Rerun the model from question #2 from homework #2 in brms. Compare the output with the lme4 model.
+
+2. What are the priors on this model? Graph one of them and explain what the distributions means about what you expect to happen.
+
+3. Get the posterior samples into a dataframe. What does this dataframe contain? To answer describe why are there the number of rows there, why that many columns? What do each of the columns represent?
+
+4. Graph the distribution of random effects of the slope parameter. Interpret what this graph tells you.
+
+5. Change the default priors of this model to something that a) regularizes the model i.e. centered around zero and b) that does the opposite, one that is wildly wrong/optimistic about the effects. What happens in each of these models?

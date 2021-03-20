@@ -1,0 +1,259 @@
+---
+title: "brms"
+author: Josh Jackson
+date: "10-15-21"
+output:
+  xaringan::moon_reader:
+    mathjax: "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML"
+    css: xaringan-themer.css
+    seal: false
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      ratio: "16:9"
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r xaringan-themer, include = FALSE}
+library(xaringanthemer)
+mono_light(
+  base_color = "#23395b",
+  header_font_google = google_font("Josefin Sans"),
+  text_font_google   = google_font("Montserrat", "300", "300i"),
+  code_font_google   = google_font("Droid Mono"),
+)
+
+library(tidyverse)
+library(broom)
+library(tidybayes)
+library(modelr)
+library(viridis)
+library(brms)
+```
+
+
+# Longitudinal Structural Equation Modeling
+
+SEM is the broader umbrella from the GLM. With it we are able to do two interesting this: 
+
+1. Fit a latent measurement model (e.g., CFA)
+
+2. Fit a structural model (e.g,. path analysis)
+
+These two components allow us to address more difficult research questions involving but not limited to: multiple DVs, mediators, varying effects across time, unmeasured variables, constraints, and measurement invariance. 
+
+
+---
+# SEM terminology
+In our studies some of the variables of interest will be measured and others will be latent or unobserved. Measured variables are the observed scores that are typically collected in a research study.  We will use the general term "indicators" or "items" or "manifest variables" to refer to these measures variables. They will be indicated by boxes in a path diagram. 
+
+Latent variables, in contrast, are not directly observed. A latent variable is something that we assume to exist but we cannot directly measure (see) it. They are typically postulated by theories or inferred from the statistical behavior of measured variables.  Sounds like psychological variables! Examples of latent variables include "depression," "job satisfaction," and "working memory capacity." 
+
+
+---
+# Path diagrams
+
+Circles = latent variables
+
+Boxes = observed indicator variables
+
+Two headed arrows = correlations/covariances/variances
+
+Single head arrows = regressions
+
+Triangle = means
+
+
+```{r, echo = FALSE}
+library(lavaan)
+library(semPlot)
+library(readr)
+
+HolzingerSwineford1939 <- read_csv("HolzingerSwineford1939")
+
+
+mod.1 <- 'visual =~ x1 + x2 + x3
+textual =~ x4 + x5 + x6
+speed =~ x7 + x8 + x9'
+
+fit.1 <- cfa(mod.1, data=HolzingerSwineford1939,meanstructure = TRUE)
+```
+
+---
+```{r}
+semPaths(fit.1,  intercepts = TRUE)
+```
+
+```{r}
+semPaths(fit.1, "std", intercepts = TRUE)
+```
+
+---
+
+# Measurement model
+
+The first step of an SEM model with latent variables is to define them. This is called specifying the measurement model. It is up to you to specify how you think the latent variable is created through the selection of indicators. 
+
+The key components are the a) factor loadings, b) residuals, and c) variance of latent variable. 
+
+---
+## Classical test theory interpretation 
+
+Latent construct = what the indicators share in common
+
+The indicators represent the sum of True Score variance + Item specific variance + Random error
+
+The variance of the latent variable represents the amount of common information in the latent variable. If your indicators are haphazardly chosen then there will be low variance. We want to maximize variance here as variance suggests meaningful differences can be made between people. 
+
+The residual errors (sometimes referred to as disturbances) represent the amount of information unique to each indicator. A combination of error and item-specific variance. 
+
+The extent of the connection between the latent variable and the indicators is represented as a factor loading. 
+
+---
+## Generizability interpretation of latent variables
+True score variance can be thought of as consisting as a combination of 
+1. Construct variance- this is the truest true score variance
+2. Method variance- see Campbell and Fiske or sludge factor of Meehl. 
+3. Occasion- important for longitudinal, aging, and cohort analyses--and for this class. 
+
+For longitudinal models, occasion specific variance can lead to biased estimates. We want to separate the time specific variance from the overall construct variance. Or, we want to make sure that the time specific variance doesn't make it appear that a construct is changing when really it is not. 
+
+---
+### Formative indicators
+
+These pretty pictures imply that the latent variables "cause" the indicators. This is the standard view and are referred to as reflexive indicators. However, there is another approach, formative indicators, were indicators "cause" the latent variable. Or, in other words, the latent variable doesn't actually exist. It is not real, only a combination of variables. 
+
+An example of this is SES. SES does not 'exist' but is a socially constructed idea. Some people have argued that psychological constructs are of this kind, and that reflexive indicators are inappropriate. The arguments are mainly philosophical and thus is beyond the scope of our discussion. Suffice to say, that most of the time there are few analytic differences. You can think of this as similar to the factor analysis vs principal component analysis debates. 
+
+---
+## Measurement error
+
+A major advantage is that each latent variable does not contain measurement error. It is as is if we measured our variable with an alpha = 1. 
+
+What does that do? Well, ideally that gets us closer to the population model, which could yield higher R2 and parameter estimates.
+
+How does this happen? It is a direct result of capturing what is shared among the indicators. The measurement error associated with each indicator is uncorrelated with the latent variable. 
+
+Think about how this situation differs from creating a composite among variables or from creating a factor score among variables within a simple factor analysis approach. 
+
+Remember however, that it is theoretically error free. The latent variable is not only filled with true score variance (see above re: occasion and method variance). Unless you have multiple methods and occasions it is hard to parse them apart. 
+
+---
+### Regarding means
+SEM is also known as covariance structure analysis. You can do SEM using only variance-covariance matrices. These do not necessarily involve any direct information about their means. Means in SEM are optional. This is cool because you can technically reproduce the analyses of a paper if they give you a correlation matrix of study variables. 
+
+Given we are interested in change across time, however, we will be interested in means. Latent variables by themselves do not have any inherent metric, it is up to us to choose the scale they are on. We can standardize them, use the original metric, and more! More later on how we define the mean of a latent variable.
+
+---
+# Path model
+
+The path model component can be in addition to a measurement model or separate from them. You have already worked with path models as a simple regression is a path model, so is a standard mediation. You can make the path models more complex than these though, by specifying relationships among many variables. 
+
+An example with no measurement model
+```{r, echo = FALSE}
+# generate data dataset:
+X <- rnorm(100)
+M <- rnorm(100)
+Y <- rnorm(100) 
+data <- data.frame(X, Y, M)
+
+# Two regressions:
+res1 <- lm(M ~ X, data = data)
+res2 <- lm(Y ~ X + M, data = data)
+
+# Plot mediation
+semPaths(res1 + res2, "model", "est", intercepts = FALSE)
+
+```
+
+---
+### path model with measurement model
+```{r, echo=FALSE}
+mod.2 <- 'X =~ x1 + x2 + x3
+M =~ x4 + x5 + x6
+Y =~ x7 + x8 + x9
+
+Y ~ M + X
+M ~ X'
+
+fit.2 <- cfa(mod.2, data=HolzingerSwineford1939)
+semPaths(fit.2)
+```
+
+---
+## Estimating an SEM model
+
+Our goal when doing SEM is a creation of a model that specifies certain relationship among variables. This is done by creating a measurement or path model that we think is driven by the data generating process we are trying to study. In addition to setting the measurement model and paths we may want to put apriori constraining parameters (variances/covariances/regressions) to reflect how we think variables are related. 
+
+E.g., Should these two variables be correlated or not? 
+
+Then we use or ML algorithm to get our model implied covariances/means as close as possible to the observed covariances/means. 
+
+---
+# Setting the scale and defining latent variables
+
+We are trying to measure clouds. Need to define the scale of a latent variable because there is no inherent scale of measurement. Largely irrelevant as to what scale is chosen just as centering or standardizing yield no substantive changes. Instead, scaling serves to establish a point of reference so as to interpret other parameters. 
+
+3 options: 
+
+1. Fixed factor. Here you fix the variance of the latent variable to 1 (standardized).
+
+2. Marker variable. Here you fix one factor loading to 1. All other loadings are relative to this loading. The variance of the latent variable can thus be anything. This is often the default of software programs. 
+
+3. Effect coding. Here you constrain loading to average to 1. This will be helpful for us as we can then put the scale of measurement into our original metric. For longitudinal models this is helpful in terms of how to interpret the amount of change. 
+
+---
+# Identification
+
+Note that we have multiple parameters we are trying to estimate. Paths (regression coefficients), means, variances (of manifest variables and latent variables). This makes estimating a little more tricky as you cannot have more unknowns than knowns. There are some tricks and rules of hand about what you can estimate or not. Typically however, it is suggested that you have 3 indicators per latent variable. 
+
+If you are asking too much for a model you can also constrain parameters to be the same. For example, you may assume that all residual variances are the same. This assumption can be built into your model and reduces the number of parameters you have to estimate. 
+
+More specifically, you need to compare the number of knows (variances and covariances) to the unknowns (model parameters). For example, a three indicator latent variable has 7 unknowns. 3 Loadings, 3 error variances and the variance of the latent variable
+
+The covariance matrix has 6 data points. Thus we need to add in one more known, in this case a fixed factor or a marker variable. 
+
+Knowns - unknowns = df. Note that df in this case df will not directly relate to sample size, so it is a little different than typical degree of freedom concepts. 
+
+---
+## Types of identification
+
+1. Just identified is where the number of knowns equal unknowns. Also known as saturated model. When you evaluate the fit of the model these will be perfect. So while these will estimate, we cannot examine whether or not our model is a good representation of the world, as we are simply recreating the observed covariance matrix (data). For some instances this may not be a problem, for others... 
+
+2. Over identified is when you have more knowns than unknowns. This is good as we can fit a model that is more parsimonious than our data. Moreover, we can examine fit stats. 
+
+3. Under identified is when you have problems and have more unknowns than knowns. this is because there is more than one solution available and the algorithm cannot decide e.g,. 2 + X = Y. If we add a constraint or a known value then it becomes manageable 2 + X = 12
+
+
+---
+## Fit Indices
+
+1. residuals. Good to check.  
+
+2. modification indices. Check to see if missing parameters that residuals may suggest you didn't include or should include. Can test with more advanced techniques. But eh...could be over fitting, relying too much on sig tests...
+
+3. chi-square. (Statistical fit) Implied versus observed data, tests to see if model are exact fit with data. But eh...too impacted by sample size
+
+4. RMSEA or SRMR (Absolute fit). Does not compare to a null model. Judges distance from perfect fit. 
+
+Above .10 poor fit
+Below .08 acceptable
+
+5. CFI, TFI (Relative fit models). Compares relative to a null model. Judges distance from the worse fit ie a null model. Null models have no covariance among observed and latent variables. Range from 0-1. Indicate % of improvement from the null model to a saturated i.e. just identified model. Usually >.9 is okay. Some care about > .95
+
+
+---
+### Parcels
+It is often necessary to simplify your model. One option to do so is with parcels where you combine indicators into a composite. This simplifies the model in that you have fewer parameters to fit. In addition to being a way to get a model identified, it also has benefits in terms of the assumptions of the indicator variables. 
+
+To do so, you can combine items however you want into 3 or 4 groups or parcels, averaging them together. You may balance highly loading with less highly loading items (item to construct technique) or you may pair pos and negatively keyed items together. It is up to you. 
+
+Some dislike it because you are aggregating without taking into account the association between the indicators; it is a blind procedure based on theory/assumptions rather than maths. ¯\_(ツ)_/¯
+
+
+

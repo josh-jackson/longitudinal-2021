@@ -350,6 +350,7 @@ lmertest is another package that does this but it also causes conflicts with sta
 ### Model assumption tests
 
 ```{r}
+library(qqplotr)
 performance::check_model(mod.2, panel = FALSE)
 ```
 

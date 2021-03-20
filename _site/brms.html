@@ -3,6 +3,7 @@
   <head>
     <title>brms</title>
     <meta charset="utf-8" />
+    <meta name="author" content="Josh Jackson" />
     <!--radix_placeholder_navigation_in_header-->
     <meta name="distill:offset" content=""/>
 
@@ -932,7 +933,7 @@
     .distill-site-footer a:hover {
       color: var(--hover-color, white);
     }</style>
-    <script src="brms_files/header-attrs-2.6.6/header-attrs.js"></script>
+    <script src="brms_files/header-attrs-2.7/header-attrs.js"></script>
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
   </head>
   <body>
@@ -957,6 +958,7 @@ Lectures
 <a href="mlm.html">MLM</a>
 <a href="conditional.html">conditional models</a>
 <a href="tvc.html">time varying conditional models</a>
+<a href="sem.html">structural equation models</a>
 </div>
 </div>
 <div class="nav-dropdown">
@@ -982,6 +984,7 @@ Homeworks
 <div class="nav-dropdown-content">
 <a href="hw-1.html">homework 1</a>
 <a href="hw-2.html">homework 2</a>
+<a href="hw-3.html">homework 3</a>
 </div>
 </div>
 <a href="https://github.com/josh-jackson/longitudinal-2021">
@@ -994,6 +997,8 @@ Homeworks
 <!--/radix_placeholder_navigation_before_body-->
 <!--radix_placeholder_site_before_body-->
 <!--/radix_placeholder_site_before_body-->
+
+
 
 
 
@@ -1410,16 +1415,16 @@ glimpse()
 ```
 ## Rows: 4,000
 ## Columns: 10
-## $ b_intercept              &lt;dbl&gt; 107.1322, 106.5620, 105.1879, 104.7985, 105.…
-## $ b_age_c                  &lt;dbl&gt; -20.05813, -17.48179, -18.67641, -19.68588, …
-## $ b_program                &lt;dbl&gt; 6.074647, 8.357630, 9.475295, 9.272974, 9.38…
-## $ `b_age_c:program`        &lt;dbl&gt; 4.0091448, 0.1695788, 2.2809121, 3.1886861, …
-## $ sd_id__Intercept         &lt;dbl&gt; 8.866482, 8.361914, 9.289218, 8.937065, 7.98…
-## $ sd_id__age_c             &lt;dbl&gt; 4.31743810, 3.71414428, 3.42532730, 3.434381…
-## $ cor_id__Intercept__age_c &lt;dbl&gt; -0.35068165, -0.71489674, -0.02717587, -0.24…
-## $ sigma                    &lt;dbl&gt; 9.021767, 8.706345, 8.951294, 8.829981, 8.92…
-## $ `r_id[1,Intercept]`      &lt;dbl&gt; 2.7725062, 9.6001455, 0.1182156, 1.3098393, …
-## $ `r_id[2,Intercept]`      &lt;dbl&gt; 0.8796124, 0.7027919, 1.3312441, 3.2554817, …
+## $ b_intercept              &lt;dbl&gt; 107.1322, 106.5620, 105.1879, 104.7985, 105.9…
+## $ b_age_c                  &lt;dbl&gt; -20.05813, -17.48179, -18.67641, -19.68588, -…
+## $ b_program                &lt;dbl&gt; 6.074647, 8.357630, 9.475295, 9.272974, 9.384…
+## $ `b_age_c:program`        &lt;dbl&gt; 4.0091448, 0.1695788, 2.2809121, 3.1886861, 1…
+## $ sd_id__Intercept         &lt;dbl&gt; 8.866482, 8.361914, 9.289218, 8.937065, 7.984…
+## $ sd_id__age_c             &lt;dbl&gt; 4.31743810, 3.71414428, 3.42532730, 3.4343819…
+## $ cor_id__Intercept__age_c &lt;dbl&gt; -0.35068165, -0.71489674, -0.02717587, -0.240…
+## $ sigma                    &lt;dbl&gt; 9.021767, 8.706345, 8.951294, 8.829981, 8.924…
+## $ `r_id[1,Intercept]`      &lt;dbl&gt; 2.7725062, 9.6001455, 0.1182156, 1.3098393, -…
+## $ `r_id[2,Intercept]`      &lt;dbl&gt; 0.8796124, 0.7027919, 1.3312441, 3.2554817, 3…
 ```
 
 We saved our results as `post`, which is a data frame with 4000 rows (i.e., 1000 post-warmup iterations times 4 chains) and 215 columns, each depicting one of the model parameters. With **brms**, the `\(\gamma\)` parameters (i.e., the fixed effects or population parameters) get `b_` prefixes in the `posterior_samples()` output. 

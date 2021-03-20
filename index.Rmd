@@ -5,6 +5,9 @@ site: distill::distill_website
 ---
 
 
+Homework 3 is posted. Due 3/29
+
+
 Homework 2 is posted. Due 3/8  
 
 
