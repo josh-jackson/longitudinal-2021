@@ -2978,7 +2978,7 @@ year        |    4.89e-04 | 1.91e-03 | [ 0.00, 0.00] |   0.26 | 0.798 </code></p
 <pre><code>Parameter   | Coefficient |        95% CI |      p
 --------------------------------------------------
 (Intercept) |        0.10 | [ 0.09, 0.12] | &lt; .001
-year        |    5.07e-04 | [ 0.00, 0.00] | 0.793 </code></pre>
+year        |    6.20e-04 | [ 0.00, 0.00] | 0.751 </code></pre>
 </div>
 <h3 id="p--values">p -values</h3>
 <p>The author of the package dislikes p-values. So they are not included. But what if you need them? Well, CIs. But if pressed you can use the parameters package:</p>
@@ -3083,9 +3083,9 @@ $ conf.high &lt;dbl&gt; -0.021162535, 0.031740388, 0.034800657, 0.03490022…</c
 <span class='fu'><a href='https://rdrr.io/pkg/merTools/man/FEsim.html'>FEsim</a></span><span class='op'>(</span><span class='va'>mod.2</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>         term         mean       median          sd
-1 (Intercept) 0.1044382039 0.1042109338 0.005460021
-2        year 0.0003728177 0.0004492735 0.001823427</code></pre>
+<pre><code>         term        mean       median          sd
+1 (Intercept) 0.104837715 0.1042876366 0.005404447
+2        year 0.000516185 0.0005360292 0.001929322</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -3094,12 +3094,12 @@ $ conf.high &lt;dbl&gt; -0.021162535, 0.031740388, 0.034800657, 0.03490022…</c
 </code></pre>
 </div>
 <pre><code>  groupFctr groupID        term         mean       median         sd
-1        ID       6 (Intercept) -0.055546188 -0.054118219 0.01860560
-2        ID      29 (Intercept) -0.008311602 -0.007907426 0.02109247
-3        ID      34 (Intercept) -0.007432196 -0.007395566 0.02156840
-4        ID      36 (Intercept) -0.009258183 -0.008980903 0.02301909
-5        ID      37 (Intercept) -0.007930277 -0.008038888 0.01839353
-6        ID      48 (Intercept)  0.038163366  0.037397301 0.01843253</code></pre>
+1        ID       6 (Intercept) -0.057217623 -0.057215652 0.01786603
+2        ID      29 (Intercept) -0.010064809 -0.011112412 0.01980399
+3        ID      34 (Intercept) -0.007409408 -0.007006766 0.02217660
+4        ID      36 (Intercept) -0.006507850 -0.006560813 0.02208567
+5        ID      37 (Intercept) -0.006863077 -0.005303389 0.01855996
+6        ID      48 (Intercept)  0.037155408  0.036352933 0.01945153</code></pre>
 </div>
 <p>This can be used to create CIs for each individual random effect (and fixed effect). What is the confidence interval around person 6’s intercept estimate compared to person 2000 who has 25 repeated measurements?</p>
 <h3 id="caterpillar-plots">Caterpillar plots</h3>
@@ -3161,12 +3161,12 @@ then: 5. returns newdata with the lower and upper limits of the prediction inter
 </code></pre>
 </div>
 <pre><code>         fit        upr          lwr
-1 0.04474242 0.09897841 -0.003974577
-2 0.04469012 0.09371309 -0.017301706
-3 0.03262087 0.11040921 -0.022846335
-4 0.09198796 0.16631175  0.035977015
-5 0.09527989 0.14575625  0.027124205
-6 0.09130064 0.15404767  0.021892316</code></pre>
+1 0.05270466 0.11089507 -0.009337879
+2 0.04359175 0.09887672 -0.013342142
+3 0.04382813 0.09719000 -0.025492193
+4 0.09777059 0.16875447  0.024160060
+5 0.09881617 0.15236055  0.026293406
+6 0.09551711 0.16640537  0.029405964</code></pre>
 </div>
 <div class="sourceCode" id="cb32"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->

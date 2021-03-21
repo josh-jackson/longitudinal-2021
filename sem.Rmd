@@ -69,7 +69,7 @@ Single head arrows = regressions
 Triangle = means
 
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, messages = FALSE, warnings = FALSE}
 library(lavaan)
 library(semPlot)
 library(readr)
@@ -152,9 +152,12 @@ Given we are interested in change across time, however, we will be interested in
 ---
 # Path model
 
-The path model component can be in addition to a measurement model or separate from them. You have already worked with path models as a simple regression is a path model, so is a standard mediation. You can make the path models more complex than these though, by specifying relationships among many variables. 
+.pull-left[ The path model component can be in addition to a measurement model or separate from them. You have already worked with path models as a simple regression is a path model, so is a standard mediation. You can make the path models more complex than these though, by specifying relationships among many variables. 
 
 An example with no measurement model
+]
+
+.pull-right[
 ```{r, echo = FALSE}
 # generate data dataset:
 X <- rnorm(100)
@@ -170,6 +173,7 @@ res2 <- lm(Y ~ X + M, data = data)
 semPaths(res1 + res2, "model", "est", intercepts = FALSE)
 
 ```
+]
 
 ---
 ### path model with measurement model
