@@ -1,0 +1,2329 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>brms</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Josh Jackson" />
+    <!--radix_placeholder_navigation_in_header-->
+    <meta name="distill:offset" content=""/>
+
+    <script type="application/javascript">
+
+      window.headroom_prevent_pin = false;
+
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+
+        // initialize headroom for banner
+        var header = $('header').get(0);
+        var headerHeight = header.offsetHeight;
+        var headroom = new Headroom(header, {
+          tolerance: 5,
+          onPin : function() {
+            if (window.headroom_prevent_pin) {
+              window.headroom_prevent_pin = false;
+              headroom.unpin();
+            }
+          }
+        });
+        headroom.init();
+        if(window.location.hash)
+          headroom.unpin();
+        $(header).addClass('headroom--transition');
+
+        // offset scroll location for banner on hash change
+        // (see: https://github.com/WickyNilliams/headroom.js/issues/38)
+        window.addEventListener("hashchange", function(event) {
+          window.scrollTo(0, window.pageYOffset - (headerHeight + 25));
+        });
+
+        // responsive menu
+        $('.distill-site-header').each(function(i, val) {
+          var topnav = $(this);
+          var toggle = topnav.find('.nav-toggle');
+          toggle.on('click', function() {
+            topnav.toggleClass('responsive');
+          });
+        });
+
+        // nav dropdowns
+        $('.nav-dropbtn').click(function(e) {
+          $(this).next('.nav-dropdown-content').toggleClass('nav-dropdown-active');
+          $(this).parent().siblings('.nav-dropdown')
+             .children('.nav-dropdown-content').removeClass('nav-dropdown-active');
+        });
+        $("body").click(function(e){
+          $('.nav-dropdown-content').removeClass('nav-dropdown-active');
+        });
+        $(".nav-dropdown").click(function(e){
+          e.stopPropagation();
+        });
+      });
+    </script>
+
+    <style type="text/css">
+
+    /* Theme (user-documented overrideables for nav appearance) */
+
+    .distill-site-nav {
+      color: rgba(255, 255, 255, 0.8);
+      background-color: #0F2E3D;
+      font-size: 15px;
+      font-weight: 300;
+    }
+
+    .distill-site-nav a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .distill-site-nav a:hover {
+      color: white;
+    }
+
+    @media print {
+      .distill-site-nav {
+        display: none;
+      }
+    }
+
+    .distill-site-header {
+
+    }
+
+    .distill-site-footer {
+
+    }
+
+
+    /* Site Header */
+
+    .distill-site-header {
+      width: 100%;
+      box-sizing: border-box;
+      z-index: 3;
+    }
+
+    .distill-site-header .nav-left {
+      display: inline-block;
+      margin-left: 8px;
+    }
+
+    @media screen and (max-width: 768px) {
+      .distill-site-header .nav-left {
+        margin-left: 0;
+      }
+    }
+
+
+    .distill-site-header .nav-right {
+      float: right;
+      margin-right: 8px;
+    }
+
+    .distill-site-header a,
+    .distill-site-header .title {
+      display: inline-block;
+      text-align: center;
+      padding: 14px 10px 14px 10px;
+    }
+
+    .distill-site-header .title {
+      font-size: 18px;
+      min-width: 150px;
+    }
+
+    .distill-site-header .logo {
+      padding: 0;
+    }
+
+    .distill-site-header .logo img {
+      display: none;
+      max-height: 20px;
+      width: auto;
+      margin-bottom: -4px;
+    }
+
+    .distill-site-header .nav-image img {
+      max-height: 18px;
+      width: auto;
+      display: inline-block;
+      margin-bottom: -3px;
+    }
+
+
+
+    @media screen and (min-width: 1000px) {
+      .distill-site-header .logo img {
+        display: inline-block;
+      }
+      .distill-site-header .nav-left {
+        margin-left: 20px;
+      }
+      .distill-site-header .nav-right {
+        margin-right: 20px;
+      }
+      .distill-site-header .title {
+        padding-left: 12px;
+      }
+    }
+
+
+    .distill-site-header .nav-toggle {
+      display: none;
+    }
+
+    .nav-dropdown {
+      display: inline-block;
+      position: relative;
+    }
+
+    .nav-dropdown .nav-dropbtn {
+      border: none;
+      outline: none;
+      color: rgba(255, 255, 255, 0.8);
+      padding: 16px 10px;
+      background-color: transparent;
+      font-family: inherit;
+      font-size: inherit;
+      font-weight: inherit;
+      margin: 0;
+      margin-top: 1px;
+      z-index: 2;
+    }
+
+    .nav-dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: white;
+      min-width: 200px;
+      border: 1px solid rgba(0,0,0,0.15);
+      border-radius: 4px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.1);
+      z-index: 1;
+      margin-top: 2px;
+      white-space: nowrap;
+      padding-top: 4px;
+      padding-bottom: 4px;
+    }
+
+    .nav-dropdown-content hr {
+      margin-top: 4px;
+      margin-bottom: 4px;
+      border: none;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-dropdown-active {
+      display: block;
+    }
+
+    .nav-dropdown-content a, .nav-dropdown-content .nav-dropdown-header {
+      color: black;
+      padding: 6px 24px;
+      text-decoration: none;
+      display: block;
+      text-align: left;
+    }
+
+    .nav-dropdown-content .nav-dropdown-header {
+      display: block;
+      padding: 5px 24px;
+      padding-bottom: 0;
+      text-transform: uppercase;
+      font-size: 14px;
+      color: #999999;
+      white-space: nowrap;
+    }
+
+    .nav-dropdown:hover .nav-dropbtn {
+      color: white;
+    }
+
+    .nav-dropdown-content a:hover {
+      background-color: #ddd;
+      color: black;
+    }
+
+    .nav-right .nav-dropdown-content {
+      margin-left: -45%;
+      right: 0;
+    }
+
+    @media screen and (max-width: 768px) {
+      .distill-site-header a, .distill-site-header .nav-dropdown  {display: none;}
+      .distill-site-header a.nav-toggle {
+        float: right;
+        display: block;
+      }
+      .distill-site-header .title {
+        margin-left: 0;
+      }
+      .distill-site-header .nav-right {
+        margin-right: 0;
+      }
+      .distill-site-header {
+        overflow: hidden;
+      }
+      .nav-right .nav-dropdown-content {
+        margin-left: 0;
+      }
+    }
+
+
+    @media screen and (max-width: 768px) {
+      .distill-site-header.responsive {position: relative; min-height: 500px; }
+      .distill-site-header.responsive a.nav-toggle {
+        position: absolute;
+        right: 0;
+        top: 0;
+      }
+      .distill-site-header.responsive a,
+      .distill-site-header.responsive .nav-dropdown {
+        display: block;
+        text-align: left;
+      }
+      .distill-site-header.responsive .nav-left,
+      .distill-site-header.responsive .nav-right {
+        width: 100%;
+      }
+      .distill-site-header.responsive .nav-dropdown {float: none;}
+      .distill-site-header.responsive .nav-dropdown-content {position: relative;}
+      .distill-site-header.responsive .nav-dropdown .nav-dropbtn {
+        display: block;
+        width: 100%;
+        text-align: left;
+      }
+    }
+
+    /* Site Footer */
+
+    .distill-site-footer {
+      width: 100%;
+      overflow: hidden;
+      box-sizing: border-box;
+      z-index: 3;
+      margin-top: 30px;
+      padding-top: 30px;
+      padding-bottom: 30px;
+      text-align: center;
+    }
+
+    /* Headroom */
+
+    d-title {
+      padding-top: 6rem;
+    }
+
+    @media print {
+      d-title {
+        padding-top: 4rem;
+      }
+    }
+
+    .headroom {
+      z-index: 1000;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+    }
+
+    .headroom--transition {
+      transition: all .4s ease-in-out;
+    }
+
+    .headroom--unpinned {
+      top: -100px;
+    }
+
+    .headroom--pinned {
+      top: 0;
+    }
+
+    /* adjust viewport for navbar height */
+    /* helps vertically center bootstrap (non-distill) content */
+    .min-vh-100 {
+      min-height: calc(100vh - 100px) !important;
+    }
+
+    </style>
+
+    <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+    <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet"/>
+    <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet"/>
+    <script src="site_libs/headroom-0.9.4/headroom.min.js"></script>
+    <script src="site_libs/autocomplete-0.37.1/autocomplete.min.js"></script>
+    <script src="site_libs/fuse-6.4.1/fuse.min.js"></script>
+
+    <script type="application/javascript">
+
+    function getMeta(metaName) {
+      var metas = document.getElementsByTagName('meta');
+      for (let i = 0; i < metas.length; i++) {
+        if (metas[i].getAttribute('name') === metaName) {
+          return metas[i].getAttribute('content');
+        }
+      }
+      return '';
+    }
+
+    function offsetURL(url) {
+      var offset = getMeta('distill:offset');
+      return offset ? offset + '/' + url : url;
+    }
+
+    function createFuseIndex() {
+
+      // create fuse index
+      var options = {
+        keys: [
+          { name: 'title', weight: 20 },
+          { name: 'categories', weight: 15 },
+          { name: 'description', weight: 10 },
+          { name: 'contents', weight: 5 },
+        ],
+        ignoreLocation: true,
+        threshold: 0
+      };
+      var fuse = new window.Fuse([], options);
+
+      // fetch the main search.json
+      return fetch(offsetURL('search.json'))
+        .then(function(response) {
+          if (response.status == 200) {
+            return response.json().then(function(json) {
+              // index main articles
+              json.articles.forEach(function(article) {
+                fuse.add(article);
+              });
+              // download collections and index their articles
+              return Promise.all(json.collections.map(function(collection) {
+                return fetch(offsetURL(collection)).then(function(response) {
+                  if (response.status === 200) {
+                    return response.json().then(function(articles) {
+                      articles.forEach(function(article) {
+                        fuse.add(article);
+                      });
+                    })
+                  } else {
+                    return Promise.reject(
+                      new Error('Unexpected status from search index request: ' +
+                                response.status)
+                    );
+                  }
+                });
+              })).then(function() {
+                return fuse;
+              });
+            });
+
+          } else {
+            return Promise.reject(
+              new Error('Unexpected status from search index request: ' +
+                          response.status)
+            );
+          }
+        });
+    }
+
+    window.document.addEventListener("DOMContentLoaded", function (event) {
+
+      // get search element (bail if we don't have one)
+      var searchEl = window.document.getElementById('distill-search');
+      if (!searchEl)
+        return;
+
+      createFuseIndex()
+        .then(function(fuse) {
+
+          // make search box visible
+          searchEl.classList.remove('hidden');
+
+          // initialize autocomplete
+          var options = {
+            autoselect: true,
+            hint: false,
+            minLength: 2,
+          };
+          window.autocomplete(searchEl, options, [{
+            source: function(query, callback) {
+              const searchOptions = {
+                isCaseSensitive: false,
+                shouldSort: true,
+                minMatchCharLength: 2,
+                limit: 10,
+              };
+              var results = fuse.search(query, searchOptions);
+              callback(results
+                .map(function(result) { return result.item; })
+              );
+            },
+            templates: {
+              suggestion: function(suggestion) {
+                var img = suggestion.preview && Object.keys(suggestion.preview).length > 0
+                  ? `<img src="${offsetURL(suggestion.preview)}"</img>`
+                  : '';
+                var html = `
+                  <div class="search-item">
+                    <h3>${suggestion.title}</h3>
+                    <div class="search-item-description">
+                      ${suggestion.description || ''}
+                    </div>
+                    <div class="search-item-preview">
+                      ${img}
+                    </div>
+                  </div>
+                `;
+                return html;
+              }
+            }
+          }]).on('autocomplete:selected', function(event, suggestion) {
+            window.location.href = offsetURL(suggestion.path);
+          });
+          // remove inline display style on autocompleter (we want to
+          // manage responsive display via css)
+          $('.algolia-autocomplete').css("display", "");
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+
+    });
+
+    </script>
+
+    <style type="text/css">
+
+    .nav-search {
+      font-size: x-small;
+    }
+
+    /* Algolioa Autocomplete */
+
+    .algolia-autocomplete {
+      display: inline-block;
+      margin-left: 10px;
+      vertical-align: sub;
+      background-color: white;
+      color: black;
+      padding: 6px;
+      padding-top: 8px;
+      padding-bottom: 0;
+      border-radius: 6px;
+      border: 1px #0F2E3D solid;
+      width: 180px;
+    }
+
+
+    @media screen and (max-width: 768px) {
+      .distill-site-nav .algolia-autocomplete {
+        display: none;
+        visibility: hidden;
+      }
+      .distill-site-nav.responsive .algolia-autocomplete {
+        display: inline-block;
+        visibility: visible;
+      }
+      .distill-site-nav.responsive .algolia-autocomplete .aa-dropdown-menu {
+        margin-left: 0;
+        width: 400px;
+        max-height: 400px;
+      }
+    }
+
+    .algolia-autocomplete .aa-input, .algolia-autocomplete .aa-hint {
+      width: 90%;
+      outline: none;
+      border: none;
+    }
+
+    .algolia-autocomplete .aa-hint {
+      color: #999;
+    }
+    .algolia-autocomplete .aa-dropdown-menu {
+      width: 550px;
+      max-height: 70vh;
+      overflow-x: visible;
+      overflow-y: scroll;
+      padding: 5px;
+      margin-top: 3px;
+      margin-left: -150px;
+      background-color: #fff;
+      border-radius: 5px;
+      border: 1px solid #999;
+      border-top: none;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion {
+      cursor: pointer;
+      padding: 5px 4px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion:last-of-type {
+      border-bottom: none;
+      margin-bottom: 2px;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item {
+      overflow: hidden;
+      font-size: 0.8em;
+      line-height: 1.4em;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item h3 {
+      font-size: 1rem;
+      margin-block-start: 0;
+      margin-block-end: 5px;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-description {
+      display: inline-block;
+      overflow: hidden;
+      height: 2.8em;
+      width: 80%;
+      margin-right: 4%;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-preview {
+      display: inline-block;
+      width: 15%;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-preview img {
+      height: 3em;
+      width: auto;
+      display: none;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion .search-item-preview img[src] {
+      display: initial;
+    }
+
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion.aa-cursor {
+      background-color: #eee;
+    }
+    .algolia-autocomplete .aa-dropdown-menu .aa-suggestion em {
+      font-weight: bold;
+      font-style: normal;
+    }
+
+    </style>
+
+
+    <!--/radix_placeholder_navigation_in_header-->
+    <!--radix_placeholder_site_in_header-->
+    <!--/radix_placeholder_site_in_header-->
+    
+    <style type="text/css">
+    body {
+      padding-top: 60px;
+    }
+    </style>
+    <style type="text/css">
+    /* base variables */
+
+    /* Edit the CSS properties in this file to create a custom
+       Distill theme. Only edit values in the right column
+       for each row; values shown are the CSS defaults.
+       To return any property to the default,
+       you may set its value to: unset
+       All rows must end with a semi-colon.                      */
+
+    /* Optional: embed custom fonts here with `@import`          */
+    /* This must remain at the top of this file.                 */
+
+
+
+    html {
+      /*-- Main font sizes --*/
+      --title-size:      50px;
+      --body-size:       1.06rem;
+      --code-size:       14px;
+      --aside-size:      12px;
+      --fig-cap-size:    13px;
+      /*-- Main font colors --*/
+      --title-color:     #000000;
+      --header-color:    rgba(0, 0, 0, 0.8);
+      --body-color:      rgba(0, 0, 0, 0.8);
+      --aside-color:     rgba(0, 0, 0, 0.6);
+      --fig-cap-color:   rgba(0, 0, 0, 0.6);
+      /*-- Specify custom fonts ~~~ must be imported above   --*/
+      --heading-font:    sans-serif;
+      --mono-font:       monospace;
+      --body-font:       sans-serif;
+      --navbar-font:     sans-serif;  /* websites + blogs only */
+    }
+
+    /*-- ARTICLE METADATA --*/
+    d-byline {
+      --heading-size:    0.6rem;
+      --heading-color:   rgba(0, 0, 0, 0.5);
+      --body-size:       0.8rem;
+      --body-color:      rgba(0, 0, 0, 0.8);
+    }
+
+    /*-- ARTICLE TABLE OF CONTENTS --*/
+    .d-contents {
+      --heading-size:    18px;
+      --contents-size:   13px;
+    }
+
+    /*-- ARTICLE APPENDIX --*/
+    d-appendix {
+      --heading-size:    15px;
+      --heading-color:   rgba(0, 0, 0, 0.65);
+      --text-size:       0.8em;
+      --text-color:      rgba(0, 0, 0, 0.5);
+    }
+
+    /*-- WEBSITE HEADER + FOOTER --*/
+    /* These properties only apply to Distill sites and blogs  */
+
+    .distill-site-header {
+      --title-size:       18px;
+      --text-color:       rgba(255, 255, 255, 0.8);
+      --text-size:        15px;
+      --hover-color:      white;
+      --bkgd-color:       #0F2E3D;
+    }
+
+    .distill-site-footer {
+      --text-color:       rgba(255, 255, 255, 0.8);
+      --text-size:        15px;
+      --hover-color:      white;
+      --bkgd-color:       #0F2E3D;
+    }
+
+    /*-- Additional custom styles --*/
+    /* Add any additional CSS rules below                      */
+    </style>
+    <style type="text/css">
+    /* base variables */
+
+    /* Edit the CSS properties in this file to create a custom
+       Distill theme. Only edit values in the right column
+       for each row; values shown are the CSS defaults.
+       To return any property to the default,
+       you may set its value to: unset
+       All rows must end with a semi-colon.                      */
+
+    /* Optional: embed custom fonts here with `@import`          */
+    /* This must remain at the top of this file.                 */
+    @import url('https://fonts.googleapis.com/css2?family=Amiri');
+    @import url('https://fonts.googleapis.com/css2?family=Bitter');
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono');
+
+
+
+    html {
+      /*-- Main font sizes --*/
+      --title-size:      50px;
+      --body-size:       1.06rem;
+      --code-size:       14px;
+      --aside-size:      12px;
+      --fig-cap-size:    13px;
+      /*-- Main font colors --*/
+      --title-color:     #000000;
+      --header-color:    rgba(0, 0, 0, 0.8);
+      --body-color:      rgba(0, 0, 0, 0.8);
+      --aside-color:     rgba(0, 0, 0, 0.6);
+      --fig-cap-color:   rgba(0, 0, 0, 0.6);
+      /*-- Specify custom fonts ~~~ must be imported above   --*/
+      --heading-font:    "Amiri", serif;
+      --mono-font:       "DM Mono", monospace;
+      --body-font:       "Bitter", sans-serif;
+      --navbar-font:     "Amiri", sans-serif;  /* websites + blogs only */
+    }
+
+    /*-- ARTICLE METADATA --*/
+    d-byline {
+      --heading-size:    0.6rem;
+      --heading-color:   rgba(0, 0, 0, 0.5);
+      --body-size:       0.8rem;
+      --body-color:      rgba(0, 0, 0, 0.8);
+    }
+
+    /*-- ARTICLE TABLE OF CONTENTS --*/
+    .d-contents {
+      --heading-size:    18px;
+      --contents-size:   13px;
+    }
+
+    /*-- ARTICLE APPENDIX --*/
+    d-appendix {
+      --heading-size:    15px;
+      --heading-color:   rgba(0, 0, 0, 0.65);
+      --text-size:       0.8em;
+      --text-color:      rgba(0, 0, 0, 0.5);
+    }
+
+    /*-- WEBSITE HEADER + FOOTER --*/
+    /* These properties only apply to Distill sites and blogs  */
+
+    .distill-site-header {
+      --title-size:       18px;
+      --text-color:       rgba(255, 255, 255, 0.8);
+      --text-size:        15px;
+      --hover-color:      white;
+      --bkgd-color:       #0F2E3D;
+    }
+
+    .distill-site-footer {
+      --text-color:       rgba(255, 255, 255, 0.8);
+      --text-size:        15px;
+      --hover-color:      white;
+      --bkgd-color:       #0F2E3D;
+    }
+
+    /*-- Additional custom styles --*/
+    /* Add any additional CSS rules below                      */
+    </style>
+    <style type="text/css">
+    /* base style */
+
+    /* FONT FAMILIES */
+
+    :root {
+      --heading-default: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+      --mono-default: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+      --body-default: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body,
+    .posts-list .post-preview p,
+    .posts-list .description p {
+      font-family: var(--body-font), var(--body-default);
+    }
+
+    h1, h2, h3, h4, h5, h6,
+    .posts-list .post-preview h2,
+    .posts-list .description h2 {
+      font-family: var(--heading-font), var(--heading-default);
+    }
+
+    d-article div.sourceCode code,
+    d-article pre code {
+      font-family: var(--mono-font), var(--mono-default);
+    }
+
+
+    /*-- TITLE --*/
+    d-title h1,
+    .posts-list > h1 {
+      color: var(--title-color, black);
+    }
+
+    d-title h1 {
+      font-size: var(--title-size, 50px);
+    }
+
+    /*-- HEADERS --*/
+    d-article h1,
+    d-article h2,
+    d-article h3,
+    d-article h4,
+    d-article h5,
+    d-article h6 {
+      color: var(--header-color, rgba(0, 0, 0, 0.8));
+    }
+
+    /*-- BODY --*/
+    d-article > p,  /* only text inside of <p> tags */
+    d-article > ul, /* lists */
+    d-article > ol {
+      color: var(--body-color, rgba(0, 0, 0, 0.8));
+      font-size: var(--body-size, 1.06rem);
+    }
+
+
+    /*-- CODE --*/
+    d-article div.sourceCode code,
+    d-article pre code {
+      font-size: var(--code-size, 14px);
+    }
+
+    /*-- ASIDE --*/
+    d-article aside {
+      font-size: var(--aside-size, 12px);
+      color: var(--aside-color, rgba(0, 0, 0, 0.6));
+    }
+
+    /*-- FIGURE CAPTIONS --*/
+    figure .caption,
+    figure figcaption,
+    .figure .caption {
+      font-size: var(--fig-cap-size, 13px);
+      color: var(--fig-cap-color, rgba(0, 0, 0, 0.6));
+    }
+
+    /*-- METADATA --*/
+    d-byline h3 {
+      font-size: var(--heading-size, 0.6rem);
+      color: var(--heading-color, rgba(0, 0, 0, 0.5));
+    }
+
+    d-byline {
+      font-size: var(--body-size, 0.8rem);
+      color: var(--body-color, rgba(0, 0, 0, 0.8));
+    }
+
+    d-byline a,
+    d-article d-byline a {
+      color: var(--body-color, rgba(0, 0, 0, 0.8));
+    }
+
+    /*-- TABLE OF CONTENTS --*/
+    .d-contents nav h3 {
+      font-size: var(--heading-size, 18px);
+    }
+
+    .d-contents nav a {
+      font-size: var(--contents-size, 13px);
+    }
+
+    /*-- APPENDIX --*/
+    d-appendix h3 {
+      font-size: var(--heading-size, 15px);
+      color: var(--heading-color, rgba(0, 0, 0, 0.65));
+    }
+
+    d-appendix {
+      font-size: var(--text-size, 0.8em);
+      color: var(--text-color, rgba(0, 0, 0, 0.5));
+    }
+
+    d-appendix d-footnote-list a.footnote-backlink {
+      color: var(--text-color, rgba(0, 0, 0, 0.5));
+    }
+
+    /*-- WEBSITE HEADER + FOOTER --*/
+    .distill-site-header .title {
+      font-size: var(--title-size, 18px);
+      font-family: var(--navbar-font), var(--heading-default);
+    }
+
+    .distill-site-header a,
+    .nav-dropdown .nav-dropbtn {
+      font-family: var(--navbar-font), var(--heading-default);
+    }
+
+    .nav-dropdown .nav-dropbtn {
+      color: var(--text-color, rgba(255, 255, 255, 0.8));
+      font-size: var(--text-size, 15px);
+    }
+
+    .distill-site-header a:hover,
+    .nav-dropdown:hover .nav-dropbtn {
+      color: var(--hover-color, white);
+    }
+
+    .distill-site-header {
+      font-size: var(--text-size, 15px);
+      color: var(--text-color, rgba(255, 255, 255, 0.8));
+      background-color: var(--bkgd-color, #0F2E3D);
+    }
+
+    .distill-site-footer {
+      font-size: var(--text-size, 15px);
+      color: var(--text-color, rgba(255, 255, 255, 0.8));
+      background-color: var(--bkgd-color, #0F2E3D);
+    }
+
+    .distill-site-footer a:hover {
+      color: var(--hover-color, white);
+    }</style>
+    <script src="brms_files/header-attrs-2.7/header-attrs.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+<!--radix_placeholder_navigation_before_body-->
+<header class="header header--fixed" role="banner">
+<nav class="distill-site-nav distill-site-header">
+<div class="nav-left">
+<a href="index.html" class="title">Applied Longitudinal Data Analysis</a>
+</div>
+<div class="nav-right">
+<a href="index.html">Home</a>
+<div class="nav-dropdown">
+<button class="nav-dropbtn">
+Lectures
+ 
+<span class="down-arrow">&#x25BE;</span>
+</button>
+<div class="nav-dropdown-content">
+<a href="intro-1.html">Intro to longitudinal</a>
+<a href="mlm.html">MLM</a>
+<a href="conditional.html">conditional models</a>
+<a href="tvc.html">time varying conditional models</a>
+<a href="sem.html">structural equation models</a>
+</div>
+</div>
+<div class="nav-dropdown">
+<button class="nav-dropbtn">
+Workshops
+ 
+<span class="down-arrow">&#x25BE;</span>
+</button>
+<div class="nav-dropdown-content">
+<a href="data.html">data</a>
+<a href="lme4.html">lme4</a>
+<a href="plotting.html">plotting</a>
+<a href="brms.html">brms</a>
+<a href="sem-longitudinal.html">Longitudinal SEM</a>
+</div>
+</div>
+<a href="syllabus.html">Syllabus</a>
+<div class="nav-dropdown">
+<button class="nav-dropbtn">
+Homeworks
+ 
+<span class="down-arrow">&#x25BE;</span>
+</button>
+<div class="nav-dropdown-content">
+<a href="hw-1.html">homework 1</a>
+<a href="hw-2.html">homework 2</a>
+<a href="hw-3.html">homework 3</a>
+</div>
+</div>
+<a href="https://github.com/josh-jackson/longitudinal-2021">
+<i class="fab fa-github" aria-hidden="true"></i>
+</a>
+<a href="javascript:void(0);" class="nav-toggle">&#9776;</a>
+</div>
+</nav>
+</header>
+<!--/radix_placeholder_navigation_before_body-->
+<!--radix_placeholder_site_before_body-->
+<!--/radix_placeholder_site_before_body-->
+
+
+
+
+
+
+
+
+
+#Why Bayesian? 
+The models we have been working with can easily be done in a Bayesian Framework. Why Bayes? For at least 3 reasons: 1. Better convergence. 2. More flexibility. 3. Fewer assumptions. We will go through each of these ideas throughout the course in more detail, so what I want to do is sell you not on the benefits but on the lack of difference. 
+
+
+Many places to read up on this. Try Kruschke's Bayesian new statistics: https://rdcu.be/bRUvW
+
+Simple blog post on why Bayesian should be default: 
+http://babieslearninglanguage.blogspot.com/2018/02/mixed-effects-models-is-it-time-to-go.html
+
+
+---
+# How is this different? 
+Bayesian analysis differs in two ways from our traditional MLMs that we have been working with.  
+
+1. Prior distribution
+
+2. Posterior distribution. 
+
+Distributions (typically) reflect the likelihood/frequency/probability of some thing. For the prior, it is a distribution of plausible values. For the Posterior, it is the distribution of plausible values given our prior distribution and our data. 
+
+---
+![](brms_files/figure-html/unnamed-chunk-1-1.png)&lt;!-- --&gt;
+
+
+---
+## priors
+
+Useful to incorporate previous knowledge into your model. The alternative is not doing so, which is also imbuing the model with some outside subjectivity e.g., an effect of infinity is equally likely as an effect of 0.  
+
+We often know plausible ranges that are reasonable -- and those that are unreasonable--, even before we run the experiment. 
+
+Priors are often "overwhelmed with data", the robustness able to be checked, and created in a manner that will regularize the estimates -- all good things if you are concerned with the subjective nature of priors. 
+---
+
+## Bayes theorm 
+`$$posterior \propto likelihood * prior$$`
+
+---
+Likelihood - Distribution of the likelihood of various hypothesis. Probability attaches to possible results; likelihood attaches to hypotheses. Maximum likelihood is a likelihood. 
+
+
+![](brms_files/figure-html/unnamed-chunk-2-1.png)&lt;!-- --&gt;
+
+---
+## Posterior
+
+.pull-left[
+Distribution of our belief about the parameter values after taking into account the likelihood and one's priors. In regression terms, it is not a specific value of b that would make the data most likely, but a probability distribution for b that serves as a weighted combination of the likelihood and prior. 
+
+
+
+]
+
+.pull-right[
+
+![](brms_files/figure-html/unnamed-chunk-4-1.png)&lt;!-- --&gt;
+]
+
+
+---
+
+![](brms_files/figure-html/unnamed-chunk-5-1.png)&lt;!-- --&gt;
+
+
+
+---
+# How to think about these models
+
+In standard regression, we can state some expectations up front: 
+
+`$$y_i  \sim \text{Normal}(\mu_i, \sigma) \\
+\mu_i  = \alpha + \beta x_i \\
+\alpha  \sim \text{Normal}(0, 10) \\
+\beta  \sim \text{Normal}(0, 10) \\
+\sigma  \sim \text{Half Cauchy}(0, 50)$$`
+
+
+---
+
+
+`\(\alpha  \sim \text{Normal}(0, 10)\)`
+This says we have a prior idea bout the distribution of the intercept. Namely that it is centered around 0 with a possible range above and below that. 
+
+`\(\beta   \sim \text{Normal}(0, 10)\)`
+This says that we have a prior idea about the possible distribution of the regression coefficient. 
+
+![](brms_files/figure-html/unnamed-chunk-6-1.png)&lt;!-- --&gt;
+
+
+---
+Now for the priors for our residual. 
+`\(\sigma  \sim \text{HalfCauchy}(0, 1)\)`
+Same idea for the residual, the prior specifies what we expect is plausible. 
+
+
+```r
+ggplot() +
+  aes() +
+  stat_function(fun = dcauchy, n = 200, args = list(0, 1)) +
+  labs(title = "Half Cauchy distribution")
+```
+
+![](brms_files/figure-html/unnamed-chunk-7-1.png)&lt;!-- --&gt;
+
+
+
+---
+Note that we do two important things when specifying the model First, we describe the data generating processes (DGP) we think our data are coming from. Often we will just assume Gaussian normal, but this does not need to be the case. For our residual we specify a half Cauchy to make sure it is above zero and that lower terms are more likely than higher terms.
+ 
+
+Second, we are specifying a prior. Here we are saying we expect our regression parameter to be centered around zero but that it could vary widely from that and we wouldn't be surprised. The prior distribution for Beta is defined by a mean of 0 and an SD of 10. But we have control if we want to make this different. Same thing with the half Cauchy for the variance. 
+
+
+---
+## visualizing it in practice
+
+![](brms_files/figure-html/unnamed-chunk-8-1.png)&lt;!-- --&gt;
+
+
+---
+# MCMC Estimation 
+
+Posterior is analytically intractable. So the only option is sample in an iterative fashion. 
+
+The simulation process is referred to as Markov Chain Monte Carlo, or MCMC for short. In MCMC, all of the simulated draws from the posterior are based on and correlated with previous draws. As a safety check, we will run the the process multiple times, what is known as having multiple chains. If multiple chains converge towards the same answer we are more confident in our results.
+
+---
+# Comparing lmer with brms 
+
+Lets do a mixed effects model to test this out. We will use the sleepstudy dataset that is loaded with lme4
+
+```
+##   Reaction Days Subject
+## 1 249.5600    0     308
+## 2 258.7047    1     308
+## 3 250.8006    2     308
+## 4 321.4398    3     308
+## 5 356.8519    4     308
+## 6 414.6901    5     308
+```
+
+---
+
+```r
+sleep_lmer &lt;- lmer(Reaction ~ Days + (1 + Days|Subject), data = sleepstudy)
+summary(sleep_lmer)
+```
+
+```
+## Linear mixed model fit by REML ['lmerMod']
+## Formula: Reaction ~ Days + (1 + Days | Subject)
+##    Data: sleepstudy
+## 
+## REML criterion at convergence: 1743.6
+## 
+## Scaled residuals: 
+##     Min      1Q  Median      3Q     Max 
+## -3.9536 -0.4634  0.0231  0.4634  5.1793 
+## 
+## Random effects:
+##  Groups   Name        Variance Std.Dev. Corr
+##  Subject  (Intercept) 612.10   24.741       
+##           Days         35.07    5.922   0.07
+##  Residual             654.94   25.592       
+## Number of obs: 180, groups:  Subject, 18
+## 
+## Fixed effects:
+##             Estimate Std. Error t value
+## (Intercept)  251.405      6.825  36.838
+## Days          10.467      1.546   6.771
+## 
+## Correlation of Fixed Effects:
+##      (Intr)
+## Days -0.138
+```
+
+---
+
+
+```r
+library(brms)
+
+sleep_brm &lt;- brm(Reaction ~ Days + (1 + Days|Subject), data = sleepstudy, file = "fit1")
+```
+
+---
+
+
+
+```r
+summary(sleep_brm)
+```
+
+```
+##  Family: gaussian 
+##   Links: mu = identity; sigma = identity 
+## Formula: Reaction ~ Days + (1 + Days | Subject) 
+##    Data: sleepstudy (Number of observations: 180) 
+## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
+##          total post-warmup samples = 4000
+## 
+## Group-Level Effects: 
+## ~Subject (Number of levels: 18) 
+##                     Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## sd(Intercept)          26.66      6.63    15.46    41.18 1.00     1829     2284
+## sd(Days)                6.61      1.54     4.17    10.07 1.00     1421     2285
+## cor(Intercept,Days)     0.09      0.30    -0.46     0.68 1.00      779     1543
+## 
+## Population-Level Effects: 
+##           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## Intercept   251.35      7.23   237.03   265.55 1.00     2022     2555
+## Days         10.43      1.69     7.09    13.87 1.00     1287     1664
+## 
+## Family Specific Parameters: 
+##       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## sigma    25.92      1.53    23.15    29.04 1.00     3026     3186
+## 
+## Samples were drawn using sampling(NUTS). For each parameter, Bulk_ESS
+## and Tail_ESS are effective sample size measures, and Rhat is the potential
+## scale reduction factor on split chains (at convergence, Rhat = 1).
+```
+
+---
+## What priors did we use? 
+
+
+```r
+brms::get_prior(Reaction ~ Days + (1 + Days|Subject), data = sleepstudy)
+```
+
+```
+##                      prior     class      coef   group resp dpar nlpar bound
+##                     (flat)         b                                        
+##                     (flat)         b      Days                              
+##                     lkj(1)       cor                                        
+##                     lkj(1)       cor           Subject                      
+##  student_t(3, 288.7, 59.3) Intercept                                        
+##      student_t(3, 0, 59.3)        sd                                        
+##      student_t(3, 0, 59.3)        sd           Subject                      
+##      student_t(3, 0, 59.3)        sd      Days Subject                      
+##      student_t(3, 0, 59.3)        sd Intercept Subject                      
+##      student_t(3, 0, 59.3)     sigma                                        
+##        source
+##       default
+##  (vectorized)
+##       default
+##  (vectorized)
+##       default
+##       default
+##  (vectorized)
+##  (vectorized)
+##  (vectorized)
+##       default
+```
+*Note that there are flat priors as the default for fixed effects. This essentially disregards the prior and spits back the likelihood, equivalent to the ML estimate. 
+
+ The ts have three parameters: degrees of freedom, mean, and then an SD.
+
+---
+
+
+```r
+plot(sleep_brm)
+```
+
+![](brms_files/figure-html/unnamed-chunk-14-1.png)&lt;!-- --&gt;![](brms_files/figure-html/unnamed-chunk-14-2.png)&lt;!-- --&gt;
+
+
+
+---
+
+# More models
+## Ex 1 
+Here we'll use a dataset from Singer &amp; Willet, chapter 3, looking at cognitive performance across time for children who under went an intervention or not. 
+
+
+```
+## Joining, by = c("id", "age", "cog", "program", "age_c")
+```
+
+
+
+
+![](brms_files/figure-html/unnamed-chunk-17-1.png)&lt;!-- --&gt;
+
+
+---
+
+This is our assumed data generating model, with some relatively random priors thrown in. 
+
+`$$cog  \sim \text{Normal} (\mu_{ij}, \sigma_{ij}) \\
+\mu_{ij}    = \gamma_{00j} + \gamma_{10j} ({age}_{ij} - 1) + \gamma_{11j} Program \\
+\gamma_{00}      \sim \text{Normal}(0, 20) \\
+\gamma_{10}      \sim \text{Normal}(0, 5) \\
+\gamma_{11}      \sim \text{Normal}(0, 5) \\
+\sigma_{ij}  \sim \text{Student-t} (3, 0, 1)\\ 
+\sigma_0         \sim \text{Student-t} (3, 0, 1) \\
+\sigma_1         \sim \text{Student-t} (3, 0, 1) \\
+\rho_{01}        \sim \text{LKJ} (4) \\$$`
+
+
+---
+
+
+```r
+ex1 &lt;-
+  brm(data = early_int_sim,
+      file = "fit2",
+      family = gaussian,
+      formula = cog ~ 0 + intercept + age_c + program + age_c:program + (1 + age_c | id),
+      iter = 2000, warmup = 1000, chains = 4, cores = 4,
+      control = list(adapt_delta = 0.9),
+      seed = 3)
+```
+
+
+---
+## Intercepts are different because of priors
+Another important part of the syntax concerns the intercept. Normally we include a 1 (or lmer does it for us automatically) to reflect we want to fit an intercept. If we did that here, we would have made the assumption that our predictors are mean centered. The default priors set by `brms::brm()` are  set based on this assumption. SO, if we want to use non mean centered predictors (eg setting time at initial wave or dummy variables), we need to re-specify our model. Neither our variables are mean centered. 
+
+With a `0 + intercept`, we told `brm()` to suppress the default intercept and replace it with our smartly-named `intercept` parameter. This is our fixed effect for the population intercept and, importantly, `brms()` will assign default priors to it based on the data themselves without assumptions about centering. We will speak later about changing these default priors.  
+
+---
+
+
+```
+## Warning: There were 2 divergent transitions after warmup. Increasing adapt_delta
+## above 0.9 may help. See http://mc-stan.org/misc/warnings.html#divergent-
+## transitions-after-warmup
+```
+
+```
+##  Family: gaussian 
+##   Links: mu = identity; sigma = identity 
+## Formula: cog ~ 0 + intercept + age_c + program + age_c:program + (1 + age_c | id) 
+##    Data: early_int_sim (Number of observations: 309) 
+## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
+##          total post-warmup samples = 4000
+## 
+## Group-Level Effects: 
+## ~id (Number of levels: 103) 
+##                      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS
+## sd(Intercept)            9.67      1.18     7.49    12.10 1.01      785
+## sd(age_c)                3.85      2.35     0.15     8.67 1.01      272
+## cor(Intercept,age_c)    -0.46      0.38    -0.96     0.63 1.00     1894
+##                      Tail_ESS
+## sd(Intercept)            2097
+## sd(age_c)                 695
+## cor(Intercept,age_c)     1425
+## 
+## Population-Level Effects: 
+##               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## intercept       106.58      1.88   102.87   110.34 1.00      971     1699
+## age_c           -20.57      1.90   -24.33   -16.88 1.00     2054     2454
+## program           9.08      2.44     4.31    13.79 1.00     1110     1866
+## age_c:program     3.27      2.52    -1.68     8.21 1.00     2108     2516
+## 
+## Family Specific Parameters: 
+##       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## sigma     8.58      0.51     7.59     9.61 1.01      618      926
+## 
+## Samples were drawn using sampling(NUTS). For each parameter, Bulk_ESS
+## and Tail_ESS are effective sample size measures, and Rhat is the potential
+## scale reduction factor on split chains (at convergence, Rhat = 1).
+```
+
+---
+## What does the posterior look like? 
+
+
+```r
+plot(ex1)
+```
+
+![](brms_files/figure-html/unnamed-chunk-20-1.png)&lt;!-- --&gt;![](brms_files/figure-html/unnamed-chunk-20-2.png)&lt;!-- --&gt;
+
+---
+
+
+```r
+fixef(ex1)
+```
+
+```
+##                Estimate Est.Error       Q2.5      Q97.5
+## intercept     106.58099  1.882884 102.870316 110.337969
+## age_c         -20.57213  1.903562 -24.327729 -16.876166
+## program         9.07673  2.435918   4.313387  13.791824
+## age_c:program   3.27150  2.521463  -1.679237   8.212915
+```
+
+---
+
+
+```r
+post &lt;- brms::posterior_samples(ex1)
+```
+
+Here's a look at the first 10 columns.
+
+
+```r
+ post[, 1:10] %&gt;%
+glimpse()
+```
+
+```
+## Rows: 4,000
+## Columns: 10
+## $ b_intercept              &lt;dbl&gt; 107.1322, 106.5620, 105.1879, 104.7985, 105.9…
+## $ b_age_c                  &lt;dbl&gt; -20.05813, -17.48179, -18.67641, -19.68588, -…
+## $ b_program                &lt;dbl&gt; 6.074647, 8.357630, 9.475295, 9.272974, 9.384…
+## $ `b_age_c:program`        &lt;dbl&gt; 4.0091448, 0.1695788, 2.2809121, 3.1886861, 1…
+## $ sd_id__Intercept         &lt;dbl&gt; 8.866482, 8.361914, 9.289218, 8.937065, 7.984…
+## $ sd_id__age_c             &lt;dbl&gt; 4.31743810, 3.71414428, 3.42532730, 3.4343819…
+## $ cor_id__Intercept__age_c &lt;dbl&gt; -0.35068165, -0.71489674, -0.02717587, -0.240…
+## $ sigma                    &lt;dbl&gt; 9.021767, 8.706345, 8.951294, 8.829981, 8.924…
+## $ `r_id[1,Intercept]`      &lt;dbl&gt; 2.7725062, 9.6001455, 0.1182156, 1.3098393, -…
+## $ `r_id[2,Intercept]`      &lt;dbl&gt; 0.8796124, 0.7027919, 1.3312441, 3.2554817, 3…
+```
+
+We saved our results as `post`, which is a data frame with 4000 rows (i.e., 1000 post-warmup iterations times 4 chains) and 215 columns, each depicting one of the model parameters. With **brms**, the `\(\gamma\)` parameters (i.e., the fixed effects or population parameters) get `b_` prefixes in the `posterior_samples()` output. 
+
+
+---
+
+.pull-left[
+
+```r
+post %&gt;%
+  select(starts_with("b_")) %&gt;%
+  gather() %&gt;%
+  ggplot(aes(x = value)) +
+  geom_density(color = "transparent", fill = "grey") +
+  scale_y_continuous(NULL, breaks = NULL) +
+  theme(panel.grid = element_blank()) +
+  facet_wrap(~key, scales = "free")
+```
+Notice how this is exactly the same as using the `plot` function. But you have more control now. 
+
+]
+
+
+.pull-right[
+![](brms_files/figure-html/unnamed-chunk-25-1.png)&lt;!-- --&gt;
+]
+
+
+---
+## Random effects
+
+.pull-left[
+
+```r
+posterior_samples(ex1) %&gt;%
+  transmute(`sigma[0]^2`  = sd_id__Intercept^2,
+            `sigma[1]^2`  = sd_id__age_c^2,
+            `r[0][1]` = cor_id__Intercept__age_c,
+            `sigma[epsilon]^2` = sigma^2) %&gt;%
+  gather(key, posterior) %&gt;%
+
+  ggplot(aes(x = posterior)) +
+  geom_density(color = "transparent", fill = "grey") +
+  scale_y_continuous(NULL, breaks = NULL) +
+  theme(panel.grid = element_blank(),
+        strip.text = element_text(size = 12)) +
+  facet_wrap(~key, scales = "free", labeller = label_parsed)
+```
+]
+
+.pull-right[
+![](brms_files/figure-html/unnamed-chunk-27-1.png)&lt;!-- --&gt;
+]
+
+---
+
+## Ex 2
+Load the data, here from chapter 4 of Singer and Willet. It is a three wave longitudinal study of adolescents. We are looking at alcohol use during the previous year, measured from 0 - 7. COA is a variable indicating the child's parents are alcoholics. 
+
+
+
+
+---
+
+Data generating model we are fitting. You can also write this with L1 and L2 convention. 
+
+
+`$$alcuse  \sim \text{Normal} (\mu_{ij}, \sigma_{ij}) \\
+\mu_{ij}  =  \gamma_{00} +  U_{0j} + \epsilon_{ij} \\
+\gamma_{00} \sim \text{Student t} (1, 10) \\
+U_{0i}  \sim \text{Student t} (0, 10) \\
+\epsilon_{ij}  \sim \text{Student t} (0, 10) \\$$`
+
+---
+### Using priors
+How can we put that in directly to our code? 
+
+
+```r
+ex2 &lt;-
+  brm(data = alcohol1_pp,
+      file = "fit3",
+      family = gaussian,
+      alcuse ~ 1 + (1 | id),
+      prior = c(prior(student_t(3, 1, 10), class = Intercept),
+                prior(student_t(3, 0, 10), class = sd),
+                prior(student_t(3, 0, 10), class = sigma)),
+      iter = 2000, warmup = 1000, chains = 4, cores = 4,
+      seed = 4)
+```
+
+---
+Visualizing priors. 
+
+![](brms_files/figure-html/unnamed-chunk-29-1.png)&lt;!-- --&gt;
+
+Note a few things: First, this is a broad space for our intercept based on what we are looking at. This would be considering minimally informative. 
+
+Second, consider the variance priors -- they go below zero. Does this make sense? Luckily brms automatically cuts it off for us at zero. 
+
+---
+
+
+```r
+summary(ex2)
+```
+
+```
+##  Family: gaussian 
+##   Links: mu = identity; sigma = identity 
+## Formula: alcuse ~ 1 + (1 | id) 
+##    Data: alcohol1_pp (Number of observations: 246) 
+## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
+##          total post-warmup samples = 4000
+## 
+## Group-Level Effects: 
+## ~id (Number of levels: 82) 
+##               Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## sd(Intercept)     0.77      0.08     0.62     0.94 1.00     1458     2371
+## 
+## Population-Level Effects: 
+##           Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## Intercept     0.92      0.10     0.73     1.12 1.00     2185     2580
+## 
+## Family Specific Parameters: 
+##       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## sigma     0.76      0.04     0.68     0.85 1.00     3500     3343
+## 
+## Samples were drawn using sampling(NUTS). For each parameter, Bulk_ESS
+## and Tail_ESS are effective sample size measures, and Rhat is the potential
+## scale reduction factor on split chains (at convergence, Rhat = 1).
+```
+
+---
+
+
+```r
+plot(ex2)
+```
+
+![](brms_files/figure-html/unnamed-chunk-31-1.png)&lt;!-- --&gt;
+
+---
+
+
+
+```r
+post2 &lt;- posterior_samples(ex2)
+```
+
+Since all we’re interested in are the variance components, we’ll `select()` out the relevant columns from `post2`, and save the results in a mini data frame, `v`.
+
+
+```r
+v &lt;-
+  post2 %&gt;%
+  select(sigma, sd_id__Intercept)
+
+head(v)
+```
+
+```
+##       sigma sd_id__Intercept
+## 1 0.7033774        0.6814872
+## 2 0.7832208        0.6964149
+## 3 0.7047326        0.7344936
+## 4 0.7752485        0.7232665
+## 5 0.7499562        0.6517644
+## 6 0.7549697        0.7211721
+```
+
+
+```r
+dim(v)
+```
+
+```
+## [1] 4000    2
+```
+
+---
+
+![](brms_files/figure-html/unnamed-chunk-35-1.png)&lt;!-- --&gt;
+
+---
+### Calculate ICC. 
+.pull-left[
+Note that the formula uses variances. 'brms' gives us SDs
+`$$ICC = \frac{\sigma_0^2}{\sigma_0^2 + \sigma_\epsilon^2}$$`
+
+
+```r
+v %&gt;%
+  transmute(ICC = sd_id__Intercept^2 / (sd_id__Intercept^2 + sigma^2)) %&gt;%
+  ggplot(aes(x = ICC)) +
+  geom_density(size = 0, fill = "grey") +
+  scale_x_continuous( limits = 0:1) +
+  scale_y_continuous(NULL, breaks = NULL)
+```
+Note we get a distribution of ICCs, not just a singular score! Note that measuring this dispersion is a feature, not a problem. 
+]
+
+
+.pull-right[
+![](brms_files/figure-html/unnamed-chunk-37-1.png)&lt;!-- --&gt;
+]
+
+---
+### Adding predictors
+
+Using the composite formula, our next model, the unconditional growth model, follows the form
+
+`$$\begin{align*}
+\text{alcuse}_{ij} &amp; = \gamma_{00} + \gamma_{10} \text{age_14}_{ij} + U_{0j} + U_{1j} \text{age_14}_{ij} + e_{ij} \\
+\epsilon_{ij} &amp; \sim \text{Normal} (0, \sigma_\epsilon^2) \\
+\begin{bmatrix} U_{0j} \\ U_{1j} \end{bmatrix} &amp; \sim \text{MVN} 
+\Bigg ( 
+\begin{bmatrix} 0 \\ 0 \end{bmatrix}, 
+\begin{bmatrix} \sigma_0^2 &amp; \sigma_{01} \\ \sigma_{01} &amp; \sigma_1^2 \end{bmatrix}
+\Bigg )
+\end{align*}$$`
+
+---
+
+
+
+
+```r
+ex2.fit2 &lt;-
+  brm(data = alcohol1_pp, 
+      file = "fit4",
+      family = gaussian,
+      alcuse ~ 0 + intercept + age_14 + (1 + age_14 | id),
+      prior = c(prior(normal(0, 4), class = b),
+                prior(student_t(3, 0, 10), class = sd),
+                prior(student_t(3, 0, 10), class = sigma),
+                prior(lkj(1), class = cor)),
+      iter = 2000, warmup = 1000, chains = 4, cores = 4,
+      seed = 4)
+```
+
+---
+
+```r
+plot(ex2.fit2)
+```
+
+![](brms_files/figure-html/unnamed-chunk-38-1.png)&lt;!-- --&gt;![](brms_files/figure-html/unnamed-chunk-38-2.png)&lt;!-- --&gt;
+
+---
+
+### Marginal effects
+
+
+```r
+conditional_effects(ex2.fit2)
+```
+
+![](brms_files/figure-html/unnamed-chunk-39-1.png)&lt;!-- --&gt;
+
+---
+
+
+
+```r
+ex2.fit3 &lt;-
+  brm(data = alcohol1_pp, 
+      file = "fit5",
+      family = gaussian,
+      alcuse ~ 0 + intercept + age_14 + coa + age_14:coa + (1 + age_14 |id),
+      prior = c(prior(normal(0, 4), class = b),
+                prior(student_t(3, 0, 10), class = sd),
+                prior(student_t(3, 0, 10), class = sigma),
+                prior(lkj(1), class = cor)),
+      iter = 2000, warmup = 1000, chains = 4, cores = 4,
+      seed = 4)
+```
+
+
+---
+
+```r
+summary(ex2.fit3)
+```
+
+```
+##  Family: gaussian 
+##   Links: mu = identity; sigma = identity 
+## Formula: alcuse ~ 0 + intercept + age_14 + coa + age_14:coa + (1 + age_14 | id) 
+##    Data: alcohol1_pp (Number of observations: 246) 
+## Samples: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
+##          total post-warmup samples = 4000
+## 
+## Group-Level Effects: 
+## ~id (Number of levels: 82) 
+##                       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS
+## sd(Intercept)             0.70      0.10     0.50     0.91 1.00      533
+## sd(age_14)                0.37      0.10     0.15     0.53 1.01      268
+## cor(Intercept,age_14)    -0.10      0.29    -0.51     0.63 1.01      374
+##                       Tail_ESS
+## sd(Intercept)             1267
+## sd(age_14)                 346
+## cor(Intercept,age_14)      441
+## 
+## Population-Level Effects: 
+##            Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## intercept      0.33      0.13     0.07     0.59 1.00     1630     2032
+## age_14         0.29      0.08     0.12     0.46 1.00     2469     3161
+## coa            0.74      0.20     0.35     1.11 1.00     1775     2353
+## age_14:coa    -0.04      0.13    -0.29     0.21 1.00     2709     3005
+## 
+## Family Specific Parameters: 
+##       Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+## sigma     0.61      0.05     0.52     0.72 1.01      382      616
+## 
+## Samples were drawn using sampling(NUTS). For each parameter, Bulk_ESS
+## and Tail_ESS are effective sample size measures, and Rhat is the potential
+## scale reduction factor on split chains (at convergence, Rhat = 1).
+```
+
+---
+
+```r
+plot(ex2.fit3)
+```
+
+![](brms_files/figure-html/unnamed-chunk-41-1.png)&lt;!-- --&gt;![](brms_files/figure-html/unnamed-chunk-41-2.png)&lt;!-- --&gt;
+
+---
+
+```r
+conditional_effects(ex2.fit3)
+```
+
+![](brms_files/figure-html/marg.ex2.fit3-1.png)&lt;!-- --&gt;![](brms_files/figure-html/marg.ex2.fit3-2.png)&lt;!-- --&gt;![](brms_files/figure-html/marg.ex2.fit3-3.png)&lt;!-- --&gt;
+
+
+
+```r
+fit3_f &lt;-
+  update(ex2.fit3,
+         newdata = alcohol1_pp %&gt;% mutate(coa = factor(coa)))
+```
+
+---
+
+
+
+```r
+conditional_effects(fit3_f,
+                 effects = "coa")
+```
+
+![](brms_files/figure-html/unnamed-chunk-42-1.png)&lt;!-- --&gt;
+
+
+---
+
+
+```r
+marginal_effects(fit3_f,
+                 effects = "coa:age_14")
+```
+
+![](brms_files/figure-html/unnamed-chunk-43-1.png)&lt;!-- --&gt;
+
+---
+
+
+```r
+conditional_effects(fit3_f,
+                 effects = "age_14:coa")
+```
+
+![](brms_files/figure-html/unnamed-chunk-44-1.png)&lt;!-- --&gt;
+
+
+---
+We can use fitted function to create "predicted" values, much like we did with lmer
+
+```r
+nd &lt;- 
+  tibble(age_14 = seq(from = 0, to = 2, length.out = 30))
+
+f &lt;- 
+  fitted(ex2.fit2, 
+         newdata = nd,
+         re_formula = NA) %&gt;%
+  data.frame() %&gt;%
+  bind_cols(nd) %&gt;% 
+  mutate(age = age_14 + 14)
+```
+
+```
+## Warning: Reserved variable name 'intercept' is deprecated. Please use
+## 'Intercept' instead.
+
+## Warning: Reserved variable name 'intercept' is deprecated. Please use
+## 'Intercept' instead.
+```
+
+```r
+head(f)
+```
+
+```
+##    Estimate Est.Error      Q2.5     Q97.5     age_14      age
+## 1 0.6505841 0.1079780 0.4387954 0.8630901 0.00000000 14.00000
+## 2 0.6693366 0.1062076 0.4600612 0.8778608 0.06896552 14.06897
+## 3 0.6880890 0.1045860 0.4838263 0.8937493 0.13793103 14.13793
+## 4 0.7068415 0.1031204 0.5065123 0.9093866 0.20689655 14.20690
+## 5 0.7255939 0.1018174 0.5275577 0.9247424 0.27586207 14.27586
+## 6 0.7443464 0.1006833 0.5488768 0.9436081 0.34482759 14.34483
+```
+
+---
+
+```r
+f %&gt;%
+  ggplot(aes(x = age)) +
+  geom_ribbon(aes(ymin = Q2.5, ymax = Q97.5),
+              fill = "grey75", alpha = 3/4) +
+  geom_line(aes(y = Estimate)) +
+  scale_y_continuous("alcuse", breaks = 0:2, limits = c(0, 2)) 
+```
+
+![](brms_files/figure-html/unnamed-chunk-46-1.png)&lt;!-- --&gt;
+
+---
+### Comparing models
+
+As it turns out, we Bayesian use the log-likelihood (LL), too. When you’re working with **brms**, you can extract the LL with the `log_lik()` function. Here’s an example with `fit1`, our unconditional means model.
+
+
+```r
+log_lik(ex2) %&gt;%
+  str()
+```
+
+```
+##  num [1:4000, 1:246] -0.571 -0.958 -0.723 -0.761 -0.738 ...
+##  - attr(*, "dimnames")=List of 2
+##   ..$ : NULL
+##   ..$ : NULL
+```
+
+You may have noticed we didn’t just get a single value back. Rather, we got an array of 4000 rows and 246 columns. The reason we got 4000 rows is because that’s how many post-warmup iterations we drew from the posterior. I.e., we set `brm(..., iter = 2000, warmup = 1000, chains = 4)`. With respect to the 246 columns, that’s how many rows there are in the `alcohol1_pp` data. So for each person in the data set, we get an entire posterior distribution of LL values.
+
+---
+
+
+```r
+ll &lt;-
+  log_lik(ex2) %&gt;%
+  data.frame() %&gt;%
+  mutate(sums     = rowSums(.)) %&gt;%
+  mutate(deviance = -2 * sums) %&gt;%
+  select(sums, deviance, everything())
+```
+
+
+
+```r
+ll %&gt;%
+  ggplot(aes(x = deviance)) +
+  geom_density(fill = "grey25", size = 0) +
+  scale_y_continuous(NULL, breaks = NULL) +
+  theme(panel.grid = element_blank())
+```
+
+![](brms_files/figure-html/unnamed-chunk-49-1.png)&lt;!-- --&gt;
+
+---
+ The AIC is frequentist and cannot handle models with priors. The BIC isis a  misnomer as it is not Bayesian. The Widely Applicable Information Criterion (WAIC) is used instead. 
+
+The distinguishing feature of WAIC is that it is *point wise*. This means that uncertainty in prediction is considered case-by-case, or point-by-point, in the data. This is useful, because some observations are much harder to predict than others and may also have different uncertainty. You can think of WAIC as handling uncertainty where it actually matters: for each independent observation.
+
+---
+
+```r
+waic(ex2)
+```
+
+```
+## Warning: 
+## 41 (16.7%) p_waic estimates greater than 0.4. We recommend trying loo instead.
+```
+
+```
+## 
+## Computed from 4000 by 246 log-likelihood matrix
+## 
+##           Estimate   SE
+## elpd_waic   -312.4 12.2
+## p_waic        55.3  4.9
+## waic         624.8 24.4
+## 
+## 41 (16.7%) p_waic estimates greater than 0.4. We recommend trying loo instead.
+```
+
+For the statistic in each row, you get a point estimate and a standard error. The WAIC is on the bottom. The effective number of parameters, the `\(p_\text{WAIC}\)`, is in the middle. Notice the `elpd_waic` on the top. That's what you get without the `\(-2 \times ...\)` in the formula. Remember how that part is just to put things in a metric amenable to `\(\chi^2\)` difference testing? Well, not all Bayesians like that and within the **Stan** ecosystem you'll also see the WAIC expressed instead as the `\(\text{elpd}_\text{WAIC}\)`.
+
+---
+Leave-one-out cross-validation (LOO-CV).
+
+Cross validation is quickly becoming the primary method to examine fit and utility of one's model. 
+
+k-fold is a common type of CV. As `\(k\)` increases, the number of cases with a fold get smaller. In the extreme, `\(k = N\)`, the number of cases within the data. At that point, `\(k\)`-fold cross-validation turns into leave-one-out cross-validation (LOO-CV).
+
+But there’s a practical difficulty with LOO-CV: it's costly. As you may have noticed, it takes some time to fit a Bayesian multilevel model. For large data and/or complicated models, sometimes it takes hours or days. Most of us just don’t have enough time or computational resources to fit that many models. Pareto smoothed importance-sampling leave-one-out cross-validation (PSIS-LOO) as an efficient way to approximate true LOO-CV. 
+---
+
+
+```r
+l_fit1 &lt;- loo(ex2)
+```
+
+```
+## Warning: Found 2 observations with a pareto_k &gt; 0.7 in model 'ex2'. It is
+## recommended to set 'moment_match = TRUE' in order to perform moment matching for
+## problematic observations.
+```
+
+```r
+print(l_fit1)
+```
+
+```
+## 
+## Computed from 4000 by 246 log-likelihood matrix
+## 
+##          Estimate   SE
+## elpd_loo   -315.8 12.6
+## p_loo        58.7  5.3
+## looic       631.6 25.2
+## ------
+## Monte Carlo SE of elpd_loo is NA.
+## 
+## Pareto k diagnostic values:
+##                          Count Pct.    Min. n_eff
+## (-Inf, 0.5]   (good)     225   91.5%   636       
+##  (0.5, 0.7]   (ok)        19    7.7%   243       
+##    (0.7, 1]   (bad)        2    0.8%   50        
+##    (1, Inf)   (very bad)   0    0.0%   &lt;NA&gt;      
+## See help('pareto-k-diagnostic') for details.
+```
+
+---
+Comparing models with the WAIC and LOO.
+
+
+
+```r
+ex2 &lt;- add_criterion(ex2, c("loo", "waic"))
+ex2.fit2 &lt;- add_criterion(ex2.fit2, c("loo", "waic"))
+ex2.fit3 &lt;- add_criterion(ex2.fit3, c("loo", "waic"))
+```
+
+
+The point to focus on, here, is we can use the `loo_compare()` function to compare fits by their WAIC or LOO. Let's practice with the WAIC.
+
+
+```r
+ws &lt;- loo_compare(ex2, ex2.fit2, ex2.fit3, criterion = "waic")
+
+print(ws)
+```
+
+```
+##          elpd_diff se_diff
+## ex2.fit2   0.0       0.0  
+## ex2.fit3  -0.9       2.2  
+## ex2      -35.6       7.6
+```
+
+---
+### Random effects revisited
+
+For one person
+
+```r
+alcohol1_pp %&gt;% 
+  select(id:coa, cpeer, alcuse) %&gt;% 
+  filter(id == 23)
+```
+
+```
+## # A tibble: 3 x 5
+##      id   age   coa cpeer alcuse
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+## 1    23    14     1 -1.02   1   
+## 2    23    15     1 -1.02   1   
+## 3    23    16     1 -1.02   1.73
+```
+
+---
+
+
+```r
+library(tidybayes)
+get_variables(fit3_f)
+```
+
+```
+##   [1] "b_intercept"               "b_age_14"                 
+##   [3] "b_coa1"                    "b_age_14:coa1"            
+##   [5] "sd_id__Intercept"          "sd_id__age_14"            
+##   [7] "cor_id__Intercept__age_14" "sigma"                    
+##   [9] "r_id[1,Intercept]"         "r_id[2,Intercept]"        
+##  [11] "r_id[3,Intercept]"         "r_id[4,Intercept]"        
+##  [13] "r_id[5,Intercept]"         "r_id[6,Intercept]"        
+##  [15] "r_id[7,Intercept]"         "r_id[8,Intercept]"        
+##  [17] "r_id[9,Intercept]"         "r_id[10,Intercept]"       
+##  [19] "r_id[11,Intercept]"        "r_id[12,Intercept]"       
+##  [21] "r_id[13,Intercept]"        "r_id[14,Intercept]"       
+##  [23] "r_id[15,Intercept]"        "r_id[16,Intercept]"       
+##  [25] "r_id[17,Intercept]"        "r_id[18,Intercept]"       
+##  [27] "r_id[19,Intercept]"        "r_id[20,Intercept]"       
+##  [29] "r_id[21,Intercept]"        "r_id[22,Intercept]"       
+##  [31] "r_id[23,Intercept]"        "r_id[24,Intercept]"       
+##  [33] "r_id[25,Intercept]"        "r_id[26,Intercept]"       
+##  [35] "r_id[27,Intercept]"        "r_id[28,Intercept]"       
+##  [37] "r_id[29,Intercept]"        "r_id[30,Intercept]"       
+##  [39] "r_id[31,Intercept]"        "r_id[32,Intercept]"       
+##  [41] "r_id[33,Intercept]"        "r_id[34,Intercept]"       
+##  [43] "r_id[35,Intercept]"        "r_id[36,Intercept]"       
+##  [45] "r_id[37,Intercept]"        "r_id[38,Intercept]"       
+##  [47] "r_id[39,Intercept]"        "r_id[40,Intercept]"       
+##  [49] "r_id[41,Intercept]"        "r_id[42,Intercept]"       
+##  [51] "r_id[43,Intercept]"        "r_id[44,Intercept]"       
+##  [53] "r_id[45,Intercept]"        "r_id[46,Intercept]"       
+##  [55] "r_id[47,Intercept]"        "r_id[48,Intercept]"       
+##  [57] "r_id[49,Intercept]"        "r_id[50,Intercept]"       
+##  [59] "r_id[51,Intercept]"        "r_id[52,Intercept]"       
+##  [61] "r_id[53,Intercept]"        "r_id[54,Intercept]"       
+##  [63] "r_id[55,Intercept]"        "r_id[56,Intercept]"       
+##  [65] "r_id[57,Intercept]"        "r_id[58,Intercept]"       
+##  [67] "r_id[59,Intercept]"        "r_id[60,Intercept]"       
+##  [69] "r_id[61,Intercept]"        "r_id[62,Intercept]"       
+##  [71] "r_id[63,Intercept]"        "r_id[64,Intercept]"       
+##  [73] "r_id[65,Intercept]"        "r_id[66,Intercept]"       
+##  [75] "r_id[67,Intercept]"        "r_id[68,Intercept]"       
+##  [77] "r_id[69,Intercept]"        "r_id[70,Intercept]"       
+##  [79] "r_id[71,Intercept]"        "r_id[72,Intercept]"       
+##  [81] "r_id[73,Intercept]"        "r_id[74,Intercept]"       
+##  [83] "r_id[75,Intercept]"        "r_id[76,Intercept]"       
+##  [85] "r_id[77,Intercept]"        "r_id[78,Intercept]"       
+##  [87] "r_id[79,Intercept]"        "r_id[80,Intercept]"       
+##  [89] "r_id[81,Intercept]"        "r_id[82,Intercept]"       
+##  [91] "r_id[1,age_14]"            "r_id[2,age_14]"           
+##  [93] "r_id[3,age_14]"            "r_id[4,age_14]"           
+##  [95] "r_id[5,age_14]"            "r_id[6,age_14]"           
+##  [97] "r_id[7,age_14]"            "r_id[8,age_14]"           
+##  [99] "r_id[9,age_14]"            "r_id[10,age_14]"          
+## [101] "r_id[11,age_14]"           "r_id[12,age_14]"          
+## [103] "r_id[13,age_14]"           "r_id[14,age_14]"          
+## [105] "r_id[15,age_14]"           "r_id[16,age_14]"          
+## [107] "r_id[17,age_14]"           "r_id[18,age_14]"          
+## [109] "r_id[19,age_14]"           "r_id[20,age_14]"          
+## [111] "r_id[21,age_14]"           "r_id[22,age_14]"          
+## [113] "r_id[23,age_14]"           "r_id[24,age_14]"          
+## [115] "r_id[25,age_14]"           "r_id[26,age_14]"          
+## [117] "r_id[27,age_14]"           "r_id[28,age_14]"          
+## [119] "r_id[29,age_14]"           "r_id[30,age_14]"          
+## [121] "r_id[31,age_14]"           "r_id[32,age_14]"          
+## [123] "r_id[33,age_14]"           "r_id[34,age_14]"          
+## [125] "r_id[35,age_14]"           "r_id[36,age_14]"          
+## [127] "r_id[37,age_14]"           "r_id[38,age_14]"          
+## [129] "r_id[39,age_14]"           "r_id[40,age_14]"          
+## [131] "r_id[41,age_14]"           "r_id[42,age_14]"          
+## [133] "r_id[43,age_14]"           "r_id[44,age_14]"          
+## [135] "r_id[45,age_14]"           "r_id[46,age_14]"          
+## [137] "r_id[47,age_14]"           "r_id[48,age_14]"          
+## [139] "r_id[49,age_14]"           "r_id[50,age_14]"          
+## [141] "r_id[51,age_14]"           "r_id[52,age_14]"          
+## [143] "r_id[53,age_14]"           "r_id[54,age_14]"          
+## [145] "r_id[55,age_14]"           "r_id[56,age_14]"          
+## [147] "r_id[57,age_14]"           "r_id[58,age_14]"          
+## [149] "r_id[59,age_14]"           "r_id[60,age_14]"          
+## [151] "r_id[61,age_14]"           "r_id[62,age_14]"          
+## [153] "r_id[63,age_14]"           "r_id[64,age_14]"          
+## [155] "r_id[65,age_14]"           "r_id[66,age_14]"          
+## [157] "r_id[67,age_14]"           "r_id[68,age_14]"          
+## [159] "r_id[69,age_14]"           "r_id[70,age_14]"          
+## [161] "r_id[71,age_14]"           "r_id[72,age_14]"          
+## [163] "r_id[73,age_14]"           "r_id[74,age_14]"          
+## [165] "r_id[75,age_14]"           "r_id[76,age_14]"          
+## [167] "r_id[77,age_14]"           "r_id[78,age_14]"          
+## [169] "r_id[79,age_14]"           "r_id[80,age_14]"          
+## [171] "r_id[81,age_14]"           "r_id[82,age_14]"          
+## [173] "lp__"                      "accept_stat__"            
+## [175] "stepsize__"                "treedepth__"              
+## [177] "n_leapfrog__"              "divergent__"              
+## [179] "energy__"
+```
+
+---
+
+```r
+fit3_f %&gt;% 
+spread_draws(`b_age_14`, r_id[id,])
+```
+
+```
+## # A tibble: 656,000 x 6
+## # Groups:   id [82]
+##    .chain .iteration .draw b_age_14    id     r_id
+##     &lt;int&gt;      &lt;int&gt; &lt;int&gt;    &lt;dbl&gt; &lt;int&gt;    &lt;dbl&gt;
+##  1      1          1     1    0.147     1 -0.308  
+##  2      1          1     1    0.147     1  0.450  
+##  3      1          1     1    0.147     2  0.00942
+##  4      1          1     1    0.147     2 -1.28   
+##  5      1          1     1    0.147     3  0.417  
+##  6      1          1     1    0.147     3 -0.454  
+##  7      1          1     1    0.147     4  0.211  
+##  8      1          1     1    0.147     4 -0.439  
+##  9      1          1     1    0.147     5 -0.661  
+## 10      1          1     1    0.147     5 -0.893  
+## # … with 655,990 more rows
+```
+
+
+---
+
+```r
+fit3_f %&gt;% 
+spread_draws(`b_age_14`, r_id[id,]) %&gt;% 
+   median_qi(slope_mean = b_age_14 + r_id) 
+```
+
+```
+## # A tibble: 82 x 7
+##       id slope_mean .lower .upper .width .point .interval
+##    &lt;int&gt;      &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;    
+##  1     1     0.489  -0.183  1.40    0.95 median qi       
+##  2     2    -0.0115 -1.17   0.805   0.95 median qi       
+##  3     3     0.644  -0.134  1.37    0.95 median qi       
+##  4     4     0.324  -0.647  1.07    0.95 median qi       
+##  5     5    -0.184  -1.25   0.568   0.95 median qi       
+##  6     6     0.871  -0.140  2.33    0.95 median qi       
+##  7     7     0.379  -0.412  1.49    0.95 median qi       
+##  8     8    -0.184  -1.22   0.549   0.95 median qi       
+##  9     9     0.472  -0.837  1.51    0.95 median qi       
+## 10    10     0.165  -0.535  0.867   0.95 median qi       
+## # … with 72 more rows
+```
+
+---
+
+
+```r
+fit3_f %&gt;% 
+spread_draws(`b_age_14`, r_id[id,]) %&gt;% 
+   mutate(b_age_14 = b_age_14 + r_id) %&gt;% 
+  mutate(id = reorder(id, b_age_14)) %&gt;% 
+    ggplot(aes(y = id, x = b_age_14)) +
+    stat_pointinterval() 
+```
+
+![](brms_files/figure-html/unnamed-chunk-58-1.png)&lt;!-- --&gt;
+
+---
+### Level 1 predictors
+### Variance explained
+### Hypothesis function
+### Posterior-predictive checks
+### Missing data
+### Nonlinear
+
+
+## Thanks
+Many thanks to Solomon Kurz's github for code
+
+    </textarea>
+<!--radix_placeholder_site_after_body-->
+<!--/radix_placeholder_site_after_body-->
+<!--radix_placeholder_navigation_after_body-->
+<!--/radix_placeholder_navigation_after_body-->
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

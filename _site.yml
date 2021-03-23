@@ -29,6 +29,8 @@ navbar:
           href: plotting.html 
         - text: "brms"
           href: brms.html
+        - text: "Longitudinal SEM"
+          href: sem-longitudinal.html
     - text: "Syllabus"
       href: syllabus.html
     - text: "Homeworks"
