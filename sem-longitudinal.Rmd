@@ -1,5 +1,5 @@
 ---
-title: "lme4"
+title: "sem-longitudinal"
 output:
   distill::distill_article:
     toc: true
@@ -592,7 +592,7 @@ head(alcohol1_pp)
 ```{r}
 library(tidyverse)
 alcohol.wide <- alcohol1_pp %>% 
-  select(-X1, -age_14, -ccoa) %>% 
+  dplyr::select(-X1, -age_14, -ccoa) %>% 
   pivot_wider(names_from = "age", 
               names_prefix = "alcuse_",
               values_from  = alcuse) 

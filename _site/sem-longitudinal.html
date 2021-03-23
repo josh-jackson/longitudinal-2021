@@ -86,26 +86,26 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 </style>
 
   <!--radix_placeholder_meta_tags-->
-  <title>Applied Longitudinal Data Analysis: lme4</title>
+  <title>Applied Longitudinal Data Analysis: sem-longitudinal</title>
 
 
 
 
   <!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
-  <meta property="og:title" content="Applied Longitudinal Data Analysis: lme4"/>
+  <meta property="og:title" content="Applied Longitudinal Data Analysis: sem-longitudinal"/>
   <meta property="og:type" content="article"/>
   <meta property="og:locale" content="en_US"/>
   <meta property="og:site_name" content="Applied Longitudinal Data Analysis"/>
 
   <!--  https://dev.twitter.com/cards/types/summary -->
   <meta property="twitter:card" content="summary"/>
-  <meta property="twitter:title" content="Applied Longitudinal Data Analysis: lme4"/>
+  <meta property="twitter:title" content="Applied Longitudinal Data Analysis: sem-longitudinal"/>
 
   <!--/radix_placeholder_meta_tags-->
   <!--radix_placeholder_rmarkdown_metadata-->
 
   <script type="text/json" id="radix-rmarkdown-metadata">
-  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","output"]}},"value":[{"type":"character","attributes":{},"value":["lme4"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["toc","toc_depth","mathjax","self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[true]},{"type":"integer","attributes":{},"value":[2]},{"type":"character","attributes":{},"value":["https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML"]},{"type":"logical","attributes":{},"value":[false]}]}]}]}
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","output"]}},"value":[{"type":"character","attributes":{},"value":["sem-longitudinal"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["distill::distill_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["toc","toc_depth","mathjax","self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[true]},{"type":"integer","attributes":{},"value":[2]},{"type":"character","attributes":{},"value":["https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML"]},{"type":"logical","attributes":{},"value":[false]}]}]}]}
   </script>
   <!--/radix_placeholder_rmarkdown_metadata-->
   <!--radix_placeholder_navigation_in_header-->
@@ -2363,7 +2363,7 @@ code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"lme4","authors":[]}
+{"title":"sem-longitudinal","authors":[]}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -2400,6 +2400,7 @@ Workshops
 <a href="lme4.html">lme4</a>
 <a href="plotting.html">plotting</a>
 <a href="brms.html">brms</a>
+<a href="sem-longitudinal.html">Longitudinal SEM</a>
 </div>
 </div>
 <a href="syllabus.html">Syllabus</a>
@@ -2427,7 +2428,7 @@ Homeworks
 <!--/radix_placeholder_site_before_body-->
 
 <div class="d-title">
-<h1>lme4</h1>
+<h1>sem-longitudinal</h1>
 <!--radix_placeholder_categories-->
 <!--/radix_placeholder_categories-->
 
@@ -4663,7 +4664,7 @@ Defined Parameters:
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://tidyverse.tidyverse.org'>tidyverse</a></span><span class='op'>)</span>
 <span class='va'>alcohol.wide</span> <span class='op'>&lt;-</span> <span class='va'>alcohol1_pp</span> <span class='op'>%&gt;%</span> 
-  <span class='fu'>select</span><span class='op'>(</span><span class='op'>-</span><span class='va'>X1</span>, <span class='op'>-</span><span class='va'>age_14</span>, <span class='op'>-</span><span class='va'>ccoa</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/select.html'>select</a></span><span class='op'>(</span><span class='op'>-</span><span class='va'>X1</span>, <span class='op'>-</span><span class='va'>age_14</span>, <span class='op'>-</span><span class='va'>ccoa</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
   <span class='fu'>pivot_wider</span><span class='op'>(</span>names_from <span class='op'>=</span> <span class='st'>"age"</span>, 
               names_prefix <span class='op'>=</span> <span class='st'>"alcuse_"</span>,
               values_from  <span class='op'>=</span> <span class='va'>alcuse</span><span class='op'>)</span> 
