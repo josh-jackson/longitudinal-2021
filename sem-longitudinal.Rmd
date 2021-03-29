@@ -43,14 +43,15 @@ With SEM there are many different types of longitudinal models you can run. The 
 
 1. Longitudinal CFA
 
-2. Growth models 
+2. Panel/cross lag/longitudinal path model/mediation 
 
-3. Latent change/difference score models 
+3. Growth models 
 
-4. Panel/cross lag/longitudinal path model/mediation
+4. Growth models + cross lags 
 
-5. Mixture or class based longitudinal models
+5. Latent change/difference score models 
 
+6. Mixture or class based longitudinal models
 
 
 
@@ -63,7 +64,7 @@ summary(long)
 ```
 
 
-# Wide data for SEM models.
+## Wide data for SEM models.
 
 ```{r}
 head(long)
@@ -71,14 +72,16 @@ head(long)
 
 Anyone have some comments on naming conventions for this dataset? 
 
----
 
-## 1. Longitudinal CFA
+
+# 1. Longitudinal CFA
 
 Starting point in longitudinal analysis. Can be simply thought of as does this construct relate to itself across time? And, to the extent that it does not, is that due to changes in how the construct is measured over time? 
 
+Substantively, these analyses get at the relative rank order of people across assessment points. What is nice is that unlike using composites, this looks at latent correlations across time. Also nice is that different measures can be used eg a cognitive ability exam for children which naturally differs in content across age groups. 
+
 key questions: 
-1. Should the correlations be the same across time? 
+1. Should the correlations be the same across time? Should we set them (constrain) to be equal? 
 2. Should the error variances be correlated? 
 3. Are the loadings the same across time? 
 
@@ -122,20 +125,62 @@ semPaths(fit.long.cfa)
 ```
 
 
-## Measurement Invariance (MI)
+```{r}
+summary(fit.long.cfa)
+```
+
+### unstandardized estimates
+
+1. Notice the difference in loadings
+2. Notice the difference in covariances
+
+This uses the marker variable approach. The above uses the fixed factor method. 
+```{r}
+fit.long.cfa.us <- cfa(long.cfa, data=long, std.lv=FALSE)
+summary(fit.long.cfa.us)
+```
+
+We can also get standardized estimates in the the summary step, even when using the fixed factor approach. 
+```{r}
+summary(fit.long.cfa.us, standardized = TRUE)
+```
+
+
+### introducing means. 
+
+Notice how we can also esimate means of the variables, though we don't necessarily need to. These are now under the "intercepts" heading. 
+
+```{r}
+fit.long.cfa.us.mean <- cfa(long.cfa, meanstructure=TRUE, data=long, std.lv=FALSE)
+summary(fit.long.cfa.us.mean)
+```
+
+Why are our latent variables zero? The cfa and sem functions fix the latent variable intercepts (which in this case correspond to the latent means) to zero. We have to override these defaults by asking the model to fit them. More on this below.  
+
+
+# 1.a Measurement Invariance (MI)
 
 To meaningfully look at means, we need to have the means mean the same thing. In other words, without using the word mean, we need to make sure that the measurement of the construct is consistent across time. If it isn't, then what we may see as change actually reflect people responding to the indicators differently. For example, a common item on an extraversion scale is "Do you like to go to parties?" This is likely interpreted differently by a 20 year old compared to a 70 year old. This is due to what is normative, what parties look like that a typical 20 and 70 year old go to, etcetera. Another way to look at this is the item "2 x 3 = X, solve for X". The reasons that a 8 year old and a 18 year old get the item incorrect is likely for different reasons (ie knowledge vs not being careful). 
 
 Maturation is the easiest way to see differences, but it also happens when you want to compare groups ie some anova design. This assumption is typically never critically examined.  
 
 ### types of MI
-Configural (pattern). Typically always true with a decent measure of your construct. Can be tested through test statistics and eye-balling. Serves as default. 
+Configural (pattern). Asks: does your measure have the same factor structure? Typically always true with a decent measure of your construct. Can be tested through test statistics and eye-balling. Serves as default model to compare with our more stringent models. 
 
 Weak (metric/loading). Can be easily met. Not meeting this shows big problems, unless you are working with a really large dataset (where there is large power to find differences). 
 
 Strong (Scalar/intercept). Need to meet this designation to run longitudinal models and look at means across time. 
 
-Strict (residual/error variance). Not necessarily better than Strong, and does not need to be satisfied to use longitudinal models. Why might this not hold even if you are assessing the same construct? Hint: think of what residual variance is made up of. 
+Strict (residual/error variance). Not necessarily better than Strong, and does not need to be satisfied to use longitudinal models. Why might this not hold even if you are assessing the same construct? Hint: think of what residual variance is made up of.
+
+```{r}
+cfa <- 'Pos1 =~ PosAFF11 + PosAFF21 + PosAFF31'
+
+fit.cfa <- cfa(cfa, data=long, std.lv=TRUE)
+semPaths(fit.cfa)
+
+```
+
 
 ### Testing MI
 
@@ -165,15 +210,22 @@ config <- cfa(config, data=long, meanstructure=TRUE, std.lv=TRUE)
 summary(config, standardized=TRUE, fit.measures=TRUE)
 ```
 
+Notice that we didnt do anything different here except for fitting a mean structure and ask for fit.measures in the output. 
+
+
 #### Weak (constrain loadings) 
 
+With SEM models you can constrain or fix certain parameters to be whatever you want them to be. The syntax is some number or letters followed by an *. If the values are numbers, then it will force the parameters to be that number. If they are letter, then it names the parameter and forces all of those with the same naming scheme to be equivalent. But it allows the estimation to figure out what number it should be. 
+
+Weak measurement invariance test is to constrain the items to be equivalent across waves. 
+
+A special character is to "relax" constraints that are automatically included. Here NA is used to allow the latent variance at time 2 and 3 to be estimated, rather than to be constrained to 1 (bc below we used a fixed factor approach)
 ```{r}
 weak <- '
 ## define latent variables
 Pos1 =~ L1*PosAFF11 + L2*PosAFF21 + L3*PosAFF31
 Pos2 =~ L1*PosAFF12 + L2*PosAFF22 + L3*PosAFF32
 Pos3 =~ L1*PosAFF13 + L2*PosAFF23 + L3*PosAFF33
-
 
 ## free latent variances at later times (only set the scale once)
 Pos2 ~~ NA*Pos2
@@ -199,6 +251,10 @@ summary(weak, standardized=TRUE, fit.measures=TRUE)
 
 
 ####  Strong (constrain loadings and intercepts)
+
+Strong introduces means to the equation. Well, they were there before, estimated by default because we set meanstructure = TRUE. But now we are going to constrain the means of each item to be the same across time, again using labels. 
+
+Why are we doing that if we want to test whether people change? Shouldnt changes in the means exist? Well, we can  
 
 ```{r}
 strong <- '
@@ -333,9 +389,91 @@ fitmeasures(strict)['cfi']
 ```
 
 
+##  Group comparisons
 
 
-## 2. Panel/cross lag/longitudinal path model/mediation
+```{r}
+
+group <- read_csv("~/Box/5165 Applied Longitudinal Data Analysis/Longitudinal/group.csv")
+head(group)
+```
+
+
+```{r}
+group1 <- 'Positive =~ P1 + P2 + P3
+Negative =~ N1 + N2 + N3 
+
+Positive ~~ 1*Positive
+Negative ~~ 1*Negative
+
+Positive ~~ Negative
+'
+
+fit.group.1 <- cfa(group1, data=group, std.lv=TRUE, group = "Grade")
+
+summary(fit.group.1, standardized=TRUE, fit.measures=TRUE)
+
+```
+
+
+```{r}
+semPaths(fit.group.1,'est', panelGroups=TRUE)
+```
+
+
+Need to put in labels to fix the different parameters across models
+
+```{r}
+
+
+group2 <- 'Positive =~ c(L1,L1)*P1 + c(L2,L2)*P2 + c(L3,L3)*P3
+Negative =~ N1 + N2 + N3 
+
+Positive ~~ 1*Positive
+Negative ~~ 1*Negative
+
+Positive ~~ Negative
+'
+
+fit.group.2 <- cfa(group2, data=group, std.lv=TRUE, group = "Grade")
+
+summary(fit.group.2, standardized=TRUE, fit.measures=TRUE)
+
+
+```
+
+We could now test whether constraining the groups makes the fit worse (similar to how we did it for measurement invariance)
+
+```{r}
+anova(fit.group.1,fit.group.2)
+```
+
+What if you wanted to make everything the same for a particular type of parameter? lavaan has an easier answer:
+
+```{r}
+group3 <- 'Positive =~ P1 + P2 + P3
+Negative =~ N1 + N2 + N3 
+
+Positive ~~ 1*Positive
+Negative ~~ 1*Negative
+
+Positive ~~ Negative
+'
+
+fit.group.3 <- cfa(group3, data=group, std.lv=TRUE, group = "Grade", group.equal = c("loadings", "intercepts"))
+
+summary(fit.group.3, standardized=TRUE, fit.measures=TRUE)
+
+```
+
+What is nice is that the output will label what parameters are constrained. Go ahead and look at the lavaan tutorial for more (residual variances, latent means, etc)
+
+### Measurement invariance revisited
+
+Can you see how MI tests are just a special type of multiple group analysis? We could set up our data to have variables assessed at two different time points with the time demarcated by a group variable. The exact same findings from MI would be found with multiple group. It all depends on how you structure your data.  
+
+
+# 2. Panel/cross lag/longitudinal path model/mediation
 
 Instead of covariances, the key component of this is to examine structural relationships between constructs over time. This can extend to cross-construct associations such as mediational models. 
 
@@ -569,7 +707,7 @@ It is potential defensible to: 1. only control for the DV or focal association. 
 I would suggest 1. try to use covariates as closely as possible to your theoretical model and 2. not to over control. Remember that statistical models can be both too liberal (you get an asterisk, everyone gets an asterisk!) and too conservative (this one of many reasons why Josh dislikes correcting for type 1 error). The goal is to be accurate. Try them multiple ways. 
 
 
-## 3. Growth models
+# 3. Growth models
 
 The above models are well suited to address between subjects questions, but does not get at a within subjects questions at all. There are some that can separate these effects, which we will turn to in a few weeks. However, we will start with the most basic model, the model you are familiar with, the growth model. 
 
@@ -578,7 +716,7 @@ The implementation of growth models in an SEM framework is very similar to the H
 Other than time, the idea behind the growth model is exactly the same.
 
 
-### Coding time
+## Coding time
 One key these models is how you code time. Because we are working with qualitative time rather than continuous everyone has to have the same time structure. 
 
 
@@ -674,7 +812,7 @@ summary(fit.1)
 This does not change our conclusions but it does change our numnbers. 
 
 
-### Interpretation of variances
+## Interpretation of variances
 
 Intercept will reflect our fixed effects whereas our random effects are indexed by variances of the latent variables. These are interpreted the same as before. More variance means that more people differ from the fixed effect. 
 
@@ -695,7 +833,7 @@ summary(fit.2)
            
 ```
 
-### introducing covariates/predictors
+## introducing covariates/predictors
 
 ```{r}
 # a linear growth model with a time invariatnt covariate
@@ -771,8 +909,95 @@ fit.5 <- growth(model.5, data = alcohol.wide)
 How do we interpet tvcs? 
 
 
-### latent basis model 
+## Multiple groups, again 
 
+For Longitudinal models you are faced with a choice: do you want to use group status to predict your slope, for example, or do you want to use multiple groups. The short answer is that it does not matter! The semi-longer answer is that including group as a predictor is simple while multiple groups analyses are more complex but also more flexible. Using one or the other depends on what your theory about where the group differences occur. If they occur in only the regression relationship indicating group mean differences then go with the easy option. If you think that the measurement model also may differ for your groups you have a more nuanced theory that necessitates multiple groups.
+
+
+```{r}
+Demo.growth$group <- as.numeric(cut_number(Demo.growth$x1,2))
+
+
+model.7 <- '
+  # intercept and slope with fixed coefficients
+    i =~ 1*t1 + 1*t2 + 1*t3 + 1*t4
+    s =~ 0*t1 + 1*t2 + 2*t3 + 3*t4
+  # regressions
+    i ~ group
+    s ~ group
+'
+fit.7 <- growth(model.7, data = Demo.growth)
+summary(fit.7)
+
+```
+
+
+
+
+```{r}
+
+model.8 <- '
+  # intercept and slope with fixed coefficients
+    i =~ 1*t1 + 1*t2 + 1*t3 + 1*t4
+    s =~ 0*t1 + 1*t2 + 2*t3 + 3*t4
+
+'
+fit.8 <- growth(model.8, data = Demo.growth, group = "group")
+summary(fit.8)
+
+```
+
+
+Notice how the slope and the intercept differ between groups. Is this meaningful? To test we will have to do the multiple groups comparison. But before we do that, take a look at the relationship between the intercept and slope for the two groups and the regression of group onto slope and intercept. 
+
+
+```{r}
+model.9 <- '
+  # intercept and slope with fixed coefficients
+    i =~ 1*t1 + 1*t2 + 1*t3 + 1*t4
+    s =~ 0*t1 + 1*t2 + 2*t3 + 3*t4
+
+'
+fit.9 <- growth(model.9, data = Demo.growth, group = "group", group.equal = "means")
+summary(fit.9)
+
+```
+
+
+Does constraining the latent means lead to a worse fit? 
+
+```{r}
+anova(fit.8, fit.9)
+```
+
+Yes it does! Buut, how to interpret this? It is asking whether the model where we constained both the intercept and the mean differ from one that we don't. What if we want to only look at the effect of slope? 
+
+
+Testing just the slope difference without constraining anything else. 
+
+```{r}
+model.10 <- '
+  # intercept and slope with fixed coefficients
+    i =~ 1*t1 + 1*t2 + 1*t3 + 1*t4
+    s =~ 0*t1 + 1*t2 + 2*t3 + 3*t4
+
+s ~  c(m1, m1)*1
+
+'
+fit.10 <- growth(model.10, data = Demo.growth, group = "group")
+summary(fit.10)
+
+```
+
+```{r}
+anova(fit.8, fit.10)
+```
+
+
+What if you wanted to test differences in variance? 
+
+
+### latent basis model 
 
 ```{r}
 model.6 <- '  i =~ 1*alcuse_14 + 1*alcuse_15 + 1*alcuse_16 
@@ -797,7 +1022,6 @@ model.6 <- '  i =~ 1*alcuse_14 + 1*alcuse_15 + 1*alcuse_16
 fit.6 <- growth(model.6, data = alcohol.wide)
 summary(fit.6)
 ```
-
 
 
 
@@ -862,7 +1086,7 @@ semPaths(fit.sec.order)
 
 ## 3.c  Multivariate models
 
-For all of the models this semester we have focused only on a single outcome. 
+For all of the growth models this semester we have focused only on a single outcome. 
 
 ```{r}
 mv.sec.order <- '
@@ -983,175 +1207,7 @@ Slope =~ s.a + s.b + s.c + s.d
 
 
 
-##  4. Multiple groups
 
-
-```{r}
-
-group <- read_csv("~/Box/5165 Applied Longitudinal Data Analysis/Longitudinal/group.csv")
-head(group)
-```
-
-
-```{r}
-group1 <- 'Positive =~ P1 + P2 + P3
-Negative =~ N1 + N2 + N3 
-
-Positive ~~ 1*Positive
-Negative ~~ 1*Negative
-
-Positive ~~ Negative
-'
-
-fit.group.1 <- cfa(group1, data=group, std.lv=TRUE, group = "Grade")
-
-summary(fit.group.1, standardized=TRUE, fit.measures=TRUE)
-
-```
-
-
-```{r}
-semPaths(fit.group.1,'est', panelGroups=TRUE)
-```
-
-
-Need to put in labels to fix the different parameters across models
-
-```{r}
-
-
-group2 <- 'Positive =~ c(L1,L1)*P1 + c(L2,L2)*P2 + c(L3,L3)*P3
-Negative =~ N1 + N2 + N3 
-
-Positive ~~ 1*Positive
-Negative ~~ 1*Negative
-
-Positive ~~ Negative
-'
-
-fit.group.2 <- cfa(group2, data=group, std.lv=TRUE, group = "Grade")
-
-summary(fit.group.2, standardized=TRUE, fit.measures=TRUE)
-
-
-```
-
-We could now test whether constraining the groups makes the fit worse (similar to how we did it for measurement invariance)
-
-```{r}
-anova(fit.group.1,fit.group.2)
-```
-
-What if you wanted to make everything the same for a particular type of parameter? Lavaan has an easier answer:
-
-```{r}
-group3 <- 'Positive =~ P1 + P2 + P3
-Negative =~ N1 + N2 + N3 
-
-Positive ~~ 1*Positive
-Negative ~~ 1*Negative
-
-Positive ~~ Negative
-'
-
-fit.group.3 <- cfa(group3, data=group, std.lv=TRUE, group = "Grade", group.equal = c("loadings", "intercepts"))
-
-summary(fit.group.3, standardized=TRUE, fit.measures=TRUE)
-
-```
-
-What is nice is that the output will label what parameters are constrained. Go ahead and look at the lavaan tutorial for more (residual variances, latent means, etc)
-
-### Measurement invariance revisited
-
-Can you see how MI tests are just a special type of multiple group analysis? We could set up our data to have variables assessed at two different time points with the time demarcated by a group variable. The exact same findings from MI would be found with multiple group. It all depends on how you structure your data.  
-
-### When to use 
-
-For Longitudinal models you are faced with a choice: do you want to use group status to predict your slope, for example, or do you want to use multiple groups. The short answer is that it does not matter! The semi-longer answer is that including group as a predictor is simple while multiple groups analyses are more complex but also more flexible. Using one or the other depends on what your theory about where the group differences occur. If they occur in only the regression relationship indicating group mean differences then go with the easy option. If you think that the measurement model also may differ for your groups you have a more nuanced theory that necessitates multiple groups.
-
-
-```{r}
-Demo.growth$group <- as.numeric(cut_number(Demo.growth$x1,2))
-
-
-model.7 <- '
-  # intercept and slope with fixed coefficients
-    i =~ 1*t1 + 1*t2 + 1*t3 + 1*t4
-    s =~ 0*t1 + 1*t2 + 2*t3 + 3*t4
-  # regressions
-    i ~ group
-    s ~ group
-'
-fit.7 <- growth(model.7, data = Demo.growth)
-summary(fit.7)
-
-```
-
-
-
-
-```{r}
-
-model.8 <- '
-  # intercept and slope with fixed coefficients
-    i =~ 1*t1 + 1*t2 + 1*t3 + 1*t4
-    s =~ 0*t1 + 1*t2 + 2*t3 + 3*t4
-
-'
-fit.8 <- growth(model.8, data = Demo.growth, group = "group")
-summary(fit.8)
-
-```
-
-
-Notice how the slope and the intercept differ between groups. Is this meaningful? To test we will have to do the multiple groups comparison. But before we do that, take a look at the relationship between the intercept and slope for the two groups and the regression of group onto slope and intercept. 
-
-
-```{r}
-model.9 <- '
-  # intercept and slope with fixed coefficients
-    i =~ 1*t1 + 1*t2 + 1*t3 + 1*t4
-    s =~ 0*t1 + 1*t2 + 2*t3 + 3*t4
-
-'
-fit.9 <- growth(model.9, data = Demo.growth, group = "group", group.equal = "means")
-summary(fit.9)
-
-```
-
-
-Does constraining the latent means lead to a worse fit? 
-
-```{r}
-anova(fit.8, fit.9)
-```
-
-Yes it does! Buut, how to interpret this? It is asking whether the model where we constained both the intercept and the mean differ from one that we don't. What if we want to only look at the effect of slope? 
-
-
-Testing just the slope difference without constraining anything else. 
-
-```{r}
-model.10 <- '
-  # intercept and slope with fixed coefficients
-    i =~ 1*t1 + 1*t2 + 1*t3 + 1*t4
-    s =~ 0*t1 + 1*t2 + 2*t3 + 3*t4
-
-s ~  c(m1, m1)*1
-
-'
-fit.10 <- growth(model.10, data = Demo.growth, group = "group")
-summary(fit.10)
-
-```
-
-```{r}
-anova(fit.8, fit.10)
-```
-
-
-What if you wanted to test differences in variance? 
 
 
 

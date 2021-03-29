@@ -2440,17 +2440,25 @@ Homeworks
 <nav class="l-text toc figcaption" id="TOC">
 <h3>Contents</h3>
 <ul>
-<li><a href="#types-of-longitudinal-models-other-than-growth-models">Types of longitudinal models other than growth models</a></li>
-<li><a href="#wide-data-for-sem-models.">Wide data for SEM models.</a>
+<li><a href="#types-of-longitudinal-models-other-than-growth-models">Types of longitudinal models other than growth models</a>
 <ul>
+<li><a href="#wide-data-for-sem-models.">Wide data for SEM models.</a></li>
+</ul></li>
 <li><a href="#longitudinal-cfa">1. Longitudinal CFA</a></li>
-<li><a href="#measurement-invariance-mi">Measurement Invariance (MI)</a></li>
+<li><a href="#a-measurement-invariance-mi">1.a Measurement Invariance (MI)</a>
+<ul>
+<li><a href="#group-comparisons">Group comparisons</a></li>
+</ul></li>
 <li><a href="#panelcross-laglongitudinal-path-modelmediation">2. Panel/cross lag/longitudinal path model/mediation</a></li>
-<li><a href="#growth-models">3. Growth models</a></li>
+<li><a href="#growth-models">3. Growth models</a>
+<ul>
+<li><a href="#coding-time">Coding time</a></li>
+<li><a href="#interpretation-of-variances">Interpretation of variances</a></li>
+<li><a href="#introducing-covariatespredictors">introducing covariates/predictors</a></li>
+<li><a href="#multiple-groups-again">Multiple groups, again</a></li>
 <li><a href="#b-second-order-growth-model">3.b Second order growth model</a></li>
 <li><a href="#c-multivariate-models">3.c Multivariate models</a></li>
 <li><a href="#d-factor-of-curves-model">3.d Factor of curves model</a></li>
-<li><a href="#multiple-groups">4. Multiple groups</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -2459,9 +2467,10 @@ Homeworks
 <p>With SEM there are many different types of longitudinal models you can run. The basic ones are:</p>
 <ol type="1">
 <li><p>Longitudinal CFA</p></li>
-<li><p>Growth models</p></li>
-<li><p>Latent change/difference score models</p></li>
 <li><p>Panel/cross lag/longitudinal path model/mediation</p></li>
+<li><p>Growth models</p></li>
+<li><p>Growth models + cross lags</p></li>
+<li><p>Latent change/difference score models</p></li>
 <li><p>Mixture or class based longitudinal models</p></li>
 </ol>
 <div class="layout-chunk" data-layout="l-body">
@@ -2508,7 +2517,7 @@ Homeworks
  3rd Qu.: 1.73650   3rd Qu.:1.560   3rd Qu.:1.5583  
  Max.   : 2.75085   Max.   :2.447   Max.   :2.6385  </code></pre>
 </div>
-<h1 id="wide-data-for-sem-models.">Wide data for SEM models.</h1>
+<h2 id="wide-data-for-sem-models.">Wide data for SEM models.</h2>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>long</span><span class='op'>)</span>
@@ -2537,10 +2546,10 @@ Homeworks
 6 4.023383 1.053895 1.4449087 0.9600753</code></pre>
 </div>
 <p>Anyone have some comments on naming conventions for this dataset?</p>
-<hr />
-<h2 id="longitudinal-cfa">1. Longitudinal CFA</h2>
+<h1 id="longitudinal-cfa">1. Longitudinal CFA</h1>
 <p>Starting point in longitudinal analysis. Can be simply thought of as does this construct relate to itself across time? And, to the extent that it does not, is that due to changes in how the construct is measured over time?</p>
-<p>key questions: 1. Should the correlations be the same across time? 2. Should the error variances be correlated? 3. Are the loadings the same across time?</p>
+<p>Substantively, these analyses get at the relative rank order of people across assessment points. What is nice is that unlike using composites, this looks at latent correlations across time. Also nice is that different measures can be used eg a cognitive ability exam for children which naturally differs in content across age groups.</p>
+<p>key questions: 1. Should the correlations be the same across time? Should we set them (constrain) to be equal? 2. Should the error variances be correlated? 3. Are the loadings the same across time?</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>long.cfa</span> <span class='op'>&lt;-</span> <span class='st'>'
@@ -2580,14 +2589,692 @@ NegAFF32 ~~ NegAFF33
 </div>
 <p><img src="sem-longitudinal_files/figure-html5/unnamed-chunk-4-1.png" width="624" /></p>
 </div>
-<h2 id="measurement-invariance-mi">Measurement Invariance (MI)</h2>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>fit.long.cfa</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>lavaan 0.6-8 ended normally after 128 iterations
+
+  Estimator                                         ML
+  Optimization method                           NLMINB
+  Number of model parameters                        69
+                                                      
+  Number of observations                           368
+                                                      
+Model Test User Model:
+                                                      
+  Test statistic                               119.443
+  Degrees of freedom                               102
+  P-value (Chi-square)                           0.114
+
+Parameter Estimates:
+
+  Standard errors                             Standard
+  Information                                 Expected
+  Information saturated (h1) model          Structured
+
+Latent Variables:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+  Pos1 =~                                             
+    PosAFF11          0.654    0.030   21.936    0.000
+    PosAFF21          0.651    0.031   20.864    0.000
+    PosAFF31          0.685    0.031   22.361    0.000
+  Pos2 =~                                             
+    PosAFF12          0.556    0.026   21.256    0.000
+    PosAFF22          0.638    0.030   21.448    0.000
+    PosAFF32          0.644    0.027   23.567    0.000
+  Pos3 =~                                             
+    PosAFF13          0.508    0.024   21.028    0.000
+    PosAFF23          0.545    0.027   20.347    0.000
+    PosAFF33          0.538    0.026   20.827    0.000
+  Neg1 =~                                             
+    NegAFF11          0.563    0.028   20.465    0.000
+    NegAFF21          0.479    0.024   19.856    0.000
+    NegAFF31          0.555    0.025   22.373    0.000
+  Neg2 =~                                             
+    NegAFF12          0.365    0.019   18.989    0.000
+    NegAFF22          0.375    0.017   21.452    0.000
+    NegAFF32          0.368    0.017   21.383    0.000
+  Neg3 =~                                             
+    NegAFF13          0.363    0.021   17.128    0.000
+    NegAFF23          0.341    0.017   19.493    0.000
+    NegAFF33          0.344    0.017   19.700    0.000
+
+Covariances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+ .PosAFF11 ~~                                         
+   .PosAFF12          0.004    0.007    0.578    0.563
+   .PosAFF13          0.000    0.007    0.037    0.971
+ .PosAFF12 ~~                                         
+   .PosAFF13          0.004    0.006    0.674    0.500
+ .PosAFF21 ~~                                         
+   .PosAFF22          0.008    0.008    1.020    0.308
+   .PosAFF23          0.008    0.008    0.991    0.322
+ .PosAFF22 ~~                                         
+   .PosAFF23          0.011    0.007    1.470    0.142
+ .PosAFF31 ~~                                         
+   .PosAFF32          0.004    0.007    0.616    0.538
+   .PosAFF33          0.016    0.007    2.182    0.029
+ .PosAFF32 ~~                                         
+   .PosAFF33          0.004    0.006    0.690    0.490
+ .NegAFF11 ~~                                         
+   .NegAFF12          0.005    0.005    0.966    0.334
+   .NegAFF13          0.006    0.006    1.036    0.300
+ .NegAFF12 ~~                                         
+   .NegAFF13          0.007    0.005    1.528    0.126
+ .NegAFF21 ~~                                         
+   .NegAFF22          0.015    0.004    3.605    0.000
+   .NegAFF23          0.011    0.005    2.387    0.017
+ .NegAFF22 ~~                                         
+   .NegAFF23          0.010    0.003    3.145    0.002
+ .NegAFF31 ~~                                         
+   .NegAFF32         -0.006    0.004   -1.607    0.108
+   .NegAFF33         -0.008    0.004   -1.778    0.075
+ .NegAFF32 ~~                                         
+   .NegAFF33         -0.001    0.003   -0.481    0.630
+  Pos1 ~~                                             
+    Pos2              0.473    0.044   10.663    0.000
+    Pos3              0.399    0.048    8.228    0.000
+    Neg1             -0.436    0.047   -9.358    0.000
+    Neg2             -0.297    0.052   -5.706    0.000
+    Neg3             -0.169    0.056   -3.003    0.003
+  Pos2 ~~                                             
+    Pos3              0.449    0.046    9.777    0.000
+    Neg1             -0.179    0.054   -3.279    0.001
+    Neg2             -0.543    0.041  -13.203    0.000
+    Neg3             -0.198    0.055   -3.578    0.000
+  Pos3 ~~                                             
+    Neg1             -0.074    0.057   -1.304    0.192
+    Neg2             -0.167    0.056   -2.989    0.003
+    Neg3             -0.292    0.054   -5.442    0.000
+  Neg1 ~~                                             
+    Neg2              0.526    0.043   12.317    0.000
+    Neg3              0.351    0.052    6.778    0.000
+  Neg2 ~~                                             
+    Neg3              0.435    0.048    9.006    0.000
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+   .PosAFF11          0.096    0.011    8.497    0.000
+   .PosAFF21          0.130    0.013    9.956    0.000
+   .PosAFF31          0.095    0.012    7.944    0.000
+   .PosAFF12          0.087    0.009   10.044    0.000
+   .PosAFF22          0.110    0.011    9.883    0.000
+   .PosAFF32          0.055    0.009    6.438    0.000
+   .PosAFF13          0.070    0.008    8.319    0.000
+   .PosAFF23          0.098    0.011    9.317    0.000
+   .PosAFF33          0.085    0.010    8.716    0.000
+   .NegAFF11          0.104    0.011    9.546    0.000
+   .NegAFF21          0.091    0.009   10.363    0.000
+   .NegAFF31          0.056    0.009    6.475    0.000
+   .NegAFF12          0.062    0.006   10.835    0.000
+   .NegAFF22          0.037    0.004    8.445    0.000
+   .NegAFF32          0.033    0.004    7.917    0.000
+   .NegAFF13          0.084    0.008   10.660    0.000
+   .NegAFF23          0.043    0.005    8.170    0.000
+   .NegAFF33          0.038    0.005    7.372    0.000
+    Pos1              1.000                           
+    Pos2              1.000                           
+    Pos3              1.000                           
+    Neg1              1.000                           
+    Neg2              1.000                           
+    Neg3              1.000                           </code></pre>
+</div>
+<h3 id="unstandardized-estimates">unstandardized estimates</h3>
+<ol type="1">
+<li>Notice the difference in loadings</li>
+<li>Notice the difference in covariances</li>
+</ol>
+This uses the marker variable approach. The above uses the fixed factor method.
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>fit.long.cfa.us</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lavaan/man/cfa.html'>cfa</a></span><span class='op'>(</span><span class='va'>long.cfa</span>, data<span class='op'>=</span><span class='va'>long</span>, std.lv<span class='op'>=</span><span class='cn'>FALSE</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>fit.long.cfa.us</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>lavaan 0.6-8 ended normally after 144 iterations
+
+  Estimator                                         ML
+  Optimization method                           NLMINB
+  Number of model parameters                        69
+                                                      
+  Number of observations                           368
+                                                      
+Model Test User Model:
+                                                      
+  Test statistic                               119.443
+  Degrees of freedom                               102
+  P-value (Chi-square)                           0.114
+
+Parameter Estimates:
+
+  Standard errors                             Standard
+  Information                                 Expected
+  Information saturated (h1) model          Structured
+
+Latent Variables:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+  Pos1 =~                                             
+    PosAFF11          1.000                           
+    PosAFF21          0.996    0.041   24.232    0.000
+    PosAFF31          1.048    0.040   26.223    0.000
+  Pos2 =~                                             
+    PosAFF12          1.000                           
+    PosAFF22          1.148    0.047   24.463    0.000
+    PosAFF32          1.159    0.043   27.012    0.000
+  Pos3 =~                                             
+    PosAFF13          1.000                           
+    PosAFF23          1.072    0.049   22.027    0.000
+    PosAFF33          1.058    0.047   22.511    0.000
+  Neg1 =~                                             
+    NegAFF11          1.000                           
+    NegAFF21          0.851    0.040   21.308    0.000
+    NegAFF31          0.985    0.042   23.372    0.000
+  Neg2 =~                                             
+    NegAFF12          1.000                           
+    NegAFF22          1.027    0.049   21.002    0.000
+    NegAFF32          1.007    0.049   20.719    0.000
+  Neg3 =~                                             
+    NegAFF13          1.000                           
+    NegAFF23          0.940    0.055   17.134    0.000
+    NegAFF33          0.948    0.056   16.997    0.000
+
+Covariances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+ .PosAFF11 ~~                                         
+   .PosAFF12          0.004    0.007    0.578    0.563
+   .PosAFF13          0.000    0.007    0.037    0.971
+ .PosAFF12 ~~                                         
+   .PosAFF13          0.004    0.006    0.674    0.500
+ .PosAFF21 ~~                                         
+   .PosAFF22          0.008    0.008    1.020    0.308
+   .PosAFF23          0.008    0.008    0.991    0.322
+ .PosAFF22 ~~                                         
+   .PosAFF23          0.011    0.007    1.470    0.142
+ .PosAFF31 ~~                                         
+   .PosAFF32          0.004    0.007    0.616    0.538
+   .PosAFF33          0.016    0.007    2.182    0.029
+ .PosAFF32 ~~                                         
+   .PosAFF33          0.004    0.006    0.690    0.490
+ .NegAFF11 ~~                                         
+   .NegAFF12          0.005    0.005    0.966    0.334
+   .NegAFF13          0.006    0.006    1.036    0.300
+ .NegAFF12 ~~                                         
+   .NegAFF13          0.007    0.005    1.528    0.126
+ .NegAFF21 ~~                                         
+   .NegAFF22          0.015    0.004    3.605    0.000
+   .NegAFF23          0.011    0.005    2.387    0.017
+ .NegAFF22 ~~                                         
+   .NegAFF23          0.010    0.003    3.145    0.002
+ .NegAFF31 ~~                                         
+   .NegAFF32         -0.006    0.004   -1.607    0.108
+   .NegAFF33         -0.008    0.004   -1.778    0.075
+ .NegAFF32 ~~                                         
+   .NegAFF33         -0.001    0.003   -0.481    0.630
+  Pos1 ~~                                             
+    Pos2              0.172    0.023    7.457    0.000
+    Pos3              0.132    0.021    6.446    0.000
+    Neg1             -0.160    0.023   -6.937    0.000
+    Neg2             -0.071    0.014   -4.955    0.000
+    Neg3             -0.040    0.014   -2.866    0.004
+  Pos2 ~~                                             
+    Pos3              0.127    0.018    7.088    0.000
+    Neg1             -0.056    0.018   -3.116    0.002
+    Neg2             -0.110    0.014   -8.074    0.000
+    Neg3             -0.040    0.012   -3.351    0.001
+  Pos3 ~~                                             
+    Neg1             -0.021    0.016   -1.293    0.196
+    Neg2             -0.031    0.011   -2.860    0.004
+    Neg3             -0.054    0.011   -4.737    0.000
+  Neg1 ~~                                             
+    Neg2              0.108    0.014    7.765    0.000
+    Neg3              0.072    0.013    5.512    0.000
+  Neg2 ~~                                             
+    Neg3              0.058    0.009    6.483    0.000
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+   .PosAFF11          0.096    0.011    8.497    0.000
+   .PosAFF21          0.130    0.013    9.956    0.000
+   .PosAFF31          0.095    0.012    7.944    0.000
+   .PosAFF12          0.087    0.009   10.044    0.000
+   .PosAFF22          0.110    0.011    9.883    0.000
+   .PosAFF32          0.055    0.009    6.437    0.000
+   .PosAFF13          0.070    0.008    8.319    0.000
+   .PosAFF23          0.098    0.011    9.317    0.000
+   .PosAFF33          0.085    0.010    8.716    0.000
+   .NegAFF11          0.104    0.011    9.546    0.000
+   .NegAFF21          0.091    0.009   10.363    0.000
+   .NegAFF31          0.056    0.009    6.475    0.000
+   .NegAFF12          0.062    0.006   10.835    0.000
+   .NegAFF22          0.037    0.004    8.445    0.000
+   .NegAFF32          0.033    0.004    7.917    0.000
+   .NegAFF13          0.084    0.008   10.660    0.000
+   .NegAFF23          0.043    0.005    8.170    0.000
+   .NegAFF33          0.038    0.005    7.372    0.000
+    Pos1              0.427    0.039   10.968    0.000
+    Pos2              0.309    0.029   10.628    0.000
+    Pos3              0.258    0.025   10.514    0.000
+    Neg1              0.317    0.031   10.233    0.000
+    Neg2              0.133    0.014    9.494    0.000
+    Neg3              0.132    0.015    8.564    0.000</code></pre>
+</div>
+We can also get standardized estimates in the the summary step, even when using the fixed factor approach.
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>fit.long.cfa.us</span>, standardized <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>lavaan 0.6-8 ended normally after 144 iterations
+
+  Estimator                                         ML
+  Optimization method                           NLMINB
+  Number of model parameters                        69
+                                                      
+  Number of observations                           368
+                                                      
+Model Test User Model:
+                                                      
+  Test statistic                               119.443
+  Degrees of freedom                               102
+  P-value (Chi-square)                           0.114
+
+Parameter Estimates:
+
+  Standard errors                             Standard
+  Information                                 Expected
+  Information saturated (h1) model          Structured
+
+Latent Variables:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
+  Pos1 =~                                                      
+    PosAFF11          1.000                               0.654
+    PosAFF21          0.996    0.041   24.232    0.000    0.651
+    PosAFF31          1.048    0.040   26.223    0.000    0.685
+  Pos2 =~                                                      
+    PosAFF12          1.000                               0.556
+    PosAFF22          1.148    0.047   24.463    0.000    0.638
+    PosAFF32          1.159    0.043   27.012    0.000    0.644
+  Pos3 =~                                                      
+    PosAFF13          1.000                               0.508
+    PosAFF23          1.072    0.049   22.027    0.000    0.545
+    PosAFF33          1.058    0.047   22.511    0.000    0.538
+  Neg1 =~                                                      
+    NegAFF11          1.000                               0.563
+    NegAFF21          0.851    0.040   21.308    0.000    0.479
+    NegAFF31          0.985    0.042   23.372    0.000    0.555
+  Neg2 =~                                                      
+    NegAFF12          1.000                               0.365
+    NegAFF22          1.027    0.049   21.002    0.000    0.375
+    NegAFF32          1.007    0.049   20.719    0.000    0.368
+  Neg3 =~                                                      
+    NegAFF13          1.000                               0.363
+    NegAFF23          0.940    0.055   17.134    0.000    0.341
+    NegAFF33          0.948    0.056   16.997    0.000    0.344
+  Std.all
+         
+    0.903
+    0.875
+    0.912
+         
+    0.883
+    0.887
+    0.940
+         
+    0.887
+    0.867
+    0.879
+         
+    0.868
+    0.847
+    0.920
+         
+    0.826
+    0.889
+    0.896
+         
+    0.782
+    0.855
+    0.869
+
+Covariances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
+ .PosAFF11 ~~                                                  
+   .PosAFF12          0.004    0.007    0.578    0.563    0.004
+   .PosAFF13          0.000    0.007    0.037    0.971    0.000
+ .PosAFF12 ~~                                                  
+   .PosAFF13          0.004    0.006    0.674    0.500    0.004
+ .PosAFF21 ~~                                                  
+   .PosAFF22          0.008    0.008    1.020    0.308    0.008
+   .PosAFF23          0.008    0.008    0.991    0.322    0.008
+ .PosAFF22 ~~                                                  
+   .PosAFF23          0.011    0.007    1.470    0.142    0.011
+ .PosAFF31 ~~                                                  
+   .PosAFF32          0.004    0.007    0.616    0.538    0.004
+   .PosAFF33          0.016    0.007    2.182    0.029    0.016
+ .PosAFF32 ~~                                                  
+   .PosAFF33          0.004    0.006    0.690    0.490    0.004
+ .NegAFF11 ~~                                                  
+   .NegAFF12          0.005    0.005    0.966    0.334    0.005
+   .NegAFF13          0.006    0.006    1.036    0.300    0.006
+ .NegAFF12 ~~                                                  
+   .NegAFF13          0.007    0.005    1.528    0.126    0.007
+ .NegAFF21 ~~                                                  
+   .NegAFF22          0.015    0.004    3.605    0.000    0.015
+   .NegAFF23          0.011    0.005    2.387    0.017    0.011
+ .NegAFF22 ~~                                                  
+   .NegAFF23          0.010    0.003    3.145    0.002    0.010
+ .NegAFF31 ~~                                                  
+   .NegAFF32         -0.006    0.004   -1.607    0.108   -0.006
+   .NegAFF33         -0.008    0.004   -1.778    0.075   -0.008
+ .NegAFF32 ~~                                                  
+   .NegAFF33         -0.001    0.003   -0.481    0.630   -0.001
+  Pos1 ~~                                                      
+    Pos2              0.172    0.023    7.457    0.000    0.473
+    Pos3              0.132    0.021    6.446    0.000    0.399
+    Neg1             -0.160    0.023   -6.937    0.000   -0.436
+    Neg2             -0.071    0.014   -4.955    0.000   -0.297
+    Neg3             -0.040    0.014   -2.866    0.004   -0.169
+  Pos2 ~~                                                      
+    Pos3              0.127    0.018    7.088    0.000    0.449
+    Neg1             -0.056    0.018   -3.116    0.002   -0.179
+    Neg2             -0.110    0.014   -8.074    0.000   -0.543
+    Neg3             -0.040    0.012   -3.351    0.001   -0.198
+  Pos3 ~~                                                      
+    Neg1             -0.021    0.016   -1.293    0.196   -0.074
+    Neg2             -0.031    0.011   -2.860    0.004   -0.167
+    Neg3             -0.054    0.011   -4.737    0.000   -0.292
+  Neg1 ~~                                                      
+    Neg2              0.108    0.014    7.765    0.000    0.526
+    Neg3              0.072    0.013    5.512    0.000    0.351
+  Neg2 ~~                                                      
+    Neg3              0.058    0.009    6.483    0.000    0.435
+  Std.all
+         
+    0.043
+    0.003
+         
+    0.050
+         
+    0.071
+    0.070
+         
+    0.104
+         
+    0.057
+    0.177
+         
+    0.061
+         
+    0.065
+    0.070
+         
+    0.099
+         
+    0.267
+    0.173
+         
+    0.253
+         
+   -0.147
+   -0.163
+         
+   -0.041
+         
+    0.473
+    0.399
+   -0.436
+   -0.297
+   -0.169
+         
+    0.449
+   -0.179
+   -0.543
+   -0.198
+         
+   -0.074
+   -0.167
+   -0.292
+         
+    0.526
+    0.351
+         
+    0.435
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
+   .PosAFF11          0.096    0.011    8.497    0.000    0.096
+   .PosAFF21          0.130    0.013    9.956    0.000    0.130
+   .PosAFF31          0.095    0.012    7.944    0.000    0.095
+   .PosAFF12          0.087    0.009   10.044    0.000    0.087
+   .PosAFF22          0.110    0.011    9.883    0.000    0.110
+   .PosAFF32          0.055    0.009    6.437    0.000    0.055
+   .PosAFF13          0.070    0.008    8.319    0.000    0.070
+   .PosAFF23          0.098    0.011    9.317    0.000    0.098
+   .PosAFF33          0.085    0.010    8.716    0.000    0.085
+   .NegAFF11          0.104    0.011    9.546    0.000    0.104
+   .NegAFF21          0.091    0.009   10.363    0.000    0.091
+   .NegAFF31          0.056    0.009    6.475    0.000    0.056
+   .NegAFF12          0.062    0.006   10.835    0.000    0.062
+   .NegAFF22          0.037    0.004    8.445    0.000    0.037
+   .NegAFF32          0.033    0.004    7.917    0.000    0.033
+   .NegAFF13          0.084    0.008   10.660    0.000    0.084
+   .NegAFF23          0.043    0.005    8.170    0.000    0.043
+   .NegAFF33          0.038    0.005    7.372    0.000    0.038
+    Pos1              0.427    0.039   10.968    0.000    1.000
+    Pos2              0.309    0.029   10.628    0.000    1.000
+    Pos3              0.258    0.025   10.514    0.000    1.000
+    Neg1              0.317    0.031   10.233    0.000    1.000
+    Neg2              0.133    0.014    9.494    0.000    1.000
+    Neg3              0.132    0.015    8.564    0.000    1.000
+  Std.all
+    0.184
+    0.235
+    0.168
+    0.220
+    0.213
+    0.117
+    0.214
+    0.249
+    0.227
+    0.246
+    0.283
+    0.153
+    0.317
+    0.209
+    0.198
+    0.389
+    0.270
+    0.245
+    1.000
+    1.000
+    1.000
+    1.000
+    1.000
+    1.000</code></pre>
+</div>
+<h3 id="introducing-means.">introducing means.</h3>
+<p>Notice how we can also esimate means of the variables, though we don’t necessarily need to. These are now under the “intercepts” heading.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>fit.long.cfa.us.mean</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lavaan/man/cfa.html'>cfa</a></span><span class='op'>(</span><span class='va'>long.cfa</span>, meanstructure<span class='op'>=</span><span class='cn'>TRUE</span>, data<span class='op'>=</span><span class='va'>long</span>, std.lv<span class='op'>=</span><span class='cn'>FALSE</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>fit.long.cfa.us.mean</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>lavaan 0.6-8 ended normally after 144 iterations
+
+  Estimator                                         ML
+  Optimization method                           NLMINB
+  Number of model parameters                        87
+                                                      
+  Number of observations                           368
+                                                      
+Model Test User Model:
+                                                      
+  Test statistic                               119.443
+  Degrees of freedom                               102
+  P-value (Chi-square)                           0.114
+
+Parameter Estimates:
+
+  Standard errors                             Standard
+  Information                                 Expected
+  Information saturated (h1) model          Structured
+
+Latent Variables:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+  Pos1 =~                                             
+    PosAFF11          1.000                           
+    PosAFF21          0.996    0.041   24.232    0.000
+    PosAFF31          1.048    0.040   26.223    0.000
+  Pos2 =~                                             
+    PosAFF12          1.000                           
+    PosAFF22          1.148    0.047   24.463    0.000
+    PosAFF32          1.159    0.043   27.012    0.000
+  Pos3 =~                                             
+    PosAFF13          1.000                           
+    PosAFF23          1.072    0.049   22.027    0.000
+    PosAFF33          1.058    0.047   22.511    0.000
+  Neg1 =~                                             
+    NegAFF11          1.000                           
+    NegAFF21          0.851    0.040   21.308    0.000
+    NegAFF31          0.985    0.042   23.372    0.000
+  Neg2 =~                                             
+    NegAFF12          1.000                           
+    NegAFF22          1.027    0.049   21.002    0.000
+    NegAFF32          1.007    0.049   20.719    0.000
+  Neg3 =~                                             
+    NegAFF13          1.000                           
+    NegAFF23          0.940    0.055   17.134    0.000
+    NegAFF33          0.948    0.056   16.997    0.000
+
+Covariances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+ .PosAFF11 ~~                                         
+   .PosAFF12          0.004    0.007    0.578    0.563
+   .PosAFF13          0.000    0.007    0.037    0.971
+ .PosAFF12 ~~                                         
+   .PosAFF13          0.004    0.006    0.674    0.500
+ .PosAFF21 ~~                                         
+   .PosAFF22          0.008    0.008    1.020    0.308
+   .PosAFF23          0.008    0.008    0.991    0.322
+ .PosAFF22 ~~                                         
+   .PosAFF23          0.011    0.007    1.470    0.142
+ .PosAFF31 ~~                                         
+   .PosAFF32          0.004    0.007    0.616    0.538
+   .PosAFF33          0.016    0.007    2.182    0.029
+ .PosAFF32 ~~                                         
+   .PosAFF33          0.004    0.006    0.690    0.490
+ .NegAFF11 ~~                                         
+   .NegAFF12          0.005    0.005    0.966    0.334
+   .NegAFF13          0.006    0.006    1.036    0.300
+ .NegAFF12 ~~                                         
+   .NegAFF13          0.007    0.005    1.528    0.126
+ .NegAFF21 ~~                                         
+   .NegAFF22          0.015    0.004    3.605    0.000
+   .NegAFF23          0.011    0.005    2.387    0.017
+ .NegAFF22 ~~                                         
+   .NegAFF23          0.010    0.003    3.145    0.002
+ .NegAFF31 ~~                                         
+   .NegAFF32         -0.006    0.004   -1.607    0.108
+   .NegAFF33         -0.008    0.004   -1.778    0.075
+ .NegAFF32 ~~                                         
+   .NegAFF33         -0.001    0.003   -0.481    0.630
+  Pos1 ~~                                             
+    Pos2              0.172    0.023    7.457    0.000
+    Pos3              0.132    0.021    6.446    0.000
+    Neg1             -0.160    0.023   -6.937    0.000
+    Neg2             -0.071    0.014   -4.955    0.000
+    Neg3             -0.040    0.014   -2.866    0.004
+  Pos2 ~~                                             
+    Pos3              0.127    0.018    7.088    0.000
+    Neg1             -0.056    0.018   -3.116    0.002
+    Neg2             -0.110    0.014   -8.074    0.000
+    Neg3             -0.040    0.012   -3.351    0.001
+  Pos3 ~~                                             
+    Neg1             -0.021    0.016   -1.293    0.196
+    Neg2             -0.031    0.011   -2.860    0.004
+    Neg3             -0.054    0.011   -4.737    0.000
+  Neg1 ~~                                             
+    Neg2              0.108    0.014    7.765    0.000
+    Neg3              0.072    0.013    5.512    0.000
+  Neg2 ~~                                             
+    Neg3              0.058    0.009    6.483    0.000
+
+Intercepts:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+   .PosAFF11          3.212    0.038   85.141    0.000
+   .PosAFF21          3.105    0.039   80.039    0.000
+   .PosAFF31          3.248    0.039   82.975    0.000
+   .PosAFF12          3.253    0.033   99.077    0.000
+   .PosAFF22          3.126    0.037   83.350    0.000
+   .PosAFF32          3.274    0.036   91.552    0.000
+   .PosAFF13          3.302    0.030  110.512    0.000
+   .PosAFF23          3.094    0.033   94.436    0.000
+   .PosAFF33          3.280    0.032  102.909    0.000
+   .NegAFF11          1.522    0.034   45.016    0.000
+   .NegAFF21          1.397    0.030   47.359    0.000
+   .NegAFF31          1.398    0.031   44.488    0.000
+   .NegAFF12          1.412    0.023   61.269    0.000
+   .NegAFF22          1.324    0.022   60.181    0.000
+   .NegAFF32          1.300    0.021   60.718    0.000
+   .NegAFF13          1.430    0.024   59.112    0.000
+   .NegAFF23          1.281    0.021   61.551    0.000
+   .NegAFF33          1.297    0.021   62.890    0.000
+    Pos1              0.000                           
+    Pos2              0.000                           
+    Pos3              0.000                           
+    Neg1              0.000                           
+    Neg2              0.000                           
+    Neg3              0.000                           
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+   .PosAFF11          0.096    0.011    8.497    0.000
+   .PosAFF21          0.130    0.013    9.956    0.000
+   .PosAFF31          0.095    0.012    7.944    0.000
+   .PosAFF12          0.087    0.009   10.044    0.000
+   .PosAFF22          0.110    0.011    9.883    0.000
+   .PosAFF32          0.055    0.009    6.437    0.000
+   .PosAFF13          0.070    0.008    8.319    0.000
+   .PosAFF23          0.098    0.011    9.317    0.000
+   .PosAFF33          0.085    0.010    8.716    0.000
+   .NegAFF11          0.104    0.011    9.546    0.000
+   .NegAFF21          0.091    0.009   10.363    0.000
+   .NegAFF31          0.056    0.009    6.475    0.000
+   .NegAFF12          0.062    0.006   10.835    0.000
+   .NegAFF22          0.037    0.004    8.445    0.000
+   .NegAFF32          0.033    0.004    7.917    0.000
+   .NegAFF13          0.084    0.008   10.660    0.000
+   .NegAFF23          0.043    0.005    8.170    0.000
+   .NegAFF33          0.038    0.005    7.372    0.000
+    Pos1              0.427    0.039   10.968    0.000
+    Pos2              0.309    0.029   10.628    0.000
+    Pos3              0.258    0.025   10.514    0.000
+    Neg1              0.317    0.031   10.233    0.000
+    Neg2              0.133    0.014    9.494    0.000
+    Neg3              0.132    0.015    8.564    0.000</code></pre>
+</div>
+<p>Why are our latent variables zero? The cfa and sem functions fix the latent variable intercepts (which in this case correspond to the latent means) to zero. We have to override these defaults by asking the model to fit them. More on this below.</p>
+<h1 id="a-measurement-invariance-mi">1.a Measurement Invariance (MI)</h1>
 <p>To meaningfully look at means, we need to have the means mean the same thing. In other words, without using the word mean, we need to make sure that the measurement of the construct is consistent across time. If it isn’t, then what we may see as change actually reflect people responding to the indicators differently. For example, a common item on an extraversion scale is “Do you like to go to parties?” This is likely interpreted differently by a 20 year old compared to a 70 year old. This is due to what is normative, what parties look like that a typical 20 and 70 year old go to, etcetera. Another way to look at this is the item “2 x 3 = X, solve for X”. The reasons that a 8 year old and a 18 year old get the item incorrect is likely for different reasons (ie knowledge vs not being careful).</p>
 <p>Maturation is the easiest way to see differences, but it also happens when you want to compare groups ie some anova design. This assumption is typically never critically examined.</p>
 <h3 id="types-of-mi">types of MI</h3>
-<p>Configural (pattern). Typically always true with a decent measure of your construct. Can be tested through test statistics and eye-balling. Serves as default.</p>
+<p>Configural (pattern). Asks: does your measure have the same factor structure? Typically always true with a decent measure of your construct. Can be tested through test statistics and eye-balling. Serves as default model to compare with our more stringent models.</p>
 <p>Weak (metric/loading). Can be easily met. Not meeting this shows big problems, unless you are working with a really large dataset (where there is large power to find differences).</p>
 <p>Strong (Scalar/intercept). Need to meet this designation to run longitudinal models and look at means across time.</p>
 <p>Strict (residual/error variance). Not necessarily better than Strong, and does not need to be satisfied to use longitudinal models. Why might this not hold even if you are assessing the same construct? Hint: think of what residual variance is made up of.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>cfa</span> <span class='op'>&lt;-</span> <span class='st'>'Pos1 =~ PosAFF11 + PosAFF21 + PosAFF31'</span>
+
+<span class='va'>fit.cfa</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lavaan/man/cfa.html'>cfa</a></span><span class='op'>(</span><span class='va'>cfa</span>, data<span class='op'>=</span><span class='va'>long</span>, std.lv<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/pkg/semPlot/man/semPaths.html'>semPaths</a></span><span class='op'>(</span><span class='va'>fit.cfa</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="sem-longitudinal_files/figure-html5/unnamed-chunk-9-1.png" width="624" /></p>
+</div>
 <h3 id="testing-mi">Testing MI</h3>
 <h4 id="configural-baseline">configural (baseline)</h4>
 <div class="layout-chunk" data-layout="l-body">
@@ -2794,7 +3481,11 @@ Variances:
     1.000
     1.000</code></pre>
 </div>
+<p>Notice that we didnt do anything different here except for fitting a mean structure and ask for fit.measures in the output.</p>
 <h4 id="weak-constrain-loadings">Weak (constrain loadings)</h4>
+<p>With SEM models you can constrain or fix certain parameters to be whatever you want them to be. The syntax is some number or letters followed by an *. If the values are numbers, then it will force the parameters to be that number. If they are letter, then it names the parameter and forces all of those with the same naming scheme to be equivalent. But it allows the estimation to figure out what number it should be.</p>
+<p>Weak measurement invariance test is to constrain the items to be equivalent across waves.</p>
+A special character is to “relax” constraints that are automatically included. Here NA is used to allow the latent variance at time 2 and 3 to be estimated, rather than to be constrained to 1 (bc below we used a fixed factor approach)
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>weak</span> <span class='op'>&lt;-</span> <span class='st'>'
@@ -2802,7 +3493,6 @@ Variances:
 Pos1 =~ L1*PosAFF11 + L2*PosAFF21 + L3*PosAFF31
 Pos2 =~ L1*PosAFF12 + L2*PosAFF22 + L3*PosAFF32
 Pos3 =~ L1*PosAFF13 + L2*PosAFF23 + L3*PosAFF33
-
 
 ## free latent variances at later times (only set the scale once)
 Pos2 ~~ NA*Pos2
@@ -3005,6 +3695,8 @@ Variances:
     1.000</code></pre>
 </div>
 <h4 id="strong-constrain-loadings-and-intercepts">Strong (constrain loadings and intercepts)</h4>
+<p>Strong introduces means to the equation. Well, they were there before, estimated by default because we set meanstructure = TRUE. But now we are going to constrain the means of each item to be the same across time, again using labels.</p>
+<p>Why are we doing that if we want to test whether people change? Shouldnt changes in the means exist? Well, we can</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>strong</span> <span class='op'>&lt;-</span> <span class='st'>'
@@ -3524,7 +4216,692 @@ Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&
 <pre><code>      cfi 
 0.9888801 </code></pre>
 </div>
-<h2 id="panelcross-laglongitudinal-path-modelmediation">2. Panel/cross lag/longitudinal path model/mediation</h2>
+<h2 id="group-comparisons">Group comparisons</h2>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>group</span> <span class='op'>&lt;-</span> <span class='fu'>read_csv</span><span class='op'>(</span><span class='st'>"~/Box/5165 Applied Longitudinal Data Analysis/Longitudinal/group.csv"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>group</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code># A tibble: 6 x 7
+     P1    P2    P3    N1    N2    N3 Grade
+  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;
+1  2.75  3.42  3.27 1.71  1.45  1.76  7th  
+2  4.18  3.49  3.36 3.43  2.70  2.48  7th  
+3  2.17  2.69  2.90 1.06  0.726 1.15  7th  
+4  2.68  2.88  3.28 0.846 1.22  0.293 7th  
+5  1.41  1.83  1.64 2.18  2.73  2.47  7th  
+6  3.96  4.03  4.21 1.80  1.72  1.71  7th  </code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>group1</span> <span class='op'>&lt;-</span> <span class='st'>'Positive =~ P1 + P2 + P3
+Negative =~ N1 + N2 + N3 
+
+Positive ~~ 1*Positive
+Negative ~~ 1*Negative
+
+Positive ~~ Negative
+'</span>
+
+<span class='va'>fit.group.1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lavaan/man/cfa.html'>cfa</a></span><span class='op'>(</span><span class='va'>group1</span>, data<span class='op'>=</span><span class='va'>group</span>, std.lv<span class='op'>=</span><span class='cn'>TRUE</span>, group <span class='op'>=</span> <span class='st'>"Grade"</span><span class='op'>)</span>
+
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>fit.group.1</span>, standardized<span class='op'>=</span><span class='cn'>TRUE</span>, fit.measures<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>lavaan 0.6-8 ended normally after 42 iterations
+
+  Estimator                                         ML
+  Optimization method                           NLMINB
+  Number of model parameters                        38
+                                                      
+  Number of observations per group:                   
+    7th                                            380
+    8th                                            379
+                                                      
+Model Test User Model:
+                                                      
+  Test statistic                                46.102
+  Degrees of freedom                                16
+  P-value (Chi-square)                           0.000
+  Test statistic for each group:
+    7th                                         17.124
+    8th                                         28.978
+
+Model Test Baseline Model:
+
+  Test statistic                              3598.760
+  Degrees of freedom                                30
+  P-value                                        0.000
+
+User Model versus Baseline Model:
+
+  Comparative Fit Index (CFI)                    0.992
+  Tucker-Lewis Index (TLI)                       0.984
+
+Loglikelihood and Information Criteria:
+
+  Loglikelihood user model (H0)              -2901.633
+  Loglikelihood unrestricted model (H1)      -2878.582
+                                                      
+  Akaike (AIC)                                5879.267
+  Bayesian (BIC)                              6055.283
+  Sample-size adjusted Bayesian (BIC)         5934.617
+
+Root Mean Square Error of Approximation:
+
+  RMSEA                                          0.070
+  90 Percent confidence interval - lower         0.047
+  90 Percent confidence interval - upper         0.095
+  P-value RMSEA &lt;= 0.05                          0.072
+
+Standardized Root Mean Square Residual:
+
+  SRMR                                           0.029
+
+Parameter Estimates:
+
+  Standard errors                             Standard
+  Information                                 Expected
+  Information saturated (h1) model          Structured
+
+
+Group 1 [7th]:
+
+Latent Variables:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
+  Positive =~                                                  
+    P1                0.571    0.028   20.208    0.000    0.571
+    P2                0.605    0.029   21.201    0.000    0.605
+    P3                0.628    0.029   21.416    0.000    0.628
+  Negative =~                                                  
+    N1                0.634    0.029   21.640    0.000    0.634
+    N2                0.585    0.027   21.458    0.000    0.585
+    N3                0.599    0.026   22.814    0.000    0.599
+  Std.all
+         
+    0.856
+    0.884
+    0.890
+         
+    0.888
+    0.884
+    0.918
+
+Covariances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
+  Positive ~~                                                  
+    Negative         -0.069    0.056   -1.249    0.212   -0.069
+  Std.all
+         
+   -0.069
+
+Intercepts:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
+   .P1                3.136    0.034   91.663    0.000    3.136
+   .P2                2.991    0.035   85.211    0.000    2.991
+   .P3                3.069    0.036   84.777    0.000    3.069
+   .N1                1.701    0.037   46.482    0.000    1.701
+   .N2                1.527    0.034   44.944    0.000    1.527
+   .N3                1.545    0.033   46.195    0.000    1.545
+    Positive          0.000                               0.000
+    Negative          0.000                               0.000
+  Std.all
+    4.702
+    4.371
+    4.349
+    2.384
+    2.306
+    2.370
+    0.000
+    0.000
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
+    Positive          1.000                               1.000
+    Negative          1.000                               1.000
+   .P1                0.119    0.012    9.705    0.000    0.119
+   .P2                0.102    0.012    8.337    0.000    0.102
+   .P3                0.103    0.013    8.006    0.000    0.103
+   .N1                0.107    0.012    9.214    0.000    0.107
+   .N2                0.096    0.010    9.468    0.000    0.096
+   .N3                0.067    0.009    7.307    0.000    0.067
+  Std.all
+    1.000
+    1.000
+    0.267
+    0.218
+    0.207
+    0.211
+    0.219
+    0.157
+
+
+Group 2 [8th]:
+
+Latent Variables:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
+  Positive =~                                                  
+    P1                0.638    0.028   22.652    0.000    0.638
+    P2                0.639    0.029   21.938    0.000    0.639
+    P3                0.713    0.030   23.800    0.000    0.713
+  Negative =~                                                  
+    N1                0.562    0.027   20.758    0.000    0.562
+    N2                0.544    0.024   22.313    0.000    0.544
+    N3                0.565    0.025   22.927    0.000    0.565
+  Std.all
+         
+    0.909
+    0.892
+    0.937
+         
+    0.865
+    0.906
+    0.921
+
+Covariances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
+  Positive ~~                                                  
+    Negative         -0.321    0.050   -6.454    0.000   -0.321
+  Std.all
+         
+   -0.321
+
+Intercepts:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
+   .P1                3.073    0.036   85.224    0.000    3.073
+   .P2                2.847    0.037   77.322    0.000    2.847
+   .P3                2.979    0.039   76.197    0.000    2.979
+   .N1                1.717    0.033   51.485    0.000    1.717
+   .N2                1.580    0.031   51.175    0.000    1.580
+   .N3                1.550    0.032   49.195    0.000    1.550
+    Positive          0.000                               0.000
+    Negative          0.000                               0.000
+  Std.all
+    4.378
+    3.972
+    3.914
+    2.645
+    2.629
+    2.527
+    0.000
+    0.000
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
+    Positive          1.000                               1.000
+    Negative          1.000                               1.000
+   .P1                0.085    0.009    9.009    0.000    0.085
+   .P2                0.105    0.011   10.032    0.000    0.105
+   .P3                0.071    0.010    6.908    0.000    0.071
+   .N1                0.106    0.010   10.403    0.000    0.106
+   .N2                0.065    0.008    8.293    0.000    0.065
+   .N3                0.057    0.008    7.233    0.000    0.057
+  Std.all
+    1.000
+    1.000
+    0.173
+    0.205
+    0.123
+    0.252
+    0.180
+    0.152</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/semPlot/man/semPaths.html'>semPaths</a></span><span class='op'>(</span><span class='va'>fit.group.1</span>,<span class='st'>'est'</span>, panelGroups<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="sem-longitudinal_files/figure-html5/unnamed-chunk-18-1.png" width="624" /></p>
+</div>
+<p>Need to put in labels to fix the different parameters across models</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>group2</span> <span class='op'>&lt;-</span> <span class='st'>'Positive =~ c(L1,L1)*P1 + c(L2,L2)*P2 + c(L3,L3)*P3
+Negative =~ N1 + N2 + N3 
+
+Positive ~~ 1*Positive
+Negative ~~ 1*Negative
+
+Positive ~~ Negative
+'</span>
+
+<span class='va'>fit.group.2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lavaan/man/cfa.html'>cfa</a></span><span class='op'>(</span><span class='va'>group2</span>, data<span class='op'>=</span><span class='va'>group</span>, std.lv<span class='op'>=</span><span class='cn'>TRUE</span>, group <span class='op'>=</span> <span class='st'>"Grade"</span><span class='op'>)</span>
+
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>fit.group.2</span>, standardized<span class='op'>=</span><span class='cn'>TRUE</span>, fit.measures<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>lavaan 0.6-8 ended normally after 41 iterations
+
+  Estimator                                         ML
+  Optimization method                           NLMINB
+  Number of model parameters                        38
+  Number of equality constraints                     3
+                                                      
+  Number of observations per group:                   
+    7th                                            380
+    8th                                            379
+                                                      
+Model Test User Model:
+                                                      
+  Test statistic                                51.058
+  Degrees of freedom                                19
+  P-value (Chi-square)                           0.000
+  Test statistic for each group:
+    7th                                         19.934
+    8th                                         31.124
+
+Model Test Baseline Model:
+
+  Test statistic                              3598.760
+  Degrees of freedom                                30
+  P-value                                        0.000
+
+User Model versus Baseline Model:
+
+  Comparative Fit Index (CFI)                    0.991
+  Tucker-Lewis Index (TLI)                       0.986
+
+Loglikelihood and Information Criteria:
+
+  Loglikelihood user model (H0)              -2904.111
+  Loglikelihood unrestricted model (H1)      -2878.582
+                                                      
+  Akaike (AIC)                                5878.222
+  Bayesian (BIC)                              6040.342
+  Sample-size adjusted Bayesian (BIC)         5929.203
+
+Root Mean Square Error of Approximation:
+
+  RMSEA                                          0.067
+  90 Percent confidence interval - lower         0.045
+  90 Percent confidence interval - upper         0.089
+  P-value RMSEA &lt;= 0.05                          0.098
+
+Standardized Root Mean Square Residual:
+
+  SRMR                                           0.048
+
+Parameter Estimates:
+
+  Standard errors                             Standard
+  Information                                 Expected
+  Information saturated (h1) model          Structured
+
+
+Group 1 [7th]:
+
+Latent Variables:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
+  Positive =~                                                  
+    P1        (L1)    0.607    0.020   30.548    0.000    0.607
+    P2        (L2)    0.621    0.020   30.504    0.000    0.621
+    P3        (L3)    0.674    0.021   32.232    0.000    0.674
+  Negative =~                                                  
+    N1                0.634    0.029   21.642    0.000    0.634
+    N2                0.585    0.027   21.461    0.000    0.585
+    N3                0.599    0.026   22.816    0.000    0.599
+  Std.all
+         
+    0.871
+    0.886
+    0.906
+         
+    0.888
+    0.884
+    0.918
+
+Covariances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
+  Positive ~~                                                  
+    Negative         -0.074    0.055   -1.343    0.179   -0.074
+  Std.all
+         
+   -0.074
+
+Intercepts:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
+   .P1                3.136    0.036   87.656    0.000    3.136
+   .P2                2.991    0.036   83.103    0.000    2.991
+   .P3                3.069    0.038   80.434    0.000    3.069
+   .N1                1.701    0.037   46.473    0.000    1.701
+   .N2                1.527    0.034   44.936    0.000    1.527
+   .N3                1.545    0.033   46.185    0.000    1.545
+    Positive          0.000                               0.000
+    Negative          0.000                               0.000
+  Std.all
+    4.497
+    4.263
+    4.126
+    2.384
+    2.305
+    2.369
+    0.000
+    0.000
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
+    Positive          1.000                               1.000
+    Negative          1.000                               1.000
+   .P1                0.118    0.012    9.839    0.000    0.118
+   .P2                0.106    0.012    9.121    0.000    0.106
+   .P3                0.099    0.012    7.968    0.000    0.099
+   .N1                0.107    0.012    9.215    0.000    0.107
+   .N2                0.096    0.010    9.467    0.000    0.096
+   .N3                0.067    0.009    7.308    0.000    0.067
+  Std.all
+    1.000
+    1.000
+    0.242
+    0.216
+    0.179
+    0.211
+    0.219
+    0.157
+
+
+Group 2 [8th]:
+
+Latent Variables:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
+  Positive =~                                                  
+    P1        (L1)    0.607    0.020   30.548    0.000    0.607
+    P2        (L2)    0.621    0.020   30.504    0.000    0.621
+    P3        (L3)    0.674    0.021   32.232    0.000    0.674
+  Negative =~                                                  
+    N1                0.559    0.027   20.740    0.000    0.559
+    N2                0.542    0.024   22.303    0.000    0.542
+    N3                0.563    0.025   22.922    0.000    0.563
+  Std.all
+         
+    0.901
+    0.888
+    0.928
+         
+    0.864
+    0.905
+    0.920
+
+Covariances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
+  Positive ~~                                                  
+    Negative         -0.308    0.050   -6.180    0.000   -0.308
+  Std.all
+         
+   -0.308
+
+Intercepts:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
+   .P1                3.073    0.035   88.799    0.000    3.073
+   .P2                2.847    0.036   79.220    0.000    2.847
+   .P3                2.979    0.037   79.802    0.000    2.979
+   .N1                1.717    0.033   51.640    0.000    1.717
+   .N2                1.580    0.031   51.345    0.000    1.580
+   .N3                1.550    0.031   49.363    0.000    1.550
+    Positive          0.000                               0.000
+    Negative          0.000                               0.000
+  Std.all
+    4.561
+    4.069
+    4.099
+    2.653
+    2.637
+    2.536
+    0.000
+    0.000
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
+    Positive          1.000                               1.000
+    Negative          1.000                               1.000
+   .P1                0.085    0.009    9.240    0.000    0.085
+   .P2                0.104    0.010    9.940    0.000    0.104
+   .P3                0.074    0.010    7.434    0.000    0.074
+   .N1                0.106    0.010   10.399    0.000    0.106
+   .N2                0.065    0.008    8.288    0.000    0.065
+   .N3                0.057    0.008    7.227    0.000    0.057
+  Std.all
+    1.000
+    1.000
+    0.188
+    0.212
+    0.140
+    0.254
+    0.181
+    0.153</code></pre>
+</div>
+<p>We could now test whether constraining the groups makes the fit worse (similar to how we did it for measurement invariance)</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/lavaan/man/lavTestLRT.html'>anova</a></span><span class='op'>(</span><span class='va'>fit.group.1</span>,<span class='va'>fit.group.2</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Chi-Squared Difference Test
+
+            Df    AIC    BIC  Chisq Chisq diff Df diff Pr(&gt;Chisq)
+fit.group.1 16 5879.3 6055.3 46.102                              
+fit.group.2 19 5878.2 6040.3 51.058     4.9557       3     0.1751</code></pre>
+</div>
+<p>What if you wanted to make everything the same for a particular type of parameter? lavaan has an easier answer:</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>group3</span> <span class='op'>&lt;-</span> <span class='st'>'Positive =~ P1 + P2 + P3
+Negative =~ N1 + N2 + N3 
+
+Positive ~~ 1*Positive
+Negative ~~ 1*Negative
+
+Positive ~~ Negative
+'</span>
+
+<span class='va'>fit.group.3</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lavaan/man/cfa.html'>cfa</a></span><span class='op'>(</span><span class='va'>group3</span>, data<span class='op'>=</span><span class='va'>group</span>, std.lv<span class='op'>=</span><span class='cn'>TRUE</span>, group <span class='op'>=</span> <span class='st'>"Grade"</span>, group.equal <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"loadings"</span>, <span class='st'>"intercepts"</span><span class='op'>)</span><span class='op'>)</span>
+
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>fit.group.3</span>, standardized<span class='op'>=</span><span class='cn'>TRUE</span>, fit.measures<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>lavaan 0.6-8 ended normally after 63 iterations
+
+  Estimator                                         ML
+  Optimization method                           NLMINB
+  Number of model parameters                        40
+  Number of equality constraints                    12
+                                                      
+  Number of observations per group:                   
+    7th                                            380
+    8th                                            379
+                                                      
+Model Test User Model:
+                                                      
+  Test statistic                                64.155
+  Degrees of freedom                                26
+  P-value (Chi-square)                           0.000
+  Test statistic for each group:
+    7th                                         26.771
+    8th                                         37.384
+
+Model Test Baseline Model:
+
+  Test statistic                              3598.760
+  Degrees of freedom                                30
+  P-value                                        0.000
+
+User Model versus Baseline Model:
+
+  Comparative Fit Index (CFI)                    0.989
+  Tucker-Lewis Index (TLI)                       0.988
+
+Loglikelihood and Information Criteria:
+
+  Loglikelihood user model (H0)              -2910.660
+  Loglikelihood unrestricted model (H1)      -2878.582
+                                                      
+  Akaike (AIC)                                5877.319
+  Bayesian (BIC)                              6007.015
+  Sample-size adjusted Bayesian (BIC)         5918.104
+
+Root Mean Square Error of Approximation:
+
+  RMSEA                                          0.062
+  90 Percent confidence interval - lower         0.043
+  90 Percent confidence interval - upper         0.082
+  P-value RMSEA &lt;= 0.05                          0.137
+
+Standardized Root Mean Square Residual:
+
+  SRMR                                           0.059
+
+Parameter Estimates:
+
+  Standard errors                             Standard
+  Information                                 Expected
+  Information saturated (h1) model          Structured
+
+
+Group 1 [7th]:
+
+Latent Variables:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
+  Positive =~                                                  
+    P1      (.p1.)    0.607    0.020   30.559    0.000    0.607
+    P2      (.p2.)    0.624    0.020   30.563    0.000    0.624
+    P3      (.p3.)    0.675    0.021   32.293    0.000    0.675
+  Negative =~                                                  
+    N1      (.p4.)    0.596    0.020   29.973    0.000    0.596
+    N2      (.p5.)    0.564    0.018   31.005    0.000    0.564
+    N3      (.p6.)    0.581    0.018   32.359    0.000    0.581
+  Std.all
+         
+    0.870
+    0.886
+    0.906
+         
+    0.873
+    0.875
+    0.916
+
+Covariances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
+  Positive ~~                                                  
+    Negative         -0.072    0.055   -1.305    0.192   -0.072
+  Std.all
+         
+   -0.072
+
+Intercepts:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
+   .P1      (.16.)    3.153    0.034   92.887    0.000    3.153
+   .P2      (.17.)    2.966    0.035   85.406    0.000    2.966
+   .P3      (.18.)    3.077    0.037   83.037    0.000    3.077
+   .N1      (.19.)    1.697    0.033   50.786    0.000    1.697
+   .N2      (.20.)    1.545    0.031   49.198    0.000    1.545
+   .N3      (.21.)    1.535    0.032   48.359    0.000    1.535
+    Positiv           0.000                               0.000
+    Negativ           0.000                               0.000
+  Std.all
+    4.521
+    4.211
+    4.133
+    2.485
+    2.399
+    2.420
+    0.000
+    0.000
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
+    Positive          1.000                               1.000
+    Negative          1.000                               1.000
+   .P1                0.118    0.012    9.870    0.000    0.118
+   .P2                0.107    0.012    9.109    0.000    0.107
+   .P3                0.099    0.012    7.946    0.000    0.099
+   .N1                0.111    0.011    9.751    0.000    0.111
+   .N2                0.097    0.010    9.681    0.000    0.097
+   .N3                0.065    0.009    7.382    0.000    0.065
+  Std.all
+    1.000
+    1.000
+    0.243
+    0.215
+    0.178
+    0.237
+    0.234
+    0.162
+
+
+Group 2 [8th]:
+
+Latent Variables:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
+  Positive =~                                                  
+    P1      (.p1.)    0.607    0.020   30.559    0.000    0.607
+    P2      (.p2.)    0.624    0.020   30.563    0.000    0.624
+    P3      (.p3.)    0.675    0.021   32.293    0.000    0.675
+  Negative =~                                                  
+    N1      (.p4.)    0.596    0.020   29.973    0.000    0.596
+    N2      (.p5.)    0.564    0.018   31.005    0.000    0.564
+    N3      (.p6.)    0.581    0.018   32.359    0.000    0.581
+  Std.all
+         
+    0.900
+    0.888
+    0.928
+         
+    0.879
+    0.911
+    0.923
+
+Covariances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
+  Positive ~~                                                  
+    Negative         -0.316    0.049   -6.434    0.000   -0.316
+  Std.all
+         
+   -0.316
+
+Intercepts:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
+   .P1      (.16.)    3.153    0.034   92.887    0.000    3.153
+   .P2      (.17.)    2.966    0.035   85.406    0.000    2.966
+   .P3      (.18.)    3.077    0.037   83.037    0.000    3.077
+   .N1      (.19.)    1.697    0.033   50.786    0.000    1.697
+   .N2      (.20.)    1.545    0.031   49.198    0.000    1.545
+   .N3      (.21.)    1.535    0.032   48.359    0.000    1.535
+    Positiv          -0.153    0.076   -2.028    0.043   -0.153
+    Negativ           0.040    0.075    0.527    0.598    0.040
+  Std.all
+    4.680
+    4.222
+    4.230
+    2.502
+    2.497
+    2.440
+   -0.153
+    0.040
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
+    Positive          1.000                               1.000
+    Negative          1.000                               1.000
+   .P1                0.086    0.009    9.277    0.000    0.086
+   .P2                0.104    0.010    9.930    0.000    0.104
+   .P3                0.074    0.010    7.418    0.000    0.074
+   .N1                0.104    0.010   10.299    0.000    0.104
+   .N2                0.065    0.008    8.576    0.000    0.065
+   .N3                0.058    0.008    7.722    0.000    0.058
+  Std.all
+    1.000
+    1.000
+    0.189
+    0.211
+    0.139
+    0.227
+    0.170
+    0.147</code></pre>
+</div>
+<p>What is nice is that the output will label what parameters are constrained. Go ahead and look at the lavaan tutorial for more (residual variances, latent means, etc)</p>
+<h3 id="measurement-invariance-revisited">Measurement invariance revisited</h3>
+<p>Can you see how MI tests are just a special type of multiple group analysis? We could set up our data to have variables assessed at two different time points with the time demarcated by a group variable. The exact same findings from MI would be found with multiple group. It all depends on how you structure your data.</p>
+<h1 id="panelcross-laglongitudinal-path-modelmediation">2. Panel/cross lag/longitudinal path model/mediation</h1>
 <p>Instead of covariances, the key component of this is to examine structural relationships between constructs over time. This can extend to cross-construct associations such as mediational models.</p>
 <p>key concerns: 1. Should the regressions be the same across time? 2. Should the error variances be correlated? 3. Are the loadings the same across time?</p>
 <p>Falling under this designation is the cross-lagged panel model (clpm) – the type of two wave model that josh went off on last time. The concerns of clpms are assuaged when you have more than two assessment points, you measure your variables latently, and/or you account for mean structure.</p>
@@ -3833,7 +5210,7 @@ Variances:
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/semPlot/man/semPaths.html'>semPaths</a></span><span class='op'>(</span><span class='va'>fit.long.path</span>, layout <span class='op'>=</span> <span class='st'>"tree3"</span><span class='op'>)</span>
 </code></pre>
 </div>
-<img src="sem-longitudinal_files/figure-html5/unnamed-chunk-12-1.png" width="624" />
+<img src="sem-longitudinal_files/figure-html5/unnamed-chunk-23-1.png" width="624" />
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='co'>## layout can also be done manually to get publications worthy plots</span>
 </code></pre>
@@ -4154,14 +5531,14 @@ Variances:
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/semPlot/man/semPaths.html'>semPaths</a></span><span class='op'>(</span><span class='va'>fit.long.cross</span><span class='op'>)</span>
 </code></pre>
 </div>
-<p><img src="sem-longitudinal_files/figure-html5/unnamed-chunk-14-1.png" width="624" /></p>
+<p><img src="sem-longitudinal_files/figure-html5/unnamed-chunk-25-1.png" width="624" /></p>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/semPlot/man/semPaths.html'>semPaths</a></span><span class='op'>(</span><span class='va'>fit.long.cross</span>, layout <span class='op'>=</span> <span class='st'>"tree3"</span><span class='op'>)</span>
 </code></pre>
 </div>
-<p><img src="sem-longitudinal_files/figure-html5/unnamed-chunk-15-1.png" width="624" /></p>
+<p><img src="sem-longitudinal_files/figure-html5/unnamed-chunk-26-1.png" width="624" /></p>
 </div>
 <h3 id="longitudinal-mediation-model">Longitudinal mediation model</h3>
 <p>An extension of this model is to introduce indirect pathways. Indirect pathways are equivalent with mediational pathways. The calculation of indirect pathways are done through what is known as the tracing rules. The coefficients along each path are multiplied together; those products are them summed across different tracings or paths. In short, one finds the sum of all compound paths between two variables.</p>
@@ -4637,11 +6014,11 @@ Defined Parameters:
 <p>Third, do you want to control at the latent level or at the level of the indicators?</p>
 <p>It is potential defensible to: 1. only control for the DV or focal association. 2. only control for initial time. 3. control at all time points 4 control for only downstream timepoints ie those predicted by another variable. Each of these have different interpretation for how you think the covariates could influence the model.</p>
 <p>I would suggest 1. try to use covariates as closely as possible to your theoretical model and 2. not to over control. Remember that statistical models can be both too liberal (you get an asterisk, everyone gets an asterisk!) and too conservative (this one of many reasons why Josh dislikes correcting for type 1 error). The goal is to be accurate. Try them multiple ways.</p>
-<h2 id="growth-models">3. Growth models</h2>
+<h1 id="growth-models">3. Growth models</h1>
 <p>The above models are well suited to address between subjects questions, but does not get at a within subjects questions at all. There are some that can separate these effects, which we will turn to in a few weeks. However, we will start with the most basic model, the model you are familiar with, the growth model.</p>
 <p>The implementation of growth models in an SEM framework is very similar to the HLM framework. The major differences is how time is treated. Here, time variables must be the same for everyone in that each assessment point must have a particular variable name associated with it. That is, time is considered categorical in SEM, whereas in MLM it could be treated continuously. This requirement also makes a differences in how our data need to be structured. Whereas previously we had a time variable, now we indirectly include time into our model by specifying when variables were assessed. This has the consequence of necessitating a wide format, as opposed to the long format of MLM.</p>
 <p>Other than time, the idea behind the growth model is exactly the same.</p>
-<h3 id="coding-time">Coding time</h3>
+<h2 id="coding-time">Coding time</h2>
 <p>One key these models is how you code time. Because we are working with qualitative time rather than continuous everyone has to have the same time structure.</p>
 <p>Let’s use the long dataset from the previous Bayesian workshop, taken from chapter 4 of Singer and Willet. It is a three wave longitudinal study of adolescents. We are looking at alcohol use during the previous year, measured from 0 - 7. COA is a variable indicating the child’s parents are alcoholics.</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -4740,7 +6117,7 @@ Variances:
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/semPlot/man/semPaths.html'>semPaths</a></span><span class='op'>(</span><span class='va'>fit.1</span><span class='op'>)</span>
 </code></pre>
 </div>
-<p><img src="sem-longitudinal_files/figure-html5/unnamed-chunk-20-1.png" width="624" /></p>
+<p><img src="sem-longitudinal_files/figure-html5/unnamed-chunk-31-1.png" width="624" /></p>
 </div>
 <p>How do we define these two latent factors? They are going to be made up of our repeated measures. We then add constraints on the loadings to force the latent variables to be interpreted how we want them to be interpreted.</p>
 <p>As before, the simplest way to think of the intercept is the initial value. While the slope indexes change. To obtain that, we will constrain the loadings to the intercept to be 1 for all repeated measures. This will obtain what is <em>constant</em> across time.</p>
@@ -4880,7 +6257,7 @@ age_14 -0.441</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/semPlot/man/semPaths.html'>semPaths</a></span><span class='op'>(</span><span class='va'>fit.1</span>, <span class='st'>'est'</span><span class='op'>)</span>
 </code></pre>
 </div>
-<p><img src="sem-longitudinal_files/figure-html5/unnamed-chunk-24-1.png" width="624" /></p>
+<p><img src="sem-longitudinal_files/figure-html5/unnamed-chunk-35-1.png" width="624" /></p>
 </div>
 <h3 id="we-can-rescale-our-time-variable-to-be-whatever-we-want">we can rescale our time variable to be whatever we want</h3>
 <div class="layout-chunk" data-layout="l-body">
@@ -4944,7 +6321,7 @@ Variances:
     s                 0.936    0.334    2.803    0.005</code></pre>
 </div>
 <p>This does not change our conclusions but it does change our numnbers.</p>
-<h3 id="interpretation-of-variances">Interpretation of variances</h3>
+<h2 id="interpretation-of-variances">Interpretation of variances</h2>
 <p>Intercept will reflect our fixed effects whereas our random effects are indexed by variances of the latent variables. These are interpreted the same as before. More variance means that more people differ from the fixed effect.</p>
 <p>In MLM we assumed that the residual variances were equal. Here we can better model if that is the case. Right now we are able to fit separate variances for each repeated measure. These residual variances are interpreted as what is left over or what is unique at each time point that cannot be explained by the trajectory.</p>
 <h3 id="constraining-slope-to-be-fixed-only">constraining slope to be fixed only</h3>
@@ -5011,7 +6388,7 @@ Variances:
    .alcuse_16         0.692    0.138    5.003    0.000
     i                 0.541    0.147    3.676    0.000</code></pre>
 </div>
-<h3 id="introducing-covariatespredictors">introducing covariates/predictors</h3>
+<h2 id="introducing-covariatespredictors">introducing covariates/predictors</h2>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='co'># a linear growth model with a time invariatnt covariate</span>
@@ -5237,1210 +6614,7 @@ Variances:
 </div>
 </div>
 <p>How do we interpet tvcs?</p>
-<h3 id="latent-basis-model">latent basis model</h3>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>model.6</span> <span class='op'>&lt;-</span> <span class='st'>'  i =~ 1*alcuse_14 + 1*alcuse_15 + 1*alcuse_16 
-            s =~ 0*alcuse_14 + alcuse_15 + 1*alcuse_16
-              
-'</span>
-
-<span class='va'>fit.6</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lavaan/man/growth.html'>growth</a></span><span class='op'>(</span><span class='va'>model.6</span>, data <span class='op'>=</span> <span class='va'>alcohol.wide</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>fit.6</span><span class='op'>)</span>
-</code></pre>
-</div>
-<pre><code>lavaan 0.6-8 ended normally after 30 iterations
-
-  Estimator                                         ML
-  Optimization method                           NLMINB
-  Number of model parameters                         9
-                                                      
-  Number of observations                            82
-                                                      
-Model Test User Model:
-                                                      
-  Test statistic                                 0.000
-  Degrees of freedom                                 0
-
-Parameter Estimates:
-
-  Standard errors                             Standard
-  Information                                 Expected
-  Information saturated (h1) model          Structured
-
-Latent Variables:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)
-  i =~                                                
-    alcuse_14         1.000                           
-    alcuse_15         1.000                           
-    alcuse_16         1.000                           
-  s =~                                                
-    alcuse_14         0.000                           
-    alcuse_15         0.615    0.150    4.091    0.000
-    alcuse_16         1.000                           
-
-Covariances:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)
-  i ~~                                                
-    s                -0.488    0.326   -1.497    0.134
-
-Intercepts:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)
-   .alcuse_14         0.000                           
-   .alcuse_15         0.000                           
-   .alcuse_16         0.000                           
-    i                 0.630    0.103    6.118    0.000
-    s                 0.541    0.125    4.334    0.000
-
-Variances:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)
-   .alcuse_14        -0.049    0.275   -0.179    0.858
-   .alcuse_15         0.406    0.097    4.187    0.000
-   .alcuse_16         0.383    0.191    2.005    0.045
-    i                 0.920    0.310    2.968    0.003
-    s                 0.945    0.361    2.618    0.009</code></pre>
-</div>
-<p>Does not change the fit of the model nor the implied means, but it can change your parameters by changing the time scaling.</p>
-<h3 id="quadratic-model">quadratic model</h3>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>model.6</span> <span class='op'>&lt;-</span> <span class='st'>'  i =~ 1*alcuse_14 + 1*alcuse_15 + 1*alcuse_16 
-            s =~ 0*alcuse_14 + 1*alcuse_15 + 2*alcuse_16
-            q =~ 0*alcuse_14 + 1*alcuse_15 + 4*alcuse_16  
-'</span>
-
-<span class='va'>fit.6</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lavaan/man/growth.html'>growth</a></span><span class='op'>(</span><span class='va'>model.6</span>, data <span class='op'>=</span> <span class='va'>alcohol.wide</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>fit.6</span><span class='op'>)</span>
-</code></pre>
-</div>
-</div>
-<h2 id="b-second-order-growth-model">3.b Second order growth model</h2>
-<p>Repeated measures are latent. Why would we want to do this? At least two reasons. 1. We can take advantage of the benefits of latent variables ie no measurement error. 2. we can impose constraints for MI across time.</p>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>sec.order</span> <span class='op'>&lt;-</span> <span class='st'>'
-## define latent variables
-Pos1 =~ NA*PosAFF11 + L1*PosAFF11 + L2*PosAFF21 + L3*PosAFF31
-Pos2 =~ NA*PosAFF12 + L1*PosAFF12 + L2*PosAFF22 + L3*PosAFF32
-Pos3 =~ NA*PosAFF13 + L1*PosAFF13 + L2*PosAFF23 + L3*PosAFF33
-
-## intercepts
-PosAFF11 ~ t1*1
-PosAFF21 ~ t2*1
-PosAFF31 ~ t3*1
-
-PosAFF12 ~ t1*1
-PosAFF22 ~ t2*1
-PosAFF32 ~ t3*1
-
-PosAFF13 ~ t1*1
-PosAFF23 ~ t2*1
-PosAFF33 ~ t3*1
-
-
-## correlated residuals across time
-PosAFF11 ~~ PosAFF12 + PosAFF13
-PosAFF12 ~~ PosAFF13
-PosAFF21 ~~ PosAFF22 + PosAFF23
-PosAFF22 ~~ PosAFF23
-PosAFF31 ~~ PosAFF32 + PosAFF33
-PosAFF32 ~~ PosAFF33
-
-
-## latent variable intercepts
-Pos1 ~ 0*1
-Pos2  ~ 0*1
-Pos3  ~ 0*1
-
-#model constraints for effect coding
-## loadings must average to 1
-L1 == 3 - L2 - L3
-## means must average to 0
-t1 == 0 - t2 - t3
-
-i =~ 1*Pos1 + 1*Pos2 + 1*Pos3 
-s =~ 0*Pos1 + 1*Pos2 + 2*Pos3 '</span>
-
-
-<span class='va'>fit.sec.order</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lavaan/man/growth.html'>growth</a></span><span class='op'>(</span><span class='va'>sec.order</span>, data<span class='op'>=</span><span class='va'>long</span>, missing <span class='op'>=</span> <span class='st'>"ML"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>fit.sec.order</span>, fit.measures<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
-</code></pre>
-</div>
-<pre><code>lavaan 0.6-8 ended normally after 99 iterations
-
-  Estimator                                         ML
-  Optimization method                           NLMINB
-  Number of model parameters                        44
-  Number of equality constraints                    14
-                                                      
-  Number of observations                           368
-  Number of missing patterns                         1
-                                                      
-Model Test User Model:
-                                                      
-  Test statistic                                30.254
-  Degrees of freedom                                24
-  P-value (Chi-square)                           0.176
-
-Model Test Baseline Model:
-
-  Test statistic                              2688.088
-  Degrees of freedom                                36
-  P-value                                        0.000
-
-User Model versus Baseline Model:
-
-  Comparative Fit Index (CFI)                    0.998
-  Tucker-Lewis Index (TLI)                       0.996
-
-Loglikelihood and Information Criteria:
-
-  Loglikelihood user model (H0)              -2051.451
-  Loglikelihood unrestricted model (H1)      -2036.324
-                                                      
-  Akaike (AIC)                                4162.902
-  Bayesian (BIC)                              4280.145
-  Sample-size adjusted Bayesian (BIC)         4184.966
-
-Root Mean Square Error of Approximation:
-
-  RMSEA                                          0.027
-  90 Percent confidence interval - lower         0.000
-  90 Percent confidence interval - upper         0.053
-  P-value RMSEA &lt;= 0.05                          0.926
-
-Standardized Root Mean Square Residual:
-
-  SRMR                                           0.025
-
-Parameter Estimates:
-
-  Standard errors                             Standard
-  Information                                 Observed
-  Observed information based on                Hessian
-
-Latent Variables:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)
-  Pos1 =~                                             
-    PosAFF11  (L1)    0.950    0.014   68.551    0.000
-    PosAFF21  (L2)    1.018    0.015   69.038    0.000
-    PosAFF31  (L3)    1.033    0.014   73.342    0.000
-  Pos2 =~                                             
-    PosAFF12  (L1)    0.950    0.014   68.551    0.000
-    PosAFF22  (L2)    1.018    0.015   69.038    0.000
-    PosAFF32  (L3)    1.033    0.014   73.342    0.000
-  Pos3 =~                                             
-    PosAFF13  (L1)    0.950    0.014   68.551    0.000
-    PosAFF23  (L2)    1.018    0.015   69.038    0.000
-    PosAFF33  (L3)    1.033    0.014   73.342    0.000
-  i =~                                                
-    Pos1              1.000                           
-    Pos2              1.000                           
-    Pos3              1.000                           
-  s =~                                                
-    Pos1              0.000                           
-    Pos2              1.000                           
-    Pos3              2.000                           
-
-Covariances:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)
- .PosAFF11 ~~                                         
-   .PosAFF12          0.003    0.007    0.465    0.642
-   .PosAFF13          0.000    0.007    0.029    0.977
- .PosAFF12 ~~                                         
-   .PosAFF13          0.002    0.006    0.306    0.759
- .PosAFF21 ~~                                         
-   .PosAFF22          0.006    0.008    0.716    0.474
-   .PosAFF23          0.004    0.008    0.520    0.603
- .PosAFF22 ~~                                         
-   .PosAFF23          0.011    0.007    1.518    0.129
- .PosAFF31 ~~                                         
-   .PosAFF32          0.008    0.007    1.159    0.247
-   .PosAFF33          0.017    0.007    2.253    0.024
- .PosAFF32 ~~                                         
-   .PosAFF33          0.005    0.006    0.791    0.429
-  i ~~                                                
-    s                -0.052    0.023   -2.216    0.027
-
-Intercepts:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)
-   .PosAFF11  (t1)    0.210    0.045    4.645    0.000
-   .PosAFF21  (t2)   -0.161    0.048   -3.344    0.001
-   .PosAFF31  (t3)   -0.049    0.046   -1.067    0.286
-   .PosAFF12  (t1)    0.210    0.045    4.645    0.000
-   .PosAFF22  (t2)   -0.161    0.048   -3.344    0.001
-   .PosAFF32  (t3)   -0.049    0.046   -1.067    0.286
-   .PosAFF13  (t1)    0.210    0.045    4.645    0.000
-   .PosAFF23  (t2)   -0.161    0.048   -3.344    0.001
-   .PosAFF33  (t3)   -0.049    0.046   -1.067    0.286
-   .Pos1              0.000                           
-   .Pos2              0.000                           
-   .Pos3              0.000                           
-    i                 3.192    0.034   92.584    0.000
-    s                 0.019    0.018    1.016    0.310
-
-Variances:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)
-   .PosAFF11          0.101    0.011    9.101    0.000
-   .PosAFF21          0.125    0.013    9.479    0.000
-   .PosAFF31          0.097    0.012    8.170    0.000
-   .PosAFF12          0.086    0.009    9.536    0.000
-   .PosAFF22          0.107    0.011    9.917    0.000
-   .PosAFF32          0.061    0.009    7.052    0.000
-   .PosAFF13          0.072    0.008    8.770    0.000
-   .PosAFF23          0.101    0.010    9.655    0.000
-   .PosAFF33          0.083    0.009    8.716    0.000
-   .Pos1              0.196    0.043    4.553    0.000
-   .Pos2              0.207    0.023    9.132    0.000
-   .Pos3              0.129    0.034    3.767    0.000
-    i                 0.245    0.044    5.627    0.000
-    s                 0.029    0.019    1.542    0.123
-
-Constraints:
-                                               |Slack|
-    L1 - (3-L2-L3)                               0.000
-    t1 - (0-t2-t3)                               0.000</code></pre>
-</div>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/semPlot/man/semPaths.html'>semPaths</a></span><span class='op'>(</span><span class='va'>fit.sec.order</span><span class='op'>)</span>
-</code></pre>
-</div>
-<p><img src="sem-longitudinal_files/figure-html5/unnamed-chunk-34-1.png" width="624" /></p>
-</div>
-<h2 id="c-multivariate-models">3.c Multivariate models</h2>
-<p>For all of the models this semester we have focused only on a single outcome.</p>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>mv.sec.order</span> <span class='op'>&lt;-</span> <span class='st'>[1478 chars quoted with ''']</span>
-
-
-<span class='va'>mv.secondorder</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lavaan/man/growth.html'>growth</a></span><span class='op'>(</span><span class='va'>mv.sec.order</span>, data<span class='op'>=</span><span class='va'>long</span>, missing <span class='op'>=</span> <span class='st'>"ML"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>mv.secondorder</span>, fit.measures<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
-</code></pre>
-</div>
-<pre><code>lavaan 0.6-8 ended normally after 189 iterations
-
-  Estimator                                         ML
-  Optimization method                           NLMINB
-  Number of model parameters                        92
-  Number of equality constraints                    28
-                                                      
-  Number of observations                           368
-  Number of missing patterns                         1
-                                                      
-Model Test User Model:
-                                                      
-  Test statistic                               248.244
-  Degrees of freedom                               125
-  P-value (Chi-square)                           0.000
-
-Model Test Baseline Model:
-
-  Test statistic                              5253.085
-  Degrees of freedom                               153
-  P-value                                        0.000
-
-User Model versus Baseline Model:
-
-  Comparative Fit Index (CFI)                    0.976
-  Tucker-Lewis Index (TLI)                       0.970
-
-Loglikelihood and Information Criteria:
-
-  Loglikelihood user model (H0)              -3124.754
-  Loglikelihood unrestricted model (H1)      -3000.632
-                                                      
-  Akaike (AIC)                                6377.508
-  Bayesian (BIC)                              6627.625
-  Sample-size adjusted Bayesian (BIC)         6424.576
-
-Root Mean Square Error of Approximation:
-
-  RMSEA                                          0.052
-  90 Percent confidence interval - lower         0.042
-  90 Percent confidence interval - upper         0.061
-  P-value RMSEA &lt;= 0.05                          0.367
-
-Standardized Root Mean Square Residual:
-
-  SRMR                                           0.060
-
-Parameter Estimates:
-
-  Standard errors                             Standard
-  Information                                 Observed
-  Observed information based on                Hessian
-
-Latent Variables:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)
-  Pos1 =~                                             
-    PosAFF11  (L1)    0.948    0.014   68.484    0.000
-    PosAFF21  (L2)    1.015    0.015   68.707    0.000
-    PosAFF31  (L3)    1.037    0.014   73.770    0.000
-  Pos2 =~                                             
-    PosAFF12  (L1)    0.948    0.014   68.484    0.000
-    PosAFF22  (L2)    1.015    0.015   68.707    0.000
-    PosAFF32  (L3)    1.037    0.014   73.770    0.000
-  Pos3 =~                                             
-    PosAFF13  (L1)    0.948    0.014   68.484    0.000
-    PosAFF23  (L2)    1.015    0.015   68.707    0.000
-    PosAFF33  (L3)    1.037    0.014   73.770    0.000
-  Neg1 =~                                             
-    NegAFF11  (L4)    1.029    0.018   58.212    0.000
-    NegAFF21  (L5)    0.959    0.017   55.123    0.000
-    NegAFF31  (L6)    1.011    0.016   62.776    0.000
-  Neg2 =~                                             
-    NegAFF12  (L4)    1.029    0.018   58.212    0.000
-    NegAFF22  (L5)    0.959    0.017   55.123    0.000
-    NegAFF32  (L6)    1.011    0.016   62.776    0.000
-  Neg3 =~                                             
-    NegAFF13  (L4)    1.029    0.018   58.212    0.000
-    NegAFF23  (L5)    0.959    0.017   55.123    0.000
-    NegAFF33  (L6)    1.011    0.016   62.776    0.000
-  i.p =~                                              
-    Pos1              1.000                           
-    Pos2              1.000                           
-    Pos3              1.000                           
-  s.p =~                                              
-    Pos1              0.000                           
-    Pos2              1.000                           
-    Pos3              2.000                           
-  i.n =~                                              
-    Neg1              1.000                           
-    Neg2              1.000                           
-    Neg3              1.000                           
-  s.n =~                                              
-    Neg1              0.000                           
-    Neg2              1.000                           
-    Neg3              2.000                           
-
-Covariances:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)
- .PosAFF11 ~~                                         
-   .PosAFF12          0.004    0.007    0.581    0.561
-   .PosAFF13         -0.001    0.007   -0.091    0.927
- .PosAFF12 ~~                                         
-   .PosAFF13          0.002    0.006    0.324    0.746
- .PosAFF21 ~~                                         
-   .PosAFF22          0.008    0.008    0.969    0.333
-   .PosAFF23          0.006    0.008    0.772    0.440
- .PosAFF22 ~~                                         
-   .PosAFF23          0.012    0.007    1.608    0.108
- .PosAFF31 ~~                                         
-   .PosAFF32          0.005    0.007    0.768    0.443
-   .PosAFF33          0.016    0.007    2.126    0.034
- .PosAFF32 ~~                                         
-   .PosAFF33          0.004    0.006    0.695    0.487
- .NegAFF11 ~~                                         
-   .NegAFF12          0.006    0.006    1.048    0.294
-   .NegAFF13          0.006    0.006    0.998    0.318
- .NegAFF12 ~~                                         
-   .NegAFF13          0.007    0.005    1.492    0.136
- .NegAFF21 ~~                                         
-   .NegAFF22          0.015    0.004    3.263    0.001
-   .NegAFF23          0.010    0.005    2.168    0.030
- .NegAFF22 ~~                                         
-   .NegAFF23          0.011    0.003    3.235    0.001
- .NegAFF31 ~~                                         
-   .NegAFF32         -0.006    0.004   -1.577    0.115
-   .NegAFF33         -0.008    0.004   -1.793    0.073
- .NegAFF32 ~~                                         
-   .NegAFF33         -0.002    0.003   -0.674    0.500
-  i.p ~~                                              
-    s.p              -0.036    0.022   -1.581    0.114
-    i.n              -0.151    0.019   -7.794    0.000
-    s.n               0.054    0.010    5.454    0.000
-  s.p ~~                                              
-    i.n               0.063    0.010    6.314    0.000
-    s.n              -0.036    0.005   -6.625    0.000
-  i.n ~~                                              
-    s.n              -0.035    0.012   -2.880    0.004
-
-Intercepts:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)
-   .PosAFF11  (t1)    0.216    0.045    4.791    0.000
-   .PosAFF21  (t2)   -0.154    0.048   -3.187    0.001
-   .PosAFF31  (t3)   -0.063    0.046   -1.365    0.172
-   .PosAFF12  (t1)    0.216    0.045    4.791    0.000
-   .PosAFF22  (t2)   -0.154    0.048   -3.187    0.001
-   .PosAFF32  (t3)   -0.063    0.046   -1.365    0.172
-   .PosAFF13  (t1)    0.216    0.045    4.791    0.000
-   .PosAFF23  (t2)   -0.154    0.048   -3.187    0.001
-   .PosAFF33  (t3)   -0.063    0.046   -1.365    0.172
-   .NegAFF11 (tt1)    0.039    0.025    1.553    0.120
-   .NegAFF21 (tt2)    0.018    0.025    0.716    0.474
-   .NegAFF31 (tt3)   -0.056    0.023   -2.497    0.013
-   .NegAFF12 (tt1)    0.039    0.025    1.553    0.120
-   .NegAFF22 (tt2)    0.018    0.025    0.716    0.474
-   .NegAFF32 (tt3)   -0.056    0.023   -2.497    0.013
-   .NegAFF13 (tt1)    0.039    0.025    1.553    0.120
-   .NegAFF23 (tt2)    0.018    0.025    0.716    0.474
-   .NegAFF33 (tt3)   -0.056    0.023   -2.497    0.013
-   .Pos1              0.000                           
-   .Pos2              0.000                           
-   .Pos3              0.000                           
-   .Neg1              0.000                           
-   .Neg2              0.000                           
-   .Neg3              0.000                           
-    i.p               3.193    0.035   92.501    0.000
-    s.p               0.018    0.018    0.996    0.319
-    i.n               1.414    0.027   52.911    0.000
-    s.n              -0.047    0.015   -3.271    0.001
-
-Variances:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)
-   .PosAFF11          0.103    0.011    9.281    0.000
-   .PosAFF21          0.129    0.013    9.683    0.000
-   .PosAFF31          0.092    0.012    7.837    0.000
-   .PosAFF12          0.086    0.009    9.582    0.000
-   .PosAFF22          0.109    0.011   10.042    0.000
-   .PosAFF32          0.059    0.009    6.869    0.000
-   .PosAFF13          0.073    0.008    8.877    0.000
-   .PosAFF23          0.101    0.010    9.715    0.000
-   .PosAFF33          0.081    0.009    8.640    0.000
-   .NegAFF11          0.105    0.011   10.019    0.000
-   .NegAFF21          0.086    0.009    9.635    0.000
-   .NegAFF31          0.061    0.008    7.271    0.000
-   .NegAFF12          0.060    0.006   10.358    0.000
-   .NegAFF22          0.042    0.005    9.127    0.000
-   .NegAFF32          0.032    0.004    7.515    0.000
-   .NegAFF13          0.085    0.008   10.966    0.000
-   .NegAFF23          0.045    0.005    8.959    0.000
-   .NegAFF33          0.036    0.005    7.399    0.000
-   .Pos1              0.234    0.041    5.641    0.000
-   .Pos2              0.190    0.021    9.025    0.000
-   .Pos3              0.157    0.034    4.600    0.000
-   .Neg1              0.148    0.022    6.683    0.000
-   .Neg2              0.054    0.008    6.944    0.000
-   .Neg3              0.084    0.015    5.626    0.000
-    i.p               0.223    0.041    5.464    0.000
-    s.p               0.013    0.018    0.686    0.493
-    i.n               0.140    0.022    6.382    0.000
-    s.n               0.010    0.009    1.108    0.268
-
-Constraints:
-                                               |Slack|
-    L1 - (3-L2-L3)                               0.000
-    L4 - (3-L5-L6)                               0.000
-    t1 - (0-t2-t3)                               0.000
-    tt1 - (0-tt2-tt3)                            0.000</code></pre>
-</div>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/semPlot/man/semPaths.html'>semPaths</a></span><span class='op'>(</span><span class='va'>mv.secondorder</span><span class='op'>)</span>
-</code></pre>
-</div>
-<p><img src="sem-longitudinal_files/figure-html5/unnamed-chunk-36-1.png" width="624" /></p>
-</div>
-<h2 id="d-factor-of-curves-model">3.d Factor of curves model</h2>
-<p>This type of model takes multiple slope terms and asks is there a latent variable associated with the change?</p>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>i.a <span class="ot">=</span><span class="er">~</span> <span class="dv">1</span><span class="sc">*</span>Pos1 <span class="sc">+</span> <span class="dv">1</span><span class="sc">*</span>Pos2 <span class="sc">+</span> <span class="dv">1</span><span class="sc">*</span>Pos3 </span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>s.a <span class="ot">=</span><span class="er">~</span> <span class="dv">0</span><span class="sc">*</span>Pos1 <span class="sc">+</span> <span class="dv">1</span><span class="sc">*</span>Pos2 <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span>Pos3</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>i.b <span class="ot">=</span><span class="er">~</span> <span class="dv">1</span><span class="sc">*</span>Neg1 <span class="sc">+</span> <span class="dv">1</span><span class="sc">*</span>Neg2 <span class="sc">+</span> <span class="dv">1</span><span class="sc">*</span>Neg3 </span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>s.b <span class="ot">=</span><span class="er">~</span> <span class="dv">0</span><span class="sc">*</span>Neg1 <span class="sc">+</span> <span class="dv">1</span><span class="sc">*</span>Neg2 <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span>Neg3</span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>i.c <span class="ot">=</span><span class="er">~</span> <span class="dv">1</span><span class="sc">*</span>hap1 <span class="sc">+</span> <span class="dv">1</span><span class="sc">*</span>hap2 <span class="sc">+</span> <span class="dv">1</span><span class="sc">*</span>hap3 </span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>s.c <span class="ot">=</span><span class="er">~</span> <span class="dv">0</span><span class="sc">*</span>hap1 <span class="sc">+</span> <span class="dv">1</span><span class="sc">*</span>hap2 <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span>hap3</span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>i.d <span class="ot">=</span><span class="er">~</span> <span class="dv">1</span><span class="sc">*</span>Arou1 <span class="sc">+</span> <span class="dv">1</span><span class="sc">*</span>Arou2 <span class="sc">+</span> <span class="dv">1</span><span class="sc">*</span>Arou3 </span>
-<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>s.d <span class="ot">=</span><span class="er">~</span> <span class="dv">0</span><span class="sc">*</span>Arou1 <span class="sc">+</span> <span class="dv">1</span><span class="sc">*</span>Arou2 <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span>Arou3</span>
-<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a><span class="co">#Note that there are no constraints on these</span></span>
-<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>Intercept <span class="ot">=</span><span class="er">~</span> i.a <span class="sc">+</span> i.b <span class="sc">+</span> i.c <span class="sc">+</span> i.d </span>
-<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>Slope <span class="ot">=</span><span class="er">~</span> s.a <span class="sc">+</span> s.b <span class="sc">+</span> s.c <span class="sc">+</span> s.d </span>
-<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a><span class="st">&#39;</span></span></code></pre></div>
-</div>
-<h2 id="multiple-groups">4. Multiple groups</h2>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>group</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readr.tidyverse.org/reference/read_delim.html'>read_csv</a></span><span class='op'>(</span><span class='st'>"~/Box/5165 Applied Longitudinal Data Analysis/Longitudinal/group.csv"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>group</span><span class='op'>)</span>
-</code></pre>
-</div>
-<pre><code># A tibble: 6 x 7
-     P1    P2    P3    N1    N2    N3 Grade
-  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;
-1  2.75  3.42  3.27 1.71  1.45  1.76  7th  
-2  4.18  3.49  3.36 3.43  2.70  2.48  7th  
-3  2.17  2.69  2.90 1.06  0.726 1.15  7th  
-4  2.68  2.88  3.28 0.846 1.22  0.293 7th  
-5  1.41  1.83  1.64 2.18  2.73  2.47  7th  
-6  3.96  4.03  4.21 1.80  1.72  1.71  7th  </code></pre>
-</div>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>group1</span> <span class='op'>&lt;-</span> <span class='st'>'Positive =~ P1 + P2 + P3
-Negative =~ N1 + N2 + N3 
-
-Positive ~~ 1*Positive
-Negative ~~ 1*Negative
-
-Positive ~~ Negative
-'</span>
-
-<span class='va'>fit.group.1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lavaan/man/cfa.html'>cfa</a></span><span class='op'>(</span><span class='va'>group1</span>, data<span class='op'>=</span><span class='va'>group</span>, std.lv<span class='op'>=</span><span class='cn'>TRUE</span>, group <span class='op'>=</span> <span class='st'>"Grade"</span><span class='op'>)</span>
-
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>fit.group.1</span>, standardized<span class='op'>=</span><span class='cn'>TRUE</span>, fit.measures<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
-</code></pre>
-</div>
-<pre><code>lavaan 0.6-8 ended normally after 42 iterations
-
-  Estimator                                         ML
-  Optimization method                           NLMINB
-  Number of model parameters                        38
-                                                      
-  Number of observations per group:                   
-    7th                                            380
-    8th                                            379
-                                                      
-Model Test User Model:
-                                                      
-  Test statistic                                46.102
-  Degrees of freedom                                16
-  P-value (Chi-square)                           0.000
-  Test statistic for each group:
-    7th                                         17.124
-    8th                                         28.978
-
-Model Test Baseline Model:
-
-  Test statistic                              3598.760
-  Degrees of freedom                                30
-  P-value                                        0.000
-
-User Model versus Baseline Model:
-
-  Comparative Fit Index (CFI)                    0.992
-  Tucker-Lewis Index (TLI)                       0.984
-
-Loglikelihood and Information Criteria:
-
-  Loglikelihood user model (H0)              -2901.633
-  Loglikelihood unrestricted model (H1)      -2878.582
-                                                      
-  Akaike (AIC)                                5879.267
-  Bayesian (BIC)                              6055.283
-  Sample-size adjusted Bayesian (BIC)         5934.617
-
-Root Mean Square Error of Approximation:
-
-  RMSEA                                          0.070
-  90 Percent confidence interval - lower         0.047
-  90 Percent confidence interval - upper         0.095
-  P-value RMSEA &lt;= 0.05                          0.072
-
-Standardized Root Mean Square Residual:
-
-  SRMR                                           0.029
-
-Parameter Estimates:
-
-  Standard errors                             Standard
-  Information                                 Expected
-  Information saturated (h1) model          Structured
-
-
-Group 1 [7th]:
-
-Latent Variables:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
-  Positive =~                                                  
-    P1                0.571    0.028   20.208    0.000    0.571
-    P2                0.605    0.029   21.201    0.000    0.605
-    P3                0.628    0.029   21.416    0.000    0.628
-  Negative =~                                                  
-    N1                0.634    0.029   21.640    0.000    0.634
-    N2                0.585    0.027   21.458    0.000    0.585
-    N3                0.599    0.026   22.814    0.000    0.599
-  Std.all
-         
-    0.856
-    0.884
-    0.890
-         
-    0.888
-    0.884
-    0.918
-
-Covariances:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
-  Positive ~~                                                  
-    Negative         -0.069    0.056   -1.249    0.212   -0.069
-  Std.all
-         
-   -0.069
-
-Intercepts:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
-   .P1                3.136    0.034   91.663    0.000    3.136
-   .P2                2.991    0.035   85.211    0.000    2.991
-   .P3                3.069    0.036   84.777    0.000    3.069
-   .N1                1.701    0.037   46.482    0.000    1.701
-   .N2                1.527    0.034   44.944    0.000    1.527
-   .N3                1.545    0.033   46.195    0.000    1.545
-    Positive          0.000                               0.000
-    Negative          0.000                               0.000
-  Std.all
-    4.702
-    4.371
-    4.349
-    2.384
-    2.306
-    2.370
-    0.000
-    0.000
-
-Variances:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
-    Positive          1.000                               1.000
-    Negative          1.000                               1.000
-   .P1                0.119    0.012    9.705    0.000    0.119
-   .P2                0.102    0.012    8.337    0.000    0.102
-   .P3                0.103    0.013    8.006    0.000    0.103
-   .N1                0.107    0.012    9.214    0.000    0.107
-   .N2                0.096    0.010    9.468    0.000    0.096
-   .N3                0.067    0.009    7.307    0.000    0.067
-  Std.all
-    1.000
-    1.000
-    0.267
-    0.218
-    0.207
-    0.211
-    0.219
-    0.157
-
-
-Group 2 [8th]:
-
-Latent Variables:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
-  Positive =~                                                  
-    P1                0.638    0.028   22.652    0.000    0.638
-    P2                0.639    0.029   21.938    0.000    0.639
-    P3                0.713    0.030   23.800    0.000    0.713
-  Negative =~                                                  
-    N1                0.562    0.027   20.758    0.000    0.562
-    N2                0.544    0.024   22.313    0.000    0.544
-    N3                0.565    0.025   22.927    0.000    0.565
-  Std.all
-         
-    0.909
-    0.892
-    0.937
-         
-    0.865
-    0.906
-    0.921
-
-Covariances:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
-  Positive ~~                                                  
-    Negative         -0.321    0.050   -6.454    0.000   -0.321
-  Std.all
-         
-   -0.321
-
-Intercepts:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
-   .P1                3.073    0.036   85.224    0.000    3.073
-   .P2                2.847    0.037   77.322    0.000    2.847
-   .P3                2.979    0.039   76.197    0.000    2.979
-   .N1                1.717    0.033   51.485    0.000    1.717
-   .N2                1.580    0.031   51.175    0.000    1.580
-   .N3                1.550    0.032   49.195    0.000    1.550
-    Positive          0.000                               0.000
-    Negative          0.000                               0.000
-  Std.all
-    4.378
-    3.972
-    3.914
-    2.645
-    2.629
-    2.527
-    0.000
-    0.000
-
-Variances:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
-    Positive          1.000                               1.000
-    Negative          1.000                               1.000
-   .P1                0.085    0.009    9.009    0.000    0.085
-   .P2                0.105    0.011   10.032    0.000    0.105
-   .P3                0.071    0.010    6.908    0.000    0.071
-   .N1                0.106    0.010   10.403    0.000    0.106
-   .N2                0.065    0.008    8.293    0.000    0.065
-   .N3                0.057    0.008    7.233    0.000    0.057
-  Std.all
-    1.000
-    1.000
-    0.173
-    0.205
-    0.123
-    0.252
-    0.180
-    0.152</code></pre>
-</div>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/semPlot/man/semPaths.html'>semPaths</a></span><span class='op'>(</span><span class='va'>fit.group.1</span>,<span class='st'>'est'</span>, panelGroups<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
-</code></pre>
-</div>
-<p><img src="sem-longitudinal_files/figure-html5/unnamed-chunk-40-1.png" width="624" /></p>
-</div>
-<p>Need to put in labels to fix the different parameters across models</p>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>group2</span> <span class='op'>&lt;-</span> <span class='st'>'Positive =~ c(L1,L1)*P1 + c(L2,L2)*P2 + c(L3,L3)*P3
-Negative =~ N1 + N2 + N3 
-
-Positive ~~ 1*Positive
-Negative ~~ 1*Negative
-
-Positive ~~ Negative
-'</span>
-
-<span class='va'>fit.group.2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lavaan/man/cfa.html'>cfa</a></span><span class='op'>(</span><span class='va'>group2</span>, data<span class='op'>=</span><span class='va'>group</span>, std.lv<span class='op'>=</span><span class='cn'>TRUE</span>, group <span class='op'>=</span> <span class='st'>"Grade"</span><span class='op'>)</span>
-
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>fit.group.2</span>, standardized<span class='op'>=</span><span class='cn'>TRUE</span>, fit.measures<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
-</code></pre>
-</div>
-<pre><code>lavaan 0.6-8 ended normally after 41 iterations
-
-  Estimator                                         ML
-  Optimization method                           NLMINB
-  Number of model parameters                        38
-  Number of equality constraints                     3
-                                                      
-  Number of observations per group:                   
-    7th                                            380
-    8th                                            379
-                                                      
-Model Test User Model:
-                                                      
-  Test statistic                                51.058
-  Degrees of freedom                                19
-  P-value (Chi-square)                           0.000
-  Test statistic for each group:
-    7th                                         19.934
-    8th                                         31.124
-
-Model Test Baseline Model:
-
-  Test statistic                              3598.760
-  Degrees of freedom                                30
-  P-value                                        0.000
-
-User Model versus Baseline Model:
-
-  Comparative Fit Index (CFI)                    0.991
-  Tucker-Lewis Index (TLI)                       0.986
-
-Loglikelihood and Information Criteria:
-
-  Loglikelihood user model (H0)              -2904.111
-  Loglikelihood unrestricted model (H1)      -2878.582
-                                                      
-  Akaike (AIC)                                5878.222
-  Bayesian (BIC)                              6040.342
-  Sample-size adjusted Bayesian (BIC)         5929.203
-
-Root Mean Square Error of Approximation:
-
-  RMSEA                                          0.067
-  90 Percent confidence interval - lower         0.045
-  90 Percent confidence interval - upper         0.089
-  P-value RMSEA &lt;= 0.05                          0.098
-
-Standardized Root Mean Square Residual:
-
-  SRMR                                           0.048
-
-Parameter Estimates:
-
-  Standard errors                             Standard
-  Information                                 Expected
-  Information saturated (h1) model          Structured
-
-
-Group 1 [7th]:
-
-Latent Variables:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
-  Positive =~                                                  
-    P1        (L1)    0.607    0.020   30.548    0.000    0.607
-    P2        (L2)    0.621    0.020   30.504    0.000    0.621
-    P3        (L3)    0.674    0.021   32.232    0.000    0.674
-  Negative =~                                                  
-    N1                0.634    0.029   21.642    0.000    0.634
-    N2                0.585    0.027   21.461    0.000    0.585
-    N3                0.599    0.026   22.816    0.000    0.599
-  Std.all
-         
-    0.871
-    0.886
-    0.906
-         
-    0.888
-    0.884
-    0.918
-
-Covariances:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
-  Positive ~~                                                  
-    Negative         -0.074    0.055   -1.343    0.179   -0.074
-  Std.all
-         
-   -0.074
-
-Intercepts:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
-   .P1                3.136    0.036   87.656    0.000    3.136
-   .P2                2.991    0.036   83.103    0.000    2.991
-   .P3                3.069    0.038   80.434    0.000    3.069
-   .N1                1.701    0.037   46.473    0.000    1.701
-   .N2                1.527    0.034   44.936    0.000    1.527
-   .N3                1.545    0.033   46.185    0.000    1.545
-    Positive          0.000                               0.000
-    Negative          0.000                               0.000
-  Std.all
-    4.497
-    4.263
-    4.126
-    2.384
-    2.305
-    2.369
-    0.000
-    0.000
-
-Variances:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
-    Positive          1.000                               1.000
-    Negative          1.000                               1.000
-   .P1                0.118    0.012    9.839    0.000    0.118
-   .P2                0.106    0.012    9.121    0.000    0.106
-   .P3                0.099    0.012    7.968    0.000    0.099
-   .N1                0.107    0.012    9.215    0.000    0.107
-   .N2                0.096    0.010    9.467    0.000    0.096
-   .N3                0.067    0.009    7.308    0.000    0.067
-  Std.all
-    1.000
-    1.000
-    0.242
-    0.216
-    0.179
-    0.211
-    0.219
-    0.157
-
-
-Group 2 [8th]:
-
-Latent Variables:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
-  Positive =~                                                  
-    P1        (L1)    0.607    0.020   30.548    0.000    0.607
-    P2        (L2)    0.621    0.020   30.504    0.000    0.621
-    P3        (L3)    0.674    0.021   32.232    0.000    0.674
-  Negative =~                                                  
-    N1                0.559    0.027   20.740    0.000    0.559
-    N2                0.542    0.024   22.303    0.000    0.542
-    N3                0.563    0.025   22.922    0.000    0.563
-  Std.all
-         
-    0.901
-    0.888
-    0.928
-         
-    0.864
-    0.905
-    0.920
-
-Covariances:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
-  Positive ~~                                                  
-    Negative         -0.308    0.050   -6.180    0.000   -0.308
-  Std.all
-         
-   -0.308
-
-Intercepts:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
-   .P1                3.073    0.035   88.799    0.000    3.073
-   .P2                2.847    0.036   79.220    0.000    2.847
-   .P3                2.979    0.037   79.802    0.000    2.979
-   .N1                1.717    0.033   51.640    0.000    1.717
-   .N2                1.580    0.031   51.345    0.000    1.580
-   .N3                1.550    0.031   49.363    0.000    1.550
-    Positive          0.000                               0.000
-    Negative          0.000                               0.000
-  Std.all
-    4.561
-    4.069
-    4.099
-    2.653
-    2.637
-    2.536
-    0.000
-    0.000
-
-Variances:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
-    Positive          1.000                               1.000
-    Negative          1.000                               1.000
-   .P1                0.085    0.009    9.240    0.000    0.085
-   .P2                0.104    0.010    9.940    0.000    0.104
-   .P3                0.074    0.010    7.434    0.000    0.074
-   .N1                0.106    0.010   10.399    0.000    0.106
-   .N2                0.065    0.008    8.288    0.000    0.065
-   .N3                0.057    0.008    7.227    0.000    0.057
-  Std.all
-    1.000
-    1.000
-    0.188
-    0.212
-    0.140
-    0.254
-    0.181
-    0.153</code></pre>
-</div>
-<p>We could now test whether constraining the groups makes the fit worse (similar to how we did it for measurement invariance)</p>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/lavaan/man/lavTestLRT.html'>anova</a></span><span class='op'>(</span><span class='va'>fit.group.1</span>,<span class='va'>fit.group.2</span><span class='op'>)</span>
-</code></pre>
-</div>
-<pre><code>Chi-Squared Difference Test
-
-            Df    AIC    BIC  Chisq Chisq diff Df diff Pr(&gt;Chisq)
-fit.group.1 16 5879.3 6055.3 46.102                              
-fit.group.2 19 5878.2 6040.3 51.058     4.9557       3     0.1751</code></pre>
-</div>
-<p>What if you wanted to make everything the same for a particular type of parameter? Lavaan has an easier answer:</p>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>group3</span> <span class='op'>&lt;-</span> <span class='st'>'Positive =~ P1 + P2 + P3
-Negative =~ N1 + N2 + N3 
-
-Positive ~~ 1*Positive
-Negative ~~ 1*Negative
-
-Positive ~~ Negative
-'</span>
-
-<span class='va'>fit.group.3</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lavaan/man/cfa.html'>cfa</a></span><span class='op'>(</span><span class='va'>group3</span>, data<span class='op'>=</span><span class='va'>group</span>, std.lv<span class='op'>=</span><span class='cn'>TRUE</span>, group <span class='op'>=</span> <span class='st'>"Grade"</span>, group.equal <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"loadings"</span>, <span class='st'>"intercepts"</span><span class='op'>)</span><span class='op'>)</span>
-
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>fit.group.3</span>, standardized<span class='op'>=</span><span class='cn'>TRUE</span>, fit.measures<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
-</code></pre>
-</div>
-<pre><code>lavaan 0.6-8 ended normally after 63 iterations
-
-  Estimator                                         ML
-  Optimization method                           NLMINB
-  Number of model parameters                        40
-  Number of equality constraints                    12
-                                                      
-  Number of observations per group:                   
-    7th                                            380
-    8th                                            379
-                                                      
-Model Test User Model:
-                                                      
-  Test statistic                                64.155
-  Degrees of freedom                                26
-  P-value (Chi-square)                           0.000
-  Test statistic for each group:
-    7th                                         26.771
-    8th                                         37.384
-
-Model Test Baseline Model:
-
-  Test statistic                              3598.760
-  Degrees of freedom                                30
-  P-value                                        0.000
-
-User Model versus Baseline Model:
-
-  Comparative Fit Index (CFI)                    0.989
-  Tucker-Lewis Index (TLI)                       0.988
-
-Loglikelihood and Information Criteria:
-
-  Loglikelihood user model (H0)              -2910.660
-  Loglikelihood unrestricted model (H1)      -2878.582
-                                                      
-  Akaike (AIC)                                5877.319
-  Bayesian (BIC)                              6007.015
-  Sample-size adjusted Bayesian (BIC)         5918.104
-
-Root Mean Square Error of Approximation:
-
-  RMSEA                                          0.062
-  90 Percent confidence interval - lower         0.043
-  90 Percent confidence interval - upper         0.082
-  P-value RMSEA &lt;= 0.05                          0.137
-
-Standardized Root Mean Square Residual:
-
-  SRMR                                           0.059
-
-Parameter Estimates:
-
-  Standard errors                             Standard
-  Information                                 Expected
-  Information saturated (h1) model          Structured
-
-
-Group 1 [7th]:
-
-Latent Variables:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
-  Positive =~                                                  
-    P1      (.p1.)    0.607    0.020   30.559    0.000    0.607
-    P2      (.p2.)    0.624    0.020   30.563    0.000    0.624
-    P3      (.p3.)    0.675    0.021   32.293    0.000    0.675
-  Negative =~                                                  
-    N1      (.p4.)    0.596    0.020   29.973    0.000    0.596
-    N2      (.p5.)    0.564    0.018   31.005    0.000    0.564
-    N3      (.p6.)    0.581    0.018   32.359    0.000    0.581
-  Std.all
-         
-    0.870
-    0.886
-    0.906
-         
-    0.873
-    0.875
-    0.916
-
-Covariances:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
-  Positive ~~                                                  
-    Negative         -0.072    0.055   -1.305    0.192   -0.072
-  Std.all
-         
-   -0.072
-
-Intercepts:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
-   .P1      (.16.)    3.153    0.034   92.887    0.000    3.153
-   .P2      (.17.)    2.966    0.035   85.406    0.000    2.966
-   .P3      (.18.)    3.077    0.037   83.037    0.000    3.077
-   .N1      (.19.)    1.697    0.033   50.786    0.000    1.697
-   .N2      (.20.)    1.545    0.031   49.198    0.000    1.545
-   .N3      (.21.)    1.535    0.032   48.359    0.000    1.535
-    Positiv           0.000                               0.000
-    Negativ           0.000                               0.000
-  Std.all
-    4.521
-    4.211
-    4.133
-    2.485
-    2.399
-    2.420
-    0.000
-    0.000
-
-Variances:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
-    Positive          1.000                               1.000
-    Negative          1.000                               1.000
-   .P1                0.118    0.012    9.870    0.000    0.118
-   .P2                0.107    0.012    9.109    0.000    0.107
-   .P3                0.099    0.012    7.946    0.000    0.099
-   .N1                0.111    0.011    9.751    0.000    0.111
-   .N2                0.097    0.010    9.681    0.000    0.097
-   .N3                0.065    0.009    7.382    0.000    0.065
-  Std.all
-    1.000
-    1.000
-    0.243
-    0.215
-    0.178
-    0.237
-    0.234
-    0.162
-
-
-Group 2 [8th]:
-
-Latent Variables:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
-  Positive =~                                                  
-    P1      (.p1.)    0.607    0.020   30.559    0.000    0.607
-    P2      (.p2.)    0.624    0.020   30.563    0.000    0.624
-    P3      (.p3.)    0.675    0.021   32.293    0.000    0.675
-  Negative =~                                                  
-    N1      (.p4.)    0.596    0.020   29.973    0.000    0.596
-    N2      (.p5.)    0.564    0.018   31.005    0.000    0.564
-    N3      (.p6.)    0.581    0.018   32.359    0.000    0.581
-  Std.all
-         
-    0.900
-    0.888
-    0.928
-         
-    0.879
-    0.911
-    0.923
-
-Covariances:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
-  Positive ~~                                                  
-    Negative         -0.316    0.049   -6.434    0.000   -0.316
-  Std.all
-         
-   -0.316
-
-Intercepts:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
-   .P1      (.16.)    3.153    0.034   92.887    0.000    3.153
-   .P2      (.17.)    2.966    0.035   85.406    0.000    2.966
-   .P3      (.18.)    3.077    0.037   83.037    0.000    3.077
-   .N1      (.19.)    1.697    0.033   50.786    0.000    1.697
-   .N2      (.20.)    1.545    0.031   49.198    0.000    1.545
-   .N3      (.21.)    1.535    0.032   48.359    0.000    1.535
-    Positiv          -0.153    0.076   -2.028    0.043   -0.153
-    Negativ           0.040    0.075    0.527    0.598    0.040
-  Std.all
-    4.680
-    4.222
-    4.230
-    2.502
-    2.497
-    2.440
-   -0.153
-    0.040
-
-Variances:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
-    Positive          1.000                               1.000
-    Negative          1.000                               1.000
-   .P1                0.086    0.009    9.277    0.000    0.086
-   .P2                0.104    0.010    9.930    0.000    0.104
-   .P3                0.074    0.010    7.418    0.000    0.074
-   .N1                0.104    0.010   10.299    0.000    0.104
-   .N2                0.065    0.008    8.576    0.000    0.065
-   .N3                0.058    0.008    7.722    0.000    0.058
-  Std.all
-    1.000
-    1.000
-    0.189
-    0.211
-    0.139
-    0.227
-    0.170
-    0.147</code></pre>
-</div>
-<p>What is nice is that the output will label what parameters are constrained. Go ahead and look at the lavaan tutorial for more (residual variances, latent means, etc)</p>
-<h3 id="measurement-invariance-revisited">Measurement invariance revisited</h3>
-<p>Can you see how MI tests are just a special type of multiple group analysis? We could set up our data to have variables assessed at two different time points with the time demarcated by a group variable. The exact same findings from MI would be found with multiple group. It all depends on how you structure your data.</p>
-<h3 id="when-to-use">When to use</h3>
+<h2 id="multiple-groups-again">Multiple groups, again</h2>
 <p>For Longitudinal models you are faced with a choice: do you want to use group status to predict your slope, for example, or do you want to use multiple groups. The short answer is that it does not matter! The semi-longer answer is that including group as a predictor is simple while multiple groups analyses are more complex but also more flexible. Using one or the other depends on what your theory about where the group differences occur. If they occur in only the regression relationship indicating group mean differences then go with the easy option. If you think that the measurement model also may differ for your groups you have a more nuanced theory that necessitates multiple groups.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -6902,7 +7076,525 @@ fit.10 11 5505.8 5573.6 58.413      47.86       1  4.578e-12 ***
 Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 </div>
 <p>What if you wanted to test differences in variance?</p>
-<div class="sourceCode" id="cb41"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<h3 id="latent-basis-model">latent basis model</h3>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>model.6</span> <span class='op'>&lt;-</span> <span class='st'>'  i =~ 1*alcuse_14 + 1*alcuse_15 + 1*alcuse_16 
+            s =~ 0*alcuse_14 + alcuse_15 + 1*alcuse_16
+              
+'</span>
+
+<span class='va'>fit.6</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lavaan/man/growth.html'>growth</a></span><span class='op'>(</span><span class='va'>model.6</span>, data <span class='op'>=</span> <span class='va'>alcohol.wide</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>fit.6</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>lavaan 0.6-8 ended normally after 30 iterations
+
+  Estimator                                         ML
+  Optimization method                           NLMINB
+  Number of model parameters                         9
+                                                      
+  Number of observations                            82
+                                                      
+Model Test User Model:
+                                                      
+  Test statistic                                 0.000
+  Degrees of freedom                                 0
+
+Parameter Estimates:
+
+  Standard errors                             Standard
+  Information                                 Expected
+  Information saturated (h1) model          Structured
+
+Latent Variables:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+  i =~                                                
+    alcuse_14         1.000                           
+    alcuse_15         1.000                           
+    alcuse_16         1.000                           
+  s =~                                                
+    alcuse_14         0.000                           
+    alcuse_15         0.615    0.150    4.091    0.000
+    alcuse_16         1.000                           
+
+Covariances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+  i ~~                                                
+    s                -0.488    0.326   -1.497    0.134
+
+Intercepts:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+   .alcuse_14         0.000                           
+   .alcuse_15         0.000                           
+   .alcuse_16         0.000                           
+    i                 0.630    0.103    6.118    0.000
+    s                 0.541    0.125    4.334    0.000
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+   .alcuse_14        -0.049    0.275   -0.179    0.858
+   .alcuse_15         0.406    0.097    4.187    0.000
+   .alcuse_16         0.383    0.191    2.005    0.045
+    i                 0.920    0.310    2.968    0.003
+    s                 0.945    0.361    2.618    0.009</code></pre>
+</div>
+<p>Does not change the fit of the model nor the implied means, but it can change your parameters by changing the time scaling.</p>
+<h3 id="quadratic-model">quadratic model</h3>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>model.6</span> <span class='op'>&lt;-</span> <span class='st'>'  i =~ 1*alcuse_14 + 1*alcuse_15 + 1*alcuse_16 
+            s =~ 0*alcuse_14 + 1*alcuse_15 + 2*alcuse_16
+            q =~ 0*alcuse_14 + 1*alcuse_15 + 4*alcuse_16  
+'</span>
+
+<span class='va'>fit.6</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lavaan/man/growth.html'>growth</a></span><span class='op'>(</span><span class='va'>model.6</span>, data <span class='op'>=</span> <span class='va'>alcohol.wide</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>fit.6</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h2 id="b-second-order-growth-model">3.b Second order growth model</h2>
+<p>Repeated measures are latent. Why would we want to do this? At least two reasons. 1. We can take advantage of the benefits of latent variables ie no measurement error. 2. we can impose constraints for MI across time.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>sec.order</span> <span class='op'>&lt;-</span> <span class='st'>'
+## define latent variables
+Pos1 =~ NA*PosAFF11 + L1*PosAFF11 + L2*PosAFF21 + L3*PosAFF31
+Pos2 =~ NA*PosAFF12 + L1*PosAFF12 + L2*PosAFF22 + L3*PosAFF32
+Pos3 =~ NA*PosAFF13 + L1*PosAFF13 + L2*PosAFF23 + L3*PosAFF33
+
+## intercepts
+PosAFF11 ~ t1*1
+PosAFF21 ~ t2*1
+PosAFF31 ~ t3*1
+
+PosAFF12 ~ t1*1
+PosAFF22 ~ t2*1
+PosAFF32 ~ t3*1
+
+PosAFF13 ~ t1*1
+PosAFF23 ~ t2*1
+PosAFF33 ~ t3*1
+
+
+## correlated residuals across time
+PosAFF11 ~~ PosAFF12 + PosAFF13
+PosAFF12 ~~ PosAFF13
+PosAFF21 ~~ PosAFF22 + PosAFF23
+PosAFF22 ~~ PosAFF23
+PosAFF31 ~~ PosAFF32 + PosAFF33
+PosAFF32 ~~ PosAFF33
+
+
+## latent variable intercepts
+Pos1 ~ 0*1
+Pos2  ~ 0*1
+Pos3  ~ 0*1
+
+#model constraints for effect coding
+## loadings must average to 1
+L1 == 3 - L2 - L3
+## means must average to 0
+t1 == 0 - t2 - t3
+
+i =~ 1*Pos1 + 1*Pos2 + 1*Pos3 
+s =~ 0*Pos1 + 1*Pos2 + 2*Pos3 '</span>
+
+
+<span class='va'>fit.sec.order</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lavaan/man/growth.html'>growth</a></span><span class='op'>(</span><span class='va'>sec.order</span>, data<span class='op'>=</span><span class='va'>long</span>, missing <span class='op'>=</span> <span class='st'>"ML"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>fit.sec.order</span>, fit.measures<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>lavaan 0.6-8 ended normally after 99 iterations
+
+  Estimator                                         ML
+  Optimization method                           NLMINB
+  Number of model parameters                        44
+  Number of equality constraints                    14
+                                                      
+  Number of observations                           368
+  Number of missing patterns                         1
+                                                      
+Model Test User Model:
+                                                      
+  Test statistic                                30.254
+  Degrees of freedom                                24
+  P-value (Chi-square)                           0.176
+
+Model Test Baseline Model:
+
+  Test statistic                              2688.088
+  Degrees of freedom                                36
+  P-value                                        0.000
+
+User Model versus Baseline Model:
+
+  Comparative Fit Index (CFI)                    0.998
+  Tucker-Lewis Index (TLI)                       0.996
+
+Loglikelihood and Information Criteria:
+
+  Loglikelihood user model (H0)              -2051.451
+  Loglikelihood unrestricted model (H1)      -2036.324
+                                                      
+  Akaike (AIC)                                4162.902
+  Bayesian (BIC)                              4280.145
+  Sample-size adjusted Bayesian (BIC)         4184.966
+
+Root Mean Square Error of Approximation:
+
+  RMSEA                                          0.027
+  90 Percent confidence interval - lower         0.000
+  90 Percent confidence interval - upper         0.053
+  P-value RMSEA &lt;= 0.05                          0.926
+
+Standardized Root Mean Square Residual:
+
+  SRMR                                           0.025
+
+Parameter Estimates:
+
+  Standard errors                             Standard
+  Information                                 Observed
+  Observed information based on                Hessian
+
+Latent Variables:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+  Pos1 =~                                             
+    PosAFF11  (L1)    0.950    0.014   68.551    0.000
+    PosAFF21  (L2)    1.018    0.015   69.038    0.000
+    PosAFF31  (L3)    1.033    0.014   73.342    0.000
+  Pos2 =~                                             
+    PosAFF12  (L1)    0.950    0.014   68.551    0.000
+    PosAFF22  (L2)    1.018    0.015   69.038    0.000
+    PosAFF32  (L3)    1.033    0.014   73.342    0.000
+  Pos3 =~                                             
+    PosAFF13  (L1)    0.950    0.014   68.551    0.000
+    PosAFF23  (L2)    1.018    0.015   69.038    0.000
+    PosAFF33  (L3)    1.033    0.014   73.342    0.000
+  i =~                                                
+    Pos1              1.000                           
+    Pos2              1.000                           
+    Pos3              1.000                           
+  s =~                                                
+    Pos1              0.000                           
+    Pos2              1.000                           
+    Pos3              2.000                           
+
+Covariances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+ .PosAFF11 ~~                                         
+   .PosAFF12          0.003    0.007    0.465    0.642
+   .PosAFF13          0.000    0.007    0.029    0.977
+ .PosAFF12 ~~                                         
+   .PosAFF13          0.002    0.006    0.306    0.759
+ .PosAFF21 ~~                                         
+   .PosAFF22          0.006    0.008    0.716    0.474
+   .PosAFF23          0.004    0.008    0.520    0.603
+ .PosAFF22 ~~                                         
+   .PosAFF23          0.011    0.007    1.518    0.129
+ .PosAFF31 ~~                                         
+   .PosAFF32          0.008    0.007    1.159    0.247
+   .PosAFF33          0.017    0.007    2.253    0.024
+ .PosAFF32 ~~                                         
+   .PosAFF33          0.005    0.006    0.791    0.429
+  i ~~                                                
+    s                -0.052    0.023   -2.216    0.027
+
+Intercepts:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+   .PosAFF11  (t1)    0.210    0.045    4.645    0.000
+   .PosAFF21  (t2)   -0.161    0.048   -3.344    0.001
+   .PosAFF31  (t3)   -0.049    0.046   -1.067    0.286
+   .PosAFF12  (t1)    0.210    0.045    4.645    0.000
+   .PosAFF22  (t2)   -0.161    0.048   -3.344    0.001
+   .PosAFF32  (t3)   -0.049    0.046   -1.067    0.286
+   .PosAFF13  (t1)    0.210    0.045    4.645    0.000
+   .PosAFF23  (t2)   -0.161    0.048   -3.344    0.001
+   .PosAFF33  (t3)   -0.049    0.046   -1.067    0.286
+   .Pos1              0.000                           
+   .Pos2              0.000                           
+   .Pos3              0.000                           
+    i                 3.192    0.034   92.584    0.000
+    s                 0.019    0.018    1.016    0.310
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+   .PosAFF11          0.101    0.011    9.101    0.000
+   .PosAFF21          0.125    0.013    9.479    0.000
+   .PosAFF31          0.097    0.012    8.170    0.000
+   .PosAFF12          0.086    0.009    9.536    0.000
+   .PosAFF22          0.107    0.011    9.917    0.000
+   .PosAFF32          0.061    0.009    7.052    0.000
+   .PosAFF13          0.072    0.008    8.770    0.000
+   .PosAFF23          0.101    0.010    9.655    0.000
+   .PosAFF33          0.083    0.009    8.716    0.000
+   .Pos1              0.196    0.043    4.553    0.000
+   .Pos2              0.207    0.023    9.132    0.000
+   .Pos3              0.129    0.034    3.767    0.000
+    i                 0.245    0.044    5.627    0.000
+    s                 0.029    0.019    1.542    0.123
+
+Constraints:
+                                               |Slack|
+    L1 - (3-L2-L3)                               0.000
+    t1 - (0-t2-t3)                               0.000</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/semPlot/man/semPaths.html'>semPaths</a></span><span class='op'>(</span><span class='va'>fit.sec.order</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="sem-longitudinal_files/figure-html5/unnamed-chunk-51-1.png" width="624" /></p>
+</div>
+<h2 id="c-multivariate-models">3.c Multivariate models</h2>
+<p>For all of the growth models this semester we have focused only on a single outcome.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>mv.sec.order</span> <span class='op'>&lt;-</span> <span class='st'>[1478 chars quoted with ''']</span>
+
+
+<span class='va'>mv.secondorder</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lavaan/man/growth.html'>growth</a></span><span class='op'>(</span><span class='va'>mv.sec.order</span>, data<span class='op'>=</span><span class='va'>long</span>, missing <span class='op'>=</span> <span class='st'>"ML"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>mv.secondorder</span>, fit.measures<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>lavaan 0.6-8 ended normally after 189 iterations
+
+  Estimator                                         ML
+  Optimization method                           NLMINB
+  Number of model parameters                        92
+  Number of equality constraints                    28
+                                                      
+  Number of observations                           368
+  Number of missing patterns                         1
+                                                      
+Model Test User Model:
+                                                      
+  Test statistic                               248.244
+  Degrees of freedom                               125
+  P-value (Chi-square)                           0.000
+
+Model Test Baseline Model:
+
+  Test statistic                              5253.085
+  Degrees of freedom                               153
+  P-value                                        0.000
+
+User Model versus Baseline Model:
+
+  Comparative Fit Index (CFI)                    0.976
+  Tucker-Lewis Index (TLI)                       0.970
+
+Loglikelihood and Information Criteria:
+
+  Loglikelihood user model (H0)              -3124.754
+  Loglikelihood unrestricted model (H1)      -3000.632
+                                                      
+  Akaike (AIC)                                6377.508
+  Bayesian (BIC)                              6627.625
+  Sample-size adjusted Bayesian (BIC)         6424.576
+
+Root Mean Square Error of Approximation:
+
+  RMSEA                                          0.052
+  90 Percent confidence interval - lower         0.042
+  90 Percent confidence interval - upper         0.061
+  P-value RMSEA &lt;= 0.05                          0.367
+
+Standardized Root Mean Square Residual:
+
+  SRMR                                           0.060
+
+Parameter Estimates:
+
+  Standard errors                             Standard
+  Information                                 Observed
+  Observed information based on                Hessian
+
+Latent Variables:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+  Pos1 =~                                             
+    PosAFF11  (L1)    0.948    0.014   68.484    0.000
+    PosAFF21  (L2)    1.015    0.015   68.707    0.000
+    PosAFF31  (L3)    1.037    0.014   73.770    0.000
+  Pos2 =~                                             
+    PosAFF12  (L1)    0.948    0.014   68.484    0.000
+    PosAFF22  (L2)    1.015    0.015   68.707    0.000
+    PosAFF32  (L3)    1.037    0.014   73.770    0.000
+  Pos3 =~                                             
+    PosAFF13  (L1)    0.948    0.014   68.484    0.000
+    PosAFF23  (L2)    1.015    0.015   68.707    0.000
+    PosAFF33  (L3)    1.037    0.014   73.770    0.000
+  Neg1 =~                                             
+    NegAFF11  (L4)    1.029    0.018   58.212    0.000
+    NegAFF21  (L5)    0.959    0.017   55.123    0.000
+    NegAFF31  (L6)    1.011    0.016   62.776    0.000
+  Neg2 =~                                             
+    NegAFF12  (L4)    1.029    0.018   58.212    0.000
+    NegAFF22  (L5)    0.959    0.017   55.123    0.000
+    NegAFF32  (L6)    1.011    0.016   62.776    0.000
+  Neg3 =~                                             
+    NegAFF13  (L4)    1.029    0.018   58.212    0.000
+    NegAFF23  (L5)    0.959    0.017   55.123    0.000
+    NegAFF33  (L6)    1.011    0.016   62.776    0.000
+  i.p =~                                              
+    Pos1              1.000                           
+    Pos2              1.000                           
+    Pos3              1.000                           
+  s.p =~                                              
+    Pos1              0.000                           
+    Pos2              1.000                           
+    Pos3              2.000                           
+  i.n =~                                              
+    Neg1              1.000                           
+    Neg2              1.000                           
+    Neg3              1.000                           
+  s.n =~                                              
+    Neg1              0.000                           
+    Neg2              1.000                           
+    Neg3              2.000                           
+
+Covariances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+ .PosAFF11 ~~                                         
+   .PosAFF12          0.004    0.007    0.581    0.561
+   .PosAFF13         -0.001    0.007   -0.091    0.927
+ .PosAFF12 ~~                                         
+   .PosAFF13          0.002    0.006    0.324    0.746
+ .PosAFF21 ~~                                         
+   .PosAFF22          0.008    0.008    0.969    0.333
+   .PosAFF23          0.006    0.008    0.772    0.440
+ .PosAFF22 ~~                                         
+   .PosAFF23          0.012    0.007    1.608    0.108
+ .PosAFF31 ~~                                         
+   .PosAFF32          0.005    0.007    0.768    0.443
+   .PosAFF33          0.016    0.007    2.126    0.034
+ .PosAFF32 ~~                                         
+   .PosAFF33          0.004    0.006    0.695    0.487
+ .NegAFF11 ~~                                         
+   .NegAFF12          0.006    0.006    1.048    0.294
+   .NegAFF13          0.006    0.006    0.998    0.318
+ .NegAFF12 ~~                                         
+   .NegAFF13          0.007    0.005    1.492    0.136
+ .NegAFF21 ~~                                         
+   .NegAFF22          0.015    0.004    3.263    0.001
+   .NegAFF23          0.010    0.005    2.168    0.030
+ .NegAFF22 ~~                                         
+   .NegAFF23          0.011    0.003    3.235    0.001
+ .NegAFF31 ~~                                         
+   .NegAFF32         -0.006    0.004   -1.577    0.115
+   .NegAFF33         -0.008    0.004   -1.793    0.073
+ .NegAFF32 ~~                                         
+   .NegAFF33         -0.002    0.003   -0.674    0.500
+  i.p ~~                                              
+    s.p              -0.036    0.022   -1.581    0.114
+    i.n              -0.151    0.019   -7.794    0.000
+    s.n               0.054    0.010    5.454    0.000
+  s.p ~~                                              
+    i.n               0.063    0.010    6.314    0.000
+    s.n              -0.036    0.005   -6.625    0.000
+  i.n ~~                                              
+    s.n              -0.035    0.012   -2.880    0.004
+
+Intercepts:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+   .PosAFF11  (t1)    0.216    0.045    4.791    0.000
+   .PosAFF21  (t2)   -0.154    0.048   -3.187    0.001
+   .PosAFF31  (t3)   -0.063    0.046   -1.365    0.172
+   .PosAFF12  (t1)    0.216    0.045    4.791    0.000
+   .PosAFF22  (t2)   -0.154    0.048   -3.187    0.001
+   .PosAFF32  (t3)   -0.063    0.046   -1.365    0.172
+   .PosAFF13  (t1)    0.216    0.045    4.791    0.000
+   .PosAFF23  (t2)   -0.154    0.048   -3.187    0.001
+   .PosAFF33  (t3)   -0.063    0.046   -1.365    0.172
+   .NegAFF11 (tt1)    0.039    0.025    1.553    0.120
+   .NegAFF21 (tt2)    0.018    0.025    0.716    0.474
+   .NegAFF31 (tt3)   -0.056    0.023   -2.497    0.013
+   .NegAFF12 (tt1)    0.039    0.025    1.553    0.120
+   .NegAFF22 (tt2)    0.018    0.025    0.716    0.474
+   .NegAFF32 (tt3)   -0.056    0.023   -2.497    0.013
+   .NegAFF13 (tt1)    0.039    0.025    1.553    0.120
+   .NegAFF23 (tt2)    0.018    0.025    0.716    0.474
+   .NegAFF33 (tt3)   -0.056    0.023   -2.497    0.013
+   .Pos1              0.000                           
+   .Pos2              0.000                           
+   .Pos3              0.000                           
+   .Neg1              0.000                           
+   .Neg2              0.000                           
+   .Neg3              0.000                           
+    i.p               3.193    0.035   92.501    0.000
+    s.p               0.018    0.018    0.996    0.319
+    i.n               1.414    0.027   52.911    0.000
+    s.n              -0.047    0.015   -3.271    0.001
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+   .PosAFF11          0.103    0.011    9.281    0.000
+   .PosAFF21          0.129    0.013    9.683    0.000
+   .PosAFF31          0.092    0.012    7.837    0.000
+   .PosAFF12          0.086    0.009    9.582    0.000
+   .PosAFF22          0.109    0.011   10.042    0.000
+   .PosAFF32          0.059    0.009    6.869    0.000
+   .PosAFF13          0.073    0.008    8.877    0.000
+   .PosAFF23          0.101    0.010    9.715    0.000
+   .PosAFF33          0.081    0.009    8.640    0.000
+   .NegAFF11          0.105    0.011   10.019    0.000
+   .NegAFF21          0.086    0.009    9.635    0.000
+   .NegAFF31          0.061    0.008    7.271    0.000
+   .NegAFF12          0.060    0.006   10.358    0.000
+   .NegAFF22          0.042    0.005    9.127    0.000
+   .NegAFF32          0.032    0.004    7.515    0.000
+   .NegAFF13          0.085    0.008   10.966    0.000
+   .NegAFF23          0.045    0.005    8.959    0.000
+   .NegAFF33          0.036    0.005    7.399    0.000
+   .Pos1              0.234    0.041    5.641    0.000
+   .Pos2              0.190    0.021    9.025    0.000
+   .Pos3              0.157    0.034    4.600    0.000
+   .Neg1              0.148    0.022    6.683    0.000
+   .Neg2              0.054    0.008    6.944    0.000
+   .Neg3              0.084    0.015    5.626    0.000
+    i.p               0.223    0.041    5.464    0.000
+    s.p               0.013    0.018    0.686    0.493
+    i.n               0.140    0.022    6.382    0.000
+    s.n               0.010    0.009    1.108    0.268
+
+Constraints:
+                                               |Slack|
+    L1 - (3-L2-L3)                               0.000
+    L4 - (3-L5-L6)                               0.000
+    t1 - (0-t2-t3)                               0.000
+    tt1 - (0-tt2-tt3)                            0.000</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/semPlot/man/semPaths.html'>semPaths</a></span><span class='op'>(</span><span class='va'>mv.secondorder</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="sem-longitudinal_files/figure-html5/unnamed-chunk-53-1.png" width="624" /></p>
+</div>
+<h2 id="d-factor-of-curves-model">3.d Factor of curves model</h2>
+<p>This type of model takes multiple slope terms and asks is there a latent variable associated with the change?</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>i.a <span class="ot">=</span><span class="er">~</span> <span class="dv">1</span><span class="sc">*</span>Pos1 <span class="sc">+</span> <span class="dv">1</span><span class="sc">*</span>Pos2 <span class="sc">+</span> <span class="dv">1</span><span class="sc">*</span>Pos3 </span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>s.a <span class="ot">=</span><span class="er">~</span> <span class="dv">0</span><span class="sc">*</span>Pos1 <span class="sc">+</span> <span class="dv">1</span><span class="sc">*</span>Pos2 <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span>Pos3</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>i.b <span class="ot">=</span><span class="er">~</span> <span class="dv">1</span><span class="sc">*</span>Neg1 <span class="sc">+</span> <span class="dv">1</span><span class="sc">*</span>Neg2 <span class="sc">+</span> <span class="dv">1</span><span class="sc">*</span>Neg3 </span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>s.b <span class="ot">=</span><span class="er">~</span> <span class="dv">0</span><span class="sc">*</span>Neg1 <span class="sc">+</span> <span class="dv">1</span><span class="sc">*</span>Neg2 <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span>Neg3</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>i.c <span class="ot">=</span><span class="er">~</span> <span class="dv">1</span><span class="sc">*</span>hap1 <span class="sc">+</span> <span class="dv">1</span><span class="sc">*</span>hap2 <span class="sc">+</span> <span class="dv">1</span><span class="sc">*</span>hap3 </span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>s.c <span class="ot">=</span><span class="er">~</span> <span class="dv">0</span><span class="sc">*</span>hap1 <span class="sc">+</span> <span class="dv">1</span><span class="sc">*</span>hap2 <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span>hap3</span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>i.d <span class="ot">=</span><span class="er">~</span> <span class="dv">1</span><span class="sc">*</span>Arou1 <span class="sc">+</span> <span class="dv">1</span><span class="sc">*</span>Arou2 <span class="sc">+</span> <span class="dv">1</span><span class="sc">*</span>Arou3 </span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>s.d <span class="ot">=</span><span class="er">~</span> <span class="dv">0</span><span class="sc">*</span>Arou1 <span class="sc">+</span> <span class="dv">1</span><span class="sc">*</span>Arou2 <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span>Arou3</span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a><span class="co">#Note that there are no constraints on these</span></span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a>Intercept <span class="ot">=</span><span class="er">~</span> i.a <span class="sc">+</span> i.b <span class="sc">+</span> i.c <span class="sc">+</span> i.d </span>
+<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a>Slope <span class="ot">=</span><span class="er">~</span> s.a <span class="sc">+</span> s.b <span class="sc">+</span> s.c <span class="sc">+</span> s.d </span>
+<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-18"><a href="#cb44-18" aria-hidden="true" tabindex="-1"></a><span class="st">&#39;</span></span></code></pre></div>
+</div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
