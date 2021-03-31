@@ -477,13 +477,15 @@ Can you see how MI tests are just a special type of multiple group analysis? We 
 
 Instead of covariances, the key component of this is to examine structural relationships between constructs over time. This can extend to cross-construct associations such as mediational models. 
 
+Here we are modeling two processes at the same time. However, this can extend to more than two developmental processes. The questions are the same, the code is the same, the only difference is the type of questions you can ask. 
+
 key concerns: 
 1. Should the regressions be the same across time? 
 2. Should the error variances be correlated? 
 3. Are the loadings the same across time? 
 
 
-Falling under this designation is the cross-lagged panel model (clpm) -- the type of two wave model that josh went off on last time. The concerns of clpms are assuaged when you have more than two assessment points, you measure your variables latently, and/or you account for mean structure.
+Falling under this designation is the cross-lagged panel model (clpm). The concerns of clpms are assuaged when you have more than two assessment points, you measure your variables latently, and/or you account for mean structure.
 
 Below is an example of two constructs modeled over time with three assessment points. Not yet a clpm. 
 
@@ -541,12 +543,12 @@ semPaths(fit.long.path, layout = "tree3")
 ```
 
 
-### Longitudinal Cross lagged panel model (clpm)
+### 2.a Longitudinal Cross lagged panel model (clpm)
 
 key concerns: 
 1. Should the regressions (both cross lagged and autoregressive) be the same across time? 
 2. Should the indicator error variances be correlated (within time or within construct)? 
-3. Are the loadings the same across time? (more on this later)
+3. Are the loadings the same across time? Should we impose this? 
 4. Are the latent error variances the same or different? 
 5. Are the latent error variances correlated the same or different across time? 
 6. Are there more lagged effects? 
@@ -610,7 +612,7 @@ semPaths(fit.long.cross, layout = "tree3")
 
 
 
-### Longitudinal mediation model
+### 2.b Longitudinal mediation model
 
 An extension of this model is to introduce indirect pathways. Indirect pathways are equivalent with mediational pathways. The calculation of indirect pathways are done through what is known as the tracing rules. The coefficients  along each path are multiplied together; those products are them summed across different tracings or paths. In short, one finds the sum of all compound paths between two variables. 
 
@@ -692,7 +694,9 @@ summary(scon62, standardized=T, fit.measures=TRUE)
 
 We will come back to extensions of these panel models in later weeks, incorporating mean levels  as well as seperating between and within person sources. 
 
-### Including covariates
+
+
+### 2.c Including covariates
 Many times we would like to control for the influence of a variable. If we wanted to, how would we go about doing this with our panel model? 
 
 First, you have to ask yourself is it a time varying covariate (tvc), akin to a level 1 predictor variable ie one that varies from wave to wave. Or is it a time invariate covariate that does not differ across time? 

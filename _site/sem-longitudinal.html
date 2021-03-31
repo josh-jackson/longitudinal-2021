@@ -4903,8 +4903,9 @@ Variances:
 <p>Can you see how MI tests are just a special type of multiple group analysis? We could set up our data to have variables assessed at two different time points with the time demarcated by a group variable. The exact same findings from MI would be found with multiple group. It all depends on how you structure your data.</p>
 <h1 id="panelcross-laglongitudinal-path-modelmediation">2. Panel/cross lag/longitudinal path model/mediation</h1>
 <p>Instead of covariances, the key component of this is to examine structural relationships between constructs over time. This can extend to cross-construct associations such as mediational models.</p>
+<p>Here we are modeling two processes at the same time. However, this can extend to more than two developmental processes. The questions are the same, the code is the same, the only difference is the type of questions you can ask.</p>
 <p>key concerns: 1. Should the regressions be the same across time? 2. Should the error variances be correlated? 3. Are the loadings the same across time?</p>
-<p>Falling under this designation is the cross-lagged panel model (clpm) – the type of two wave model that josh went off on last time. The concerns of clpms are assuaged when you have more than two assessment points, you measure your variables latently, and/or you account for mean structure.</p>
+<p>Falling under this designation is the cross-lagged panel model (clpm). The concerns of clpms are assuaged when you have more than two assessment points, you measure your variables latently, and/or you account for mean structure.</p>
 <p>Below is an example of two constructs modeled over time with three assessment points. Not yet a clpm.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -5216,8 +5217,8 @@ Variances:
 </code></pre>
 </div>
 </div>
-<h3 id="longitudinal-cross-lagged-panel-model-clpm">Longitudinal Cross lagged panel model (clpm)</h3>
-<p>key concerns: 1. Should the regressions (both cross lagged and autoregressive) be the same across time? 2. Should the indicator error variances be correlated (within time or within construct)? 3. Are the loadings the same across time? (more on this later) 4. Are the latent error variances the same or different? 5. Are the latent error variances correlated the same or different across time? 6. Are there more lagged effects?</p>
+<h3 id="a-longitudinal-cross-lagged-panel-model-clpm">2.a Longitudinal Cross lagged panel model (clpm)</h3>
+<p>key concerns: 1. Should the regressions (both cross lagged and autoregressive) be the same across time? 2. Should the indicator error variances be correlated (within time or within construct)? 3. Are the loadings the same across time? Should we impose this? 4. Are the latent error variances the same or different? 5. Are the latent error variances correlated the same or different across time? 6. Are there more lagged effects?</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>long.cross</span> <span class='op'>&lt;-</span> <span class='st'>'
@@ -5540,7 +5541,7 @@ Variances:
 </div>
 <p><img src="sem-longitudinal_files/figure-html5/unnamed-chunk-26-1.png" width="624" /></p>
 </div>
-<h3 id="longitudinal-mediation-model">Longitudinal mediation model</h3>
+<h3 id="b-longitudinal-mediation-model">2.b Longitudinal mediation model</h3>
 <p>An extension of this model is to introduce indirect pathways. Indirect pathways are equivalent with mediational pathways. The calculation of indirect pathways are done through what is known as the tracing rules. The coefficients along each path are multiplied together; those products are them summed across different tracings or paths. In short, one finds the sum of all compound paths between two variables.</p>
 <p>Maxwell, S. E., Cole, D. A., &amp; Mitchell, M. A. (2011). Bias in cross-sectional analyses of longitudinal mediation: Partial and complete mediation under an autoregressive model. Multivariate Behavioral Research, 46(5), 816-841.</p>
 <p>Selig, J. P., &amp; Preacher, K. J. (2009). Mediation models for longitudinal data in developmental research. Research in Human Development, 6(2-3), 144-164.</p>
@@ -6007,7 +6008,7 @@ Defined Parameters:
 </div>
 </div>
 <p>We will come back to extensions of these panel models in later weeks, incorporating mean levels as well as seperating between and within person sources.</p>
-<h3 id="including-covariates">Including covariates</h3>
+<h3 id="c-including-covariates">2.c Including covariates</h3>
 <p>Many times we would like to control for the influence of a variable. If we wanted to, how would we go about doing this with our panel model?</p>
 <p>First, you have to ask yourself is it a time varying covariate (tvc), akin to a level 1 predictor variable ie one that varies from wave to wave. Or is it a time invariate covariate that does not differ across time?</p>
 <p>Second, you have to ask where in the model you want to introduce covariates? The DV is tradiational in standard regression. But we could also control for with the IVs. But there are multiple IVs, do we control for them all?</p>
