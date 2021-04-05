@@ -475,7 +475,7 @@ Can you see how MI tests are just a special type of multiple group analysis? We 
 
 # 2. Panel/cross lag/longitudinal path model/mediation
 
-Instead of covariances, the key component of this is to examine structural relationships between constructs over time. This can extend to cross-construct associations such as mediational models. 
+Instead of covariances, the key component of this is to examine structural relationships between constructs over time. Structural meaning regression associations. This can extend to cross-construct associations such as mediational models. 
 
 Here we are modeling two processes at the same time. However, this can extend to more than two developmental processes. The questions are the same, the code is the same, the only difference is the type of questions you can ask. 
 
@@ -485,9 +485,53 @@ key concerns:
 3. Are the loadings the same across time? 
 
 
-Falling under this designation is the cross-lagged panel model (clpm). The concerns of clpms are assuaged when you have more than two assessment points, you measure your variables latently, and/or you account for mean structure.
+### 2.a Autoregressive
 
-Below is an example of two constructs modeled over time with three assessment points. Not yet a clpm. 
+```{r}
+auto <- '
+## define latent variables
+Pos1 =~ L1*PosAFF11 + L2*PosAFF21 + L3*PosAFF31
+Pos2 =~ L1*PosAFF12 + L2*PosAFF22 + L3*PosAFF32
+Pos3 =~ L1*PosAFF13 + L2*PosAFF23 + L3*PosAFF33
+
+
+## free latent variances at later times (only set the scale once)
+Pos2 ~~ NA*Pos2
+Pos3 ~~ NA*Pos3
+
+
+## directional auto-reggessivepaths
+Pos2 ~ Pos1
+Pos3 ~ Pos2
+
+
+## correlated residuals across time
+PosAFF11 ~~ PosAFF12 + PosAFF13
+PosAFF12 ~~ PosAFF13
+PosAFF21 ~~ PosAFF22 + PosAFF23
+PosAFF22 ~~ PosAFF23
+PosAFF31 ~~ PosAFF32 + PosAFF33
+PosAFF32 ~~ PosAFF33
+
+'
+
+fit.auto <- sem(auto, data=long, std.lv=TRUE)
+semPaths(fit.auto, layout = "tree3")
+```
+
+
+
+```{r}
+summary(fit.auto, standardized=TRUE, fit.measures=TRUE)
+```
+
+Note how our regressions are estimated seperately. You should see if our model fit is better if we constrain them to be equal. 
+
+### 2.b correlate change
+
+We can also model two autoregressive processes at the same time. We can then ask: are the changes (residualized) associated with changes in the other construct. 
+
+We will talk about residualized change more in a later lecture, but for now: how do you think residualized change differs from a difference score? 
 
 
 ```{r}
@@ -542,8 +586,14 @@ semPaths(fit.long.path, layout = "tree3")
 
 ```
 
+How do you interpret the covariances between latent variables? 
 
-### 2.a Longitudinal Cross lagged panel model (clpm)
+Should you constrain them to be equivalent? All of them? 
+
+
+### 2.c Longitudinal Cross lagged panel model (clpm)
+
+Often we want to ask whether one variable leads to another variable. That is, what is responsible for change? THIS IS A HARD QUESTION. One of the models that attempts to do this is the cross lagged panel model. The clpm is not a model i would recommend. However, it is the basis for some models I do recommend and it is historically important. So we will cover this model a lot, and talk about the pros and the cons. 
 
 key concerns: 
 1. Should the regressions (both cross lagged and autoregressive) be the same across time? 
@@ -552,6 +602,7 @@ key concerns:
 4. Are the latent error variances the same or different? 
 5. Are the latent error variances correlated the same or different across time? 
 6. Are there more lagged effects? 
+7. Should the cross lags be constrained to be equal? 
 
 
 ```{r}
@@ -602,9 +653,7 @@ summary(fit.long.cross, standardized=TRUE, fit.measures=TRUE)
 
 ```
 
-```{r}
-semPaths(fit.long.cross)
-```
+
 
 ```{r}
 semPaths(fit.long.cross, layout = "tree3")
@@ -612,7 +661,21 @@ semPaths(fit.long.cross, layout = "tree3")
 
 
 
-### 2.b Longitudinal mediation model
+## 2.d Including covariates
+Many times we would like to control for the influence of a variable. If we wanted to, how would we go about doing this with our panel model? 
+
+First, you have to ask yourself is it a time varying covariate (tvc), akin to a level 1 predictor variable ie one that varies from wave to wave. Or is it a time invariate covariate that does not differ across time? 
+
+Second, you have to ask where in the model you want to introduce covariates? The DV is traditional in standard regression. But we could also control for with the IVs. But there are multiple IVs, do we control for them all? 
+
+Third, do you want to control at the latent level or at the level of the indicators? 
+
+It is potential defensible to: 1. only control for the DV or focal association. 2. only control for initial time. 3. control at all time points 4 control for only downstream timepoints ie those predicted by another variable. Each of these have different interpretation for how you think the covariates could influence the model. 
+
+I would suggest 1. try to use covariates as closely as possible to your theoretical model and 2. not to over control. Remember that statistical models can be both too liberal (you get an asterisk, everyone gets an asterisk!) and too conservative (this one of many reasons why Josh dislikes correcting for type 1 error). The goal is to be accurate. Try them multiple ways. 
+
+
+### 2.e Longitudinal mediation model
 
 An extension of this model is to introduce indirect pathways. Indirect pathways are equivalent with mediational pathways. The calculation of indirect pathways are done through what is known as the tracing rules. The coefficients  along each path are multiplied together; those products are them summed across different tracings or paths. In short, one finds the sum of all compound paths between two variables. 
 
@@ -626,6 +689,7 @@ Example below from a paper looking at whether extraverted people are happier bec
 ```{r}
 #Do Self-Reported Social Experiences Mediate the Effect of Extraversion on Life Satisfaction and Happiness?
 #number close friends
+
 library(readr)
 TSS_sub <- read_csv("~/Box/5165 Applied Longitudinal Data Analysis/Longitudinal/TSS_sub.csv")
 
@@ -692,28 +756,9 @@ summary(scon62, standardized=T, fit.measures=TRUE)
 
 ```
 
-We will come back to extensions of these panel models in later weeks, incorporating mean levels  as well as seperating between and within person sources. 
-
-
-
-### 2.c Including covariates
-Many times we would like to control for the influence of a variable. If we wanted to, how would we go about doing this with our panel model? 
-
-First, you have to ask yourself is it a time varying covariate (tvc), akin to a level 1 predictor variable ie one that varies from wave to wave. Or is it a time invariate covariate that does not differ across time? 
-
-Second, you have to ask where in the model you want to introduce covariates? The DV is tradiational in standard regression. But we could also control for with the IVs. But there are multiple IVs, do we control for them all? 
-
-Third, do you want to control at the latent level or at the level of the indicators? 
-
-
-It is potential defensible to: 1. only control for the DV or focal association. 2. only control for initial time. 3. control at all time points 4 control for only downstream timepoints ie those predicted by another variable. Each of these have different interpretation for how you think the covariates could influence the model. 
-
-I would suggest 1. try to use covariates as closely as possible to your theoretical model and 2. not to over control. Remember that statistical models can be both too liberal (you get an asterisk, everyone gets an asterisk!) and too conservative (this one of many reasons why Josh dislikes correcting for type 1 error). The goal is to be accurate. Try them multiple ways. 
 
 
 # 3. Growth models
-
-The above models are well suited to address between subjects questions, but does not get at a within subjects questions at all. There are some that can separate these effects, which we will turn to in a few weeks. However, we will start with the most basic model, the model you are familiar with, the growth model. 
 
 The implementation of growth models in an SEM framework is very similar to the HLM framework. The major differences is how time is treated. Here, time variables must be the same for everyone in that each assessment point must have a particular variable name associated with it. That is, time is considered categorical in SEM, whereas in MLM it could be treated continuously. This requirement also makes a differences in how our data need to be structured. Whereas previously we had a time variable, now we indirectly include time into our model by specifying when variables were assessed. This has the consequence of necessitating a wide format, as opposed to the long format of MLM. 
 
@@ -742,18 +787,16 @@ head(alcohol.wide)
 ```
 
 
-
 ```{r, echo = FALSE}
 model.1 <- '  i =~ 1*alcuse_14 + 1*alcuse_15 + 1*alcuse_16 
             s =~ 0*alcuse_14 + 1*alcuse_15 + 2*alcuse_16'
 fit.1 <- growth(model.1, data=alcohol.wide)
-summary(fit.1)
 ```
 
 
 To fit a growth model within SEM we are going to create two latent variables: an intercept and a slope/trajectory. This is the same we did prior when we fit an MLM growth model with time as a predictor. 
 
-
+To define the latent variables we have to set constraints. These constraints are based on how we want to define each of these variables. 
 
 
 ```{r}
@@ -763,19 +806,18 @@ semPaths(fit.1)
 ```
 
 
-
 How do we define these two latent factors? They are going to be made up of our repeated measures. We then add constraints on the loadings to force the latent variables to be interpreted how we want them to be interpreted. 
 
-As before, the simplest way to think of the intercept is the initial value. While the slope indexes change. To obtain that, we will constrain the loadings to the intercept to be 1 for all repeated measures. This will obtain what is *constant* across time. 
+As before, the simplest way to think of the intercept is the initial value. While the slope indexes change. To obtain that, we will constrain the loadings to the intercept to be 1 for all repeated measures. This will obtain what is *constant* with respect to time. Note the similarity with using 1 for our mlm models to indicate intercept. 
 
 But where is that constant located? Previously we could center or change our time variable to change the interpretation of the intercept. We do the same thing within SEM whereby we change the interpretation of intercept by changing how we define the slope parameter. As always, the intercept is defined as when X (or time in this case) equals zero. That is, the intercept is the mean of the DV when the predictor is 0, where we have time as the predictor. 
 
-The slope loadings typically include 0, so as to make the intercept interpretable. However, it is up to you to define where zero goes and what the rest of the loadings are. A few rules: First, how you code the loadings represent the pattern of change you expect. 0,1,2 suggests a straight line that does not increase in speed. 0,1,5, suggests something different. Usually it is better to stick with linear change to start out with. 
+The slope loadings typically include 0, so as to make the intercept interpretable. However, it is up to you to define where zero goes and what the rest of the loadings are. 
+
+A few rules: First, how you code the loadings represent the pattern of change you expect. 0,1,2 suggests a straight line that does not increase in speed. 0,1,5, suggests something different. Usually it is better to stick with linear change to start out with. 
 
 Second, remember that this is just fancy regression. So the coefficients are interpreted as in regression whereas for a one unit change in the slope (time) corresponds to a coef change in your DV. Thus, you will change the magnitude of your slope parameter by choosing 0, .5, 1 versus 0,1,2 versus 0, 10, 20. As always, choose what makes sense to interpret. Changing the loadings (if they are just a multiple) will not change the substantive interpretation. 
 
-
-### How do we do that in lavaan? 
 
 ```{r}
 model.1 <- '  i =~ 1*alcuse_14 + 1*alcuse_15 + 1*alcuse_16 
@@ -787,8 +829,6 @@ summary(fit.1)
 ### Compare with MLM
 ```{r}
 library(lme4)
-fit1.mlm <- lmer(alcuse ~  age + (age | id), data = alcohol1_pp)
-summary(fit1.mlm)
 ```
 
 centered MLM
@@ -798,10 +838,11 @@ summary(fit1.mlm.c)
 ```
 
 
-```{r}
-semPaths(fit.1, 'est')
-```
+What is the same, what is different? 
 
+One notable difference is there is no residual. Instead of a single residual/sigma that we have with MLM here we have separate residuals. 
+
+The default of MLM is that these residuals are the same across measurement occasions. How could we model that here? 
 
 
 ### we can rescale our time variable to be whatever we want
@@ -816,13 +857,7 @@ summary(fit.1)
 This does not change our conclusions but it does change our numnbers. 
 
 
-## Interpretation of variances
-
-Intercept will reflect our fixed effects whereas our random effects are indexed by variances of the latent variables. These are interpreted the same as before. More variance means that more people differ from the fixed effect. 
-
-In MLM we assumed that the residual variances were equal. Here we can better model if that is the case. Right now we are able to fit separate variances for each repeated measure. These residual variances are interpreted as what is left over or what is unique at each time point that cannot be explained by the trajectory. 
-
-
+ 
 ### constraining slope to be fixed only
 
 As with MLM we have options to handle the inclusion of random effects.
@@ -839,8 +874,10 @@ summary(fit.2)
 
 ## introducing covariates/predictors
 
+The strategy for including predictors is similar to working with a level 2 mlm equation. Do you want to predict the intercept or the slope? No need to explicitly model an interaction as that is implied. 
+
 ```{r}
-# a linear growth model with a time invariatnt covariate
+# a linear growth model with a time invariant covariate
 
 model.3 <- '  i =~ 1*alcuse_14 + 1*alcuse_15 + 1*alcuse_16 
             s =~ 0*alcuse_14 + .5*alcuse_15 + 1*alcuse_16
@@ -860,6 +897,7 @@ library(lme4)
 fit3.mlm <- lmer(alcuse ~  age_14 + male*age_14 + age_14*coa + (age_14 | id), data = alcohol1_pp)
 summary(fit3.mlm)
 ```
+
 
 ### centered predictors
 
@@ -885,9 +923,24 @@ summary(fit.4)
 What is different what is the same? Notice that the main difference is the intercepts ie fixed effects.  
 
 
-
 ### introducing time varying covariates
-```{r, eval = FALSE}
+
+Level 1 variables (tvs) are flexibly handled in SEM. Whereas previously a level 1 variable had a constant effect (ie you just had a single parameter) here you can model separate effects for different times. Or you can have a tvc for one timepoint but not another. Doing this in an MLM framework is awkward at best.  
+
+
+```{r, echo = FALSE}
+
+  tvc1 <- rnorm(n = 246, 0,1)
+  tvc2 <- rnorm(n = 246, 0,1)
+  tvc3 <- rnorm(n = 246, 0,1)
+  
+alcohol.wide <- cbind(alcohol.wide,tvc1 )  
+alcohol.wide <- cbind(alcohol.wide,tvc2 )
+alcohol.wide <- cbind(alcohol.wide,tvc3 )
+```
+
+
+```{r}
 # a linear growth model with a time-varying covariate
 
 model.5 <- '  i =~ 1*alcuse_14 + 1*alcuse_15 + 1*alcuse_16 
@@ -900,22 +953,24 @@ model.5 <- '  i =~ 1*alcuse_14 + 1*alcuse_15 + 1*alcuse_16
     
 # time-varying covariates
 
-    alcuse_14 ~ c1
-    alcuse_15 ~ c2
-    alcuse_16 ~ c3
+    alcuse_14 ~ tvc1
+    alcuse_15 ~ tvc2
+    alcuse_16 ~ tvc3
 
 '
 fit.5 <- growth(model.5, data = alcohol.wide)
 
-
+summary(fit.5)
 ```
 
-How do we interpet tvcs? 
+Can we fix the TVCs to be the same? 
 
 
 ## Multiple groups, again 
 
-For Longitudinal models you are faced with a choice: do you want to use group status to predict your slope, for example, or do you want to use multiple groups. The short answer is that it does not matter! The semi-longer answer is that including group as a predictor is simple while multiple groups analyses are more complex but also more flexible. Using one or the other depends on what your theory about where the group differences occur. If they occur in only the regression relationship indicating group mean differences then go with the easy option. If you think that the measurement model also may differ for your groups you have a more nuanced theory that necessitates multiple groups.
+Say you have a two level categorical predictor. For SEM models you are faced with a choice: do you want to use group status to predict your slope or do you want to use multiple groups. The short answer is that it does not matter! 
+
+The semi-longer answer is that including group as a predictor is simple while multiple groups analyses are more complex but also more flexible. Using one or the other depends on what your theory about where the group differences occur. If they occur in only the regression relationship indicating group mean differences then go with the easy option. If you think that the measurement model also may differ for your groups you have a more nuanced theory that necessitates multiple groups.
 
 
 ```{r}
@@ -976,7 +1031,6 @@ anova(fit.8, fit.9)
 
 Yes it does! Buut, how to interpret this? It is asking whether the model where we constained both the intercept and the mean differ from one that we don't. What if we want to only look at the effect of slope? 
 
-
 Testing just the slope difference without constraining anything else. 
 
 ```{r}
@@ -1031,7 +1085,11 @@ summary(fit.6)
 
 ## 3.b Second order growth model
 
-Repeated measures are latent. Why would we want to do this? At least two reasons. 1. We can take advantage of the benefits of latent variables ie no measurement error. 2. we can impose constraints for MI across time. 
+Repeated measures are latent. Why would we want to do this? At least two reasons. 
+
+1. We can take advantage of the benefits of latent variables ie no measurement error.
+
+2. we can impose constraints for MI across time. 
 
 ```{r}
 sec.order <- '
@@ -1079,6 +1137,16 @@ s =~ 0*Pos1 + 1*Pos2 + 2*Pos3 '
 
 
 fit.sec.order <- growth(sec.order, data=long, missing = "ML")
+
+
+```
+
+
+```{r}
+semPaths(fit.sec.order)
+```
+
+```{r}
 summary(fit.sec.order, fit.measures=TRUE)
 
 ```
@@ -1088,9 +1156,12 @@ semPaths(fit.sec.order)
 ```
 
 
+
+
+
 ## 3.c  Multivariate models
 
-For all of the growth models this semester we have focused only on a single outcome. 
+For all of the growth models this semester we have focused only on a single outcome. We can now look at two processes simultaneously. This primarily gets us correlated change estimates between the slopes. 
 
 ```{r}
 mv.sec.order <- '
@@ -1169,7 +1240,6 @@ s.n =~ 0*Neg1 + 1*Neg2 + 2*Neg3'
 
 
 mv.secondorder <- growth(mv.sec.order, data=long, missing = "ML")
-summary(mv.secondorder, fit.measures=TRUE)
 
 ```
 
@@ -1177,6 +1247,16 @@ summary(mv.secondorder, fit.measures=TRUE)
 ```{r}
 semPaths(mv.secondorder)
 ```
+
+
+```{r}
+summary(mv.secondorder, fit.measures=TRUE)
+```
+
+
+You don't have to do this with a second order model. 
+
+
 
 
 ## 3.d Factor of curves model
