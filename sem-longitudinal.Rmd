@@ -506,13 +506,17 @@ Pos3 ~ Pos2
 
 
 ## correlated residuals across time
-PosAFF11 ~~ PosAFF12 + PosAFF13
-PosAFF12 ~~ PosAFF13
-PosAFF21 ~~ PosAFF22 + PosAFF23
-PosAFF22 ~~ PosAFF23
-PosAFF31 ~~ PosAFF32 + PosAFF33
-PosAFF32 ~~ PosAFF33
+PosAFF11 ~~ v1*PosAFF12 + v1*PosAFF13
+PosAFF12 ~~ v1*PosAFF13
+PosAFF21 ~~ v1*PosAFF22 + v1*PosAFF23
+PosAFF22 ~~ v1*PosAFF23
+PosAFF31 ~~ v1*PosAFF32 + v1*PosAFF33
+PosAFF32 ~~ v1*PosAFF33
 
+
+PosAFF11 ~~ i1*PosAFF11
+PosAFF12 ~~ i1*PosAFF12
+PosAFF13 ~~ i1*PosAFF13
 '
 
 fit.auto <- sem(auto, data=long, std.lv=TRUE)
@@ -626,9 +630,9 @@ Pos2 ~~ Neg2
 Pos3 ~~ Neg3
 
 ## directional regression paths
-Pos2 ~ Pos1 + Neg1
+Pos2 ~ Pos1 + c1*Neg1
 Neg2 ~ Pos1 + Neg1
-Pos3 ~ Pos2 + Neg2
+Pos3 ~ Pos2 + c1*Neg2
 Neg3 ~ Pos2 + Neg2
 
 ## correlated residuals across time
@@ -645,6 +649,7 @@ NegAFF21 ~~ NegAFF22 + NegAFF23
 NegAFF22 ~~ NegAFF23
 NegAFF31 ~~ NegAFF32 + NegAFF33
 NegAFF32 ~~ NegAFF33
+
 '
 
 fit.long.cross <- sem(long.cross,data=long, std.lv=TRUE)
@@ -854,7 +859,7 @@ fit.1 <- growth(model.1, data=alcohol.wide)
 summary(fit.1)
 ```
 
-This does not change our conclusions but it does change our numnbers. 
+This does not change our conclusions but it does change our numbers. 
 
 
  
@@ -930,13 +935,13 @@ Level 1 variables (tvs) are flexibly handled in SEM. Whereas previously a level 
 
 ```{r, echo = FALSE}
 
-  tvc1 <- rnorm(n = 246, 0,1)
-  tvc2 <- rnorm(n = 246, 0,1)
-  tvc3 <- rnorm(n = 246, 0,1)
+  tvc1 <- rnorm(n = 82, 0,1)
+  tvc2 <- rnorm(n = 82, 0,1)
+  tvc3 <- rnorm(n = 82, 0,1)
   
-alcohol.wide <- cbind(alcohol.wide,tvc1 )  
-alcohol.wide <- cbind(alcohol.wide,tvc2 )
-alcohol.wide <- cbind(alcohol.wide,tvc3 )
+temp1 <- cbind(alcohol.wide,tvc1 )  
+temp2 <- cbind(temp1,tvc2 )
+alcohol.wide <- cbind(temp2,tvc3 )
 ```
 
 

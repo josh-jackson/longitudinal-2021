@@ -2449,11 +2449,13 @@ Homeworks
 <ul>
 <li><a href="#group-comparisons">Group comparisons</a></li>
 </ul></li>
-<li><a href="#panelcross-laglongitudinal-path-modelmediation">2. Panel/cross lag/longitudinal path model/mediation</a></li>
+<li><a href="#panelcross-laglongitudinal-path-modelmediation">2. Panel/cross lag/longitudinal path model/mediation</a>
+<ul>
+<li><a href="#d-including-covariates">2.d Including covariates</a></li>
+</ul></li>
 <li><a href="#growth-models">3. Growth models</a>
 <ul>
 <li><a href="#coding-time">Coding time</a></li>
-<li><a href="#interpretation-of-variances">Interpretation of variances</a></li>
 <li><a href="#introducing-covariatespredictors">introducing covariates/predictors</a></li>
 <li><a href="#multiple-groups-again">Multiple groups, again</a></li>
 <li><a href="#b-second-order-growth-model">3.b Second order growth model</a></li>
@@ -4902,11 +4904,212 @@ Variances:
 <h3 id="measurement-invariance-revisited">Measurement invariance revisited</h3>
 <p>Can you see how MI tests are just a special type of multiple group analysis? We could set up our data to have variables assessed at two different time points with the time demarcated by a group variable. The exact same findings from MI would be found with multiple group. It all depends on how you structure your data.</p>
 <h1 id="panelcross-laglongitudinal-path-modelmediation">2. Panel/cross lag/longitudinal path model/mediation</h1>
-<p>Instead of covariances, the key component of this is to examine structural relationships between constructs over time. This can extend to cross-construct associations such as mediational models.</p>
+<p>Instead of covariances, the key component of this is to examine structural relationships between constructs over time. Structural meaning regression associations. This can extend to cross-construct associations such as mediational models.</p>
 <p>Here we are modeling two processes at the same time. However, this can extend to more than two developmental processes. The questions are the same, the code is the same, the only difference is the type of questions you can ask.</p>
 <p>key concerns: 1. Should the regressions be the same across time? 2. Should the error variances be correlated? 3. Are the loadings the same across time?</p>
-<p>Falling under this designation is the cross-lagged panel model (clpm). The concerns of clpms are assuaged when you have more than two assessment points, you measure your variables latently, and/or you account for mean structure.</p>
-<p>Below is an example of two constructs modeled over time with three assessment points. Not yet a clpm.</p>
+<h3 id="a-autoregressive">2.a Autoregressive</h3>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>auto</span> <span class='op'>&lt;-</span> <span class='st'>'
+## define latent variables
+Pos1 =~ L1*PosAFF11 + L2*PosAFF21 + L3*PosAFF31
+Pos2 =~ L1*PosAFF12 + L2*PosAFF22 + L3*PosAFF32
+Pos3 =~ L1*PosAFF13 + L2*PosAFF23 + L3*PosAFF33
+
+
+## free latent variances at later times (only set the scale once)
+Pos2 ~~ NA*Pos2
+Pos3 ~~ NA*Pos3
+
+
+## directional auto-reggessivepaths
+Pos2 ~ Pos1
+Pos3 ~ Pos2
+
+
+## correlated residuals across time
+PosAFF11 ~~ v1*PosAFF12 + v1*PosAFF13
+PosAFF12 ~~ v1*PosAFF13
+PosAFF21 ~~ v1*PosAFF22 + v1*PosAFF23
+PosAFF22 ~~ v1*PosAFF23
+PosAFF31 ~~ v1*PosAFF32 + v1*PosAFF33
+PosAFF32 ~~ v1*PosAFF33
+
+
+PosAFF11 ~~ i1*PosAFF11
+PosAFF12 ~~ i1*PosAFF12
+PosAFF13 ~~ i1*PosAFF13
+'</span>
+
+<span class='va'>fit.auto</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lavaan/man/sem.html'>sem</a></span><span class='op'>(</span><span class='va'>auto</span>, data<span class='op'>=</span><span class='va'>long</span>, std.lv<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/pkg/semPlot/man/semPaths.html'>semPaths</a></span><span class='op'>(</span><span class='va'>fit.auto</span>, layout <span class='op'>=</span> <span class='st'>"tree3"</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="sem-longitudinal_files/figure-html5/unnamed-chunk-22-1.png" width="624" /></p>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>fit.auto</span>, standardized<span class='op'>=</span><span class='cn'>TRUE</span>, fit.measures<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>lavaan 0.6-8 ended normally after 46 iterations
+
+  Estimator                                         ML
+  Optimization method                           NLMINB
+  Number of model parameters                        31
+  Number of equality constraints                    16
+                                                      
+  Number of observations                           368
+                                                      
+Model Test User Model:
+                                                      
+  Test statistic                                43.094
+  Degrees of freedom                                30
+  P-value (Chi-square)                           0.057
+
+Model Test Baseline Model:
+
+  Test statistic                              2688.088
+  Degrees of freedom                                36
+  P-value                                        0.000
+
+User Model versus Baseline Model:
+
+  Comparative Fit Index (CFI)                    0.995
+  Tucker-Lewis Index (TLI)                       0.994
+
+Loglikelihood and Information Criteria:
+
+  Loglikelihood user model (H0)              -2057.871
+  Loglikelihood unrestricted model (H1)      -2036.324
+                                                      
+  Akaike (AIC)                                4145.742
+  Bayesian (BIC)                              4204.363
+  Sample-size adjusted Bayesian (BIC)         4156.773
+
+Root Mean Square Error of Approximation:
+
+  RMSEA                                          0.034
+  90 Percent confidence interval - lower         0.000
+  90 Percent confidence interval - upper         0.056
+  P-value RMSEA &lt;= 0.05                          0.872
+
+Standardized Root Mean Square Residual:
+
+  SRMR                                           0.070
+
+Parameter Estimates:
+
+  Standard errors                             Standard
+  Information                                 Expected
+  Information saturated (h1) model          Structured
+
+Latent Variables:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
+  Pos1 =~                                                      
+    PosAFF11  (L1)    0.634    0.027   23.838    0.000    0.634
+    PosAFF21  (L2)    0.679    0.029   23.470    0.000    0.679
+    PosAFF31  (L3)    0.687    0.029   23.919    0.000    0.687
+  Pos2 =~                                                      
+    PosAFF12  (L1)    0.634    0.027   23.838    0.000    0.583
+    PosAFF22  (L2)    0.679    0.029   23.470    0.000    0.625
+    PosAFF32  (L3)    0.687    0.029   23.919    0.000    0.632
+  Pos3 =~                                                      
+    PosAFF13  (L1)    0.634    0.027   23.838    0.000    0.503
+    PosAFF23  (L2)    0.679    0.029   23.470    0.000    0.539
+    PosAFF33  (L3)    0.687    0.029   23.919    0.000    0.545
+  Std.all
+         
+    0.908
+    0.886
+    0.909
+         
+    0.894
+    0.887
+    0.930
+         
+    0.865
+    0.866
+    0.887
+
+Regressions:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
+  Pos2 ~                                                       
+    Pos1              0.438    0.046    9.484    0.000    0.476
+  Pos3 ~                                                       
+    Pos2              0.395    0.044    8.920    0.000    0.458
+  Std.all
+         
+    0.476
+         
+    0.458
+
+Covariances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
+ .PosAFF11 ~~                                                  
+   .PosAFF12  (v1)    0.006    0.002    3.050    0.002    0.006
+   .PosAFF13  (v1)    0.006    0.002    3.050    0.002    0.006
+ .PosAFF12 ~~                                                  
+   .PosAFF13  (v1)    0.006    0.002    3.050    0.002    0.006
+ .PosAFF21 ~~                                                  
+   .PosAFF22  (v1)    0.006    0.002    3.050    0.002    0.006
+   .PosAFF23  (v1)    0.006    0.002    3.050    0.002    0.006
+ .PosAFF22 ~~                                                  
+   .PosAFF23  (v1)    0.006    0.002    3.050    0.002    0.006
+ .PosAFF31 ~~                                                  
+   .PosAFF32  (v1)    0.006    0.002    3.050    0.002    0.006
+   .PosAFF33  (v1)    0.006    0.002    3.050    0.002    0.006
+ .PosAFF32 ~~                                                  
+   .PosAFF33  (v1)    0.006    0.002    3.050    0.002    0.006
+  Std.all
+         
+    0.073
+    0.073
+         
+    0.073
+         
+    0.054
+    0.057
+         
+    0.062
+         
+    0.080
+    0.070
+         
+    0.088
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
+   .Pos2              0.655    0.075    8.772    0.000    0.774
+   .Pos3              0.497    0.058    8.623    0.000    0.790
+   .PosAFF11  (i1)    0.085    0.005   15.650    0.000    0.085
+   .PosAFF12  (i1)    0.085    0.005   15.650    0.000    0.085
+   .PosAFF13  (i1)    0.085    0.005   15.650    0.000    0.085
+   .PosAFF21          0.127    0.013    9.890    0.000    0.127
+   .PosAFF31          0.099    0.011    8.750    0.000    0.099
+   .PosAFF22          0.106    0.011   10.027    0.000    0.106
+   .PosAFF32          0.063    0.008    7.548    0.000    0.063
+   .PosAFF23          0.097    0.010    9.523    0.000    0.097
+   .PosAFF33          0.081    0.009    8.645    0.000    0.081
+    Pos1              1.000                               1.000
+  Std.all
+    0.774
+    0.790
+    0.175
+    0.200
+    0.252
+    0.216
+    0.173
+    0.213
+    0.135
+    0.250
+    0.214
+    1.000</code></pre>
+</div>
+<p>Note how our regressions are estimated seperately. You should see if our model fit is better if we constrain them to be equal.</p>
+<h3 id="b-correlate-change">2.b correlate change</h3>
+<p>We can also model two autoregressive processes at the same time. We can then ask: are the changes (residualized) associated with changes in the other construct.</p>
+<p>We will talk about residualized change more in a later lecture, but for now: how do you think residualized change differs from a difference score?</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>long.path</span> <span class='op'>&lt;-</span> <span class='st'>'
@@ -5211,14 +5414,17 @@ Variances:
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/semPlot/man/semPaths.html'>semPaths</a></span><span class='op'>(</span><span class='va'>fit.long.path</span>, layout <span class='op'>=</span> <span class='st'>"tree3"</span><span class='op'>)</span>
 </code></pre>
 </div>
-<img src="sem-longitudinal_files/figure-html5/unnamed-chunk-23-1.png" width="624" />
+<img src="sem-longitudinal_files/figure-html5/unnamed-chunk-25-1.png" width="624" />
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='co'>## layout can also be done manually to get publications worthy plots</span>
 </code></pre>
 </div>
 </div>
-<h3 id="a-longitudinal-cross-lagged-panel-model-clpm">2.a Longitudinal Cross lagged panel model (clpm)</h3>
-<p>key concerns: 1. Should the regressions (both cross lagged and autoregressive) be the same across time? 2. Should the indicator error variances be correlated (within time or within construct)? 3. Are the loadings the same across time? Should we impose this? 4. Are the latent error variances the same or different? 5. Are the latent error variances correlated the same or different across time? 6. Are there more lagged effects?</p>
+<p>How do you interpret the covariances between latent variables?</p>
+<p>Should you constrain them to be equivalent? All of them?</p>
+<h3 id="c-longitudinal-cross-lagged-panel-model-clpm">2.c Longitudinal Cross lagged panel model (clpm)</h3>
+<p>Often we want to ask whether one variable leads to another variable. That is, what is responsible for change? THIS IS A HARD QUESTION. One of the models that attempts to do this is the cross lagged panel model. The clpm is not a model i would recommend. However, it is the basis for some models I do recommend and it is historically important. So we will cover this model a lot, and talk about the pros and the cons.</p>
+<p>key concerns: 1. Should the regressions (both cross lagged and autoregressive) be the same across time? 2. Should the indicator error variances be correlated (within time or within construct)? 3. Are the loadings the same across time? Should we impose this? 4. Are the latent error variances the same or different? 5. Are the latent error variances correlated the same or different across time? 6. Are there more lagged effects? 7. Should the cross lags be constrained to be equal?</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>long.cross</span> <span class='op'>&lt;-</span> <span class='st'>'
@@ -5241,9 +5447,9 @@ Pos2 ~~ Neg2
 Pos3 ~~ Neg3
 
 ## directional regression paths
-Pos2 ~ Pos1 + Neg1
+Pos2 ~ Pos1 + c1*Neg1
 Neg2 ~ Pos1 + Neg1
-Pos3 ~ Pos2 + Neg2
+Pos3 ~ Pos2 + c1*Neg2
 Neg3 ~ Pos2 + Neg2
 
 ## correlated residuals across time
@@ -5260,6 +5466,7 @@ NegAFF21 ~~ NegAFF22 + NegAFF23
 NegAFF22 ~~ NegAFF23
 NegAFF31 ~~ NegAFF32 + NegAFF33
 NegAFF32 ~~ NegAFF33
+
 '</span>
 
 <span class='va'>fit.long.cross</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lavaan/man/sem.html'>sem</a></span><span class='op'>(</span><span class='va'>long.cross</span>,data<span class='op'>=</span><span class='va'>long</span>, std.lv<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
@@ -5267,19 +5474,19 @@ NegAFF32 ~~ NegAFF33
 <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>fit.long.cross</span>, standardized<span class='op'>=</span><span class='cn'>TRUE</span>, fit.measures<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>lavaan 0.6-8 ended normally after 137 iterations
+<pre><code>lavaan 0.6-8 ended normally after 129 iterations
 
   Estimator                                         ML
   Optimization method                           NLMINB
   Number of model parameters                        69
-  Number of equality constraints                    12
+  Number of equality constraints                    13
                                                       
   Number of observations                           368
                                                       
 Model Test User Model:
                                                       
-  Test statistic                               163.406
-  Degrees of freedom                               114
+  Test statistic                               164.499
+  Degrees of freedom                               115
   P-value (Chi-square)                           0.002
 
 Model Test Baseline Model:
@@ -5295,19 +5502,19 @@ User Model versus Baseline Model:
 
 Loglikelihood and Information Criteria:
 
-  Loglikelihood user model (H0)              -3082.335
+  Loglikelihood user model (H0)              -3082.881
   Loglikelihood unrestricted model (H1)      -3000.632
                                                       
-  Akaike (AIC)                                6278.669
-  Bayesian (BIC)                              6501.430
-  Sample-size adjusted Bayesian (BIC)         6320.590
+  Akaike (AIC)                                6277.763
+  Bayesian (BIC)                              6496.615
+  Sample-size adjusted Bayesian (BIC)         6318.948
 
 Root Mean Square Error of Approximation:
 
   RMSEA                                          0.034
-  90 Percent confidence interval - lower         0.022
-  90 Percent confidence interval - upper         0.046
-  P-value RMSEA &lt;= 0.05                          0.990
+  90 Percent confidence interval - lower         0.021
+  90 Percent confidence interval - upper         0.045
+  P-value RMSEA &lt;= 0.05                          0.991
 
 Standardized Root Mean Square Residual:
 
@@ -5322,226 +5529,226 @@ Parameter Estimates:
 Latent Variables:
                    Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
   Pos1 =~                                                      
-    PosAFF11  (L1)    0.630    0.027   23.619    0.000    0.630
-    PosAFF21  (L2)    0.673    0.029   23.393    0.000    0.673
-    PosAFF31  (L3)    0.686    0.029   23.990    0.000    0.686
+    PosAFF11  (L1)    0.630    0.027   23.615    0.000    0.630
+    PosAFF21  (L2)    0.673    0.029   23.391    0.000    0.673
+    PosAFF31  (L3)    0.686    0.029   23.992    0.000    0.686
   Pos2 =~                                                      
-    PosAFF12  (L1)    0.630    0.027   23.619    0.000    0.582
-    PosAFF22  (L2)    0.673    0.029   23.393    0.000    0.622
-    PosAFF32  (L3)    0.686    0.029   23.990    0.000    0.634
+    PosAFF12  (L1)    0.630    0.027   23.615    0.000    0.583
+    PosAFF22  (L2)    0.673    0.029   23.391    0.000    0.623
+    PosAFF32  (L3)    0.686    0.029   23.992    0.000    0.635
   Pos3 =~                                                      
-    PosAFF13  (L1)    0.630    0.027   23.619    0.000    0.503
-    PosAFF23  (L2)    0.673    0.029   23.393    0.000    0.537
-    PosAFF33  (L3)    0.686    0.029   23.990    0.000    0.547
+    PosAFF13  (L1)    0.630    0.027   23.615    0.000    0.502
+    PosAFF23  (L2)    0.673    0.029   23.391    0.000    0.536
+    PosAFF33  (L3)    0.686    0.029   23.992    0.000    0.547
   Neg1 =~                                                      
-    NegAFF11  (L4)    0.547    0.024   22.394    0.000    0.547
-    NegAFF21  (L5)    0.510    0.023   22.488    0.000    0.510
-    NegAFF31  (L6)    0.538    0.023   23.710    0.000    0.538
+    NegAFF11  (L4)    0.547    0.024   22.389    0.000    0.547
+    NegAFF21  (L5)    0.510    0.023   22.486    0.000    0.510
+    NegAFF31  (L6)    0.537    0.023   23.698    0.000    0.537
   Neg2 =~                                                      
-    NegAFF12  (L4)    0.547    0.024   22.394    0.000    0.382
-    NegAFF22  (L5)    0.510    0.023   22.488    0.000    0.356
-    NegAFF32  (L6)    0.538    0.023   23.710    0.000    0.375
+    NegAFF12  (L4)    0.547    0.024   22.389    0.000    0.380
+    NegAFF22  (L5)    0.510    0.023   22.486    0.000    0.354
+    NegAFF32  (L6)    0.537    0.023   23.698    0.000    0.373
   Neg3 =~                                                      
-    NegAFF13  (L4)    0.547    0.024   22.394    0.000    0.358
-    NegAFF23  (L5)    0.510    0.023   22.488    0.000    0.334
-    NegAFF33  (L6)    0.538    0.023   23.710    0.000    0.352
+    NegAFF13  (L4)    0.547    0.024   22.389    0.000    0.360
+    NegAFF23  (L5)    0.510    0.023   22.486    0.000    0.335
+    NegAFF33  (L6)    0.537    0.023   23.698    0.000    0.354
   Std.all
          
-    0.892
+    0.891
     0.884
     0.914
          
     0.896
-    0.880
+    0.881
     0.933
          
     0.884
-    0.861
+    0.860
     0.886
          
     0.860
-    0.868
+    0.867
     0.908
          
-    0.840
-    0.869
+    0.838
+    0.868
     0.903
          
-    0.777
-    0.844
+    0.778
+    0.845
     0.881
 
 Regressions:
                    Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
   Pos2 ~                                                       
-    Pos1              0.463    0.052    8.829    0.000    0.501
-    Neg1              0.039    0.053    0.746    0.456    0.042
+    Pos1              0.478    0.050    9.481    0.000    0.517
+    Neg1      (c1)    0.072    0.042    1.708    0.088    0.078
   Neg2 ~                                                       
-    Pos1             -0.057    0.039   -1.454    0.146   -0.081
-    Neg1              0.347    0.039    8.812    0.000    0.498
+    Pos1             -0.063    0.039   -1.634    0.102   -0.091
+    Neg1              0.335    0.038    8.867    0.000    0.483
   Pos3 ~                                                       
-    Pos2              0.451    0.054    8.307    0.000    0.522
-    Neg2              0.134    0.073    1.843    0.065    0.117
+    Pos2              0.424    0.048    8.919    0.000    0.493
+    Neg2      (c1)    0.072    0.042    1.708    0.088    0.063
   Neg3 ~                                                       
-    Pos2              0.046    0.046    1.000    0.317    0.065
-    Neg2              0.446    0.062    7.239    0.000    0.475
+    Pos2              0.052    0.045    1.144    0.252    0.073
+    Neg2              0.459    0.060    7.628    0.000    0.485
   Std.all
          
-    0.501
-    0.042
+    0.517
+    0.078
          
-   -0.081
-    0.498
+   -0.091
+    0.483
          
-    0.522
-    0.117
+    0.493
+    0.063
          
-    0.065
-    0.475
+    0.073
+    0.485
 
 Covariances:
                    Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
   Pos1 ~~                                                      
-    Neg1             -0.437    0.047   -9.375    0.000   -0.437
+    Neg1             -0.439    0.047   -9.427    0.000   -0.439
  .Pos2 ~~                                                      
-   .Neg2             -0.269    0.036   -7.567    0.000   -0.566
+   .Neg2             -0.269    0.036   -7.562    0.000   -0.565
  .Pos3 ~~                                                      
-   .Neg3             -0.127    0.027   -4.710    0.000   -0.308
+   .Neg3             -0.127    0.027   -4.690    0.000   -0.306
  .PosAFF11 ~~                                                  
-   .PosAFF12          0.004    0.007    0.529    0.597    0.004
-   .PosAFF13          0.002    0.007    0.371    0.711    0.002
+   .PosAFF12          0.004    0.007    0.530    0.596    0.004
+   .PosAFF13          0.002    0.007    0.376    0.707    0.002
  .PosAFF12 ~~                                                  
-   .PosAFF13          0.003    0.006    0.569    0.569    0.003
+   .PosAFF13          0.003    0.006    0.577    0.564    0.003
  .PosAFF21 ~~                                                  
-   .PosAFF22          0.007    0.008    0.869    0.385    0.007
-   .PosAFF23          0.008    0.008    0.964    0.335    0.008
+   .PosAFF22          0.007    0.008    0.850    0.395    0.007
+   .PosAFF23          0.008    0.008    1.001    0.317    0.008
  .PosAFF22 ~~                                                  
-   .PosAFF23          0.011    0.007    1.416    0.157    0.011
+   .PosAFF23          0.011    0.007    1.434    0.152    0.011
  .PosAFF31 ~~                                                  
-   .PosAFF32          0.004    0.007    0.649    0.516    0.004
-   .PosAFF33          0.016    0.007    2.257    0.024    0.016
+   .PosAFF32          0.004    0.007    0.659    0.510    0.004
+   .PosAFF33          0.016    0.007    2.231    0.026    0.016
  .PosAFF32 ~~                                                  
-   .PosAFF33          0.004    0.006    0.580    0.562    0.004
+   .PosAFF33          0.004    0.006    0.596    0.551    0.004
  .NegAFF11 ~~                                                  
    .NegAFF12          0.005    0.005    0.986    0.324    0.005
-   .NegAFF13          0.007    0.006    1.088    0.277    0.007
+   .NegAFF13          0.007    0.006    1.093    0.274    0.007
  .NegAFF12 ~~                                                  
-   .NegAFF13          0.007    0.005    1.537    0.124    0.007
+   .NegAFF13          0.007    0.005    1.540    0.124    0.007
  .NegAFF21 ~~                                                  
-   .NegAFF22          0.015    0.004    3.440    0.001    0.015
-   .NegAFF23          0.010    0.005    2.238    0.025    0.010
+   .NegAFF22          0.015    0.004    3.435    0.001    0.015
+   .NegAFF23          0.010    0.005    2.242    0.025    0.010
  .NegAFF22 ~~                                                  
-   .NegAFF23          0.011    0.003    3.397    0.001    0.011
+   .NegAFF23          0.011    0.003    3.404    0.001    0.011
  .NegAFF31 ~~                                                  
-   .NegAFF32         -0.007    0.004   -1.748    0.080   -0.007
-   .NegAFF33         -0.007    0.004   -1.602    0.109   -0.007
+   .NegAFF32         -0.007    0.004   -1.737    0.082   -0.007
+   .NegAFF33         -0.007    0.004   -1.609    0.108   -0.007
  .NegAFF32 ~~                                                  
-   .NegAFF33         -0.002    0.003   -0.751    0.453   -0.002
+   .NegAFF33         -0.002    0.003   -0.764    0.445   -0.002
   Std.all
          
-   -0.437
+   -0.439
          
-   -0.566
+   -0.565
          
-   -0.308
+   -0.306
          
     0.039
-    0.028
+    0.029
          
-    0.043
-         
-    0.061
-    0.069
-         
-    0.099
+    0.044
          
     0.059
-    0.187
-         
-    0.050
-         
-    0.067
     0.072
          
     0.100
          
-    0.252
+    0.060
+    0.185
+         
+    0.052
+         
+    0.067
+    0.073
+         
+    0.100
+         
+    0.251
     0.165
          
-    0.256
+    0.257
          
-   -0.157
+   -0.156
    -0.145
          
-   -0.068
+   -0.069
 
 Variances:
                    Estimate  Std.Err  z-value  P(&gt;|z|)   Std.lv
-   .Pos2              0.653    0.075    8.735    0.000    0.765
-   .Pos3              0.496    0.058    8.594    0.000    0.780
-   .Neg2              0.346    0.041    8.475    0.000    0.710
-   .Neg3              0.345    0.041    8.396    0.000    0.804
-   .PosAFF11          0.102    0.011    9.359    0.000    0.102
-   .PosAFF21          0.127    0.013    9.731    0.000    0.127
-   .PosAFF31          0.093    0.012    8.100    0.000    0.093
-   .PosAFF12          0.083    0.009    9.656    0.000    0.083
-   .PosAFF22          0.113    0.011   10.344    0.000    0.113
-   .PosAFF32          0.060    0.008    7.270    0.000    0.060
-   .PosAFF13          0.071    0.008    8.814    0.000    0.071
-   .PosAFF23          0.101    0.010    9.817    0.000    0.101
-   .PosAFF33          0.082    0.009    8.730    0.000    0.082
-   .NegAFF11          0.105    0.010   10.063    0.000    0.105
-   .NegAFF21          0.085    0.009    9.775    0.000    0.085
-   .NegAFF31          0.062    0.008    7.599    0.000    0.062
-   .NegAFF12          0.061    0.006   10.647    0.000    0.061
-   .NegAFF22          0.041    0.004    9.668    0.000    0.041
-   .NegAFF32          0.032    0.004    7.810    0.000    0.032
+   .Pos2              0.653    0.075    8.728    0.000    0.762
+   .Pos3              0.499    0.058    8.613    0.000    0.786
+   .Neg2              0.347    0.041    8.485    0.000    0.720
+   .Neg3              0.345    0.041    8.389    0.000    0.797
+   .PosAFF11          0.103    0.011    9.373    0.000    0.103
+   .PosAFF21          0.127    0.013    9.742    0.000    0.127
+   .PosAFF31          0.093    0.011    8.093    0.000    0.093
+   .PosAFF12          0.083    0.009    9.645    0.000    0.083
+   .PosAFF22          0.112    0.011   10.330    0.000    0.112
+   .PosAFF32          0.060    0.008    7.256    0.000    0.060
+   .PosAFF13          0.071    0.008    8.817    0.000    0.071
+   .PosAFF23          0.101    0.010    9.827    0.000    0.101
+   .PosAFF33          0.082    0.009    8.720    0.000    0.082
+   .NegAFF11          0.105    0.010   10.059    0.000    0.105
+   .NegAFF21          0.085    0.009    9.777    0.000    0.085
+   .NegAFF31          0.062    0.008    7.609    0.000    0.062
+   .NegAFF12          0.061    0.006   10.641    0.000    0.061
+   .NegAFF22          0.041    0.004    9.665    0.000    0.041
+   .NegAFF32          0.032    0.004    7.796    0.000    0.032
    .NegAFF13          0.084    0.008   11.023    0.000    0.084
-   .NegAFF23          0.045    0.005    9.106    0.000    0.045
-   .NegAFF33          0.036    0.005    7.452    0.000    0.036
+   .NegAFF23          0.045    0.005    9.108    0.000    0.045
+   .NegAFF33          0.036    0.005    7.447    0.000    0.036
     Pos1              1.000                               1.000
     Neg1              1.000                               1.000
   Std.all
-    0.765
-    0.780
-    0.710
-    0.804
+    0.762
+    0.786
+    0.720
+    0.797
     0.205
     0.219
     0.165
-    0.198
-    0.226
+    0.197
+    0.224
     0.129
     0.219
-    0.259
+    0.260
     0.216
     0.260
-    0.247
+    0.248
     0.176
-    0.295
-    0.245
-    0.184
-    0.396
-    0.287
-    0.224
+    0.297
+    0.247
+    0.185
+    0.395
+    0.286
+    0.223
     1.000
     1.000</code></pre>
-</div>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/semPlot/man/semPaths.html'>semPaths</a></span><span class='op'>(</span><span class='va'>fit.long.cross</span><span class='op'>)</span>
-</code></pre>
-</div>
-<p><img src="sem-longitudinal_files/figure-html5/unnamed-chunk-25-1.png" width="624" /></p>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/semPlot/man/semPaths.html'>semPaths</a></span><span class='op'>(</span><span class='va'>fit.long.cross</span>, layout <span class='op'>=</span> <span class='st'>"tree3"</span><span class='op'>)</span>
 </code></pre>
 </div>
-<p><img src="sem-longitudinal_files/figure-html5/unnamed-chunk-26-1.png" width="624" /></p>
+<p><img src="sem-longitudinal_files/figure-html5/unnamed-chunk-27-1.png" width="624" /></p>
 </div>
-<h3 id="b-longitudinal-mediation-model">2.b Longitudinal mediation model</h3>
+<h2 id="d-including-covariates">2.d Including covariates</h2>
+<p>Many times we would like to control for the influence of a variable. If we wanted to, how would we go about doing this with our panel model?</p>
+<p>First, you have to ask yourself is it a time varying covariate (tvc), akin to a level 1 predictor variable ie one that varies from wave to wave. Or is it a time invariate covariate that does not differ across time?</p>
+<p>Second, you have to ask where in the model you want to introduce covariates? The DV is traditional in standard regression. But we could also control for with the IVs. But there are multiple IVs, do we control for them all?</p>
+<p>Third, do you want to control at the latent level or at the level of the indicators?</p>
+<p>It is potential defensible to: 1. only control for the DV or focal association. 2. only control for initial time. 3. control at all time points 4 control for only downstream timepoints ie those predicted by another variable. Each of these have different interpretation for how you think the covariates could influence the model.</p>
+<p>I would suggest 1. try to use covariates as closely as possible to your theoretical model and 2. not to over control. Remember that statistical models can be both too liberal (you get an asterisk, everyone gets an asterisk!) and too conservative (this one of many reasons why Josh dislikes correcting for type 1 error). The goal is to be accurate. Try them multiple ways.</p>
+<h3 id="e-longitudinal-mediation-model">2.e Longitudinal mediation model</h3>
 <p>An extension of this model is to introduce indirect pathways. Indirect pathways are equivalent with mediational pathways. The calculation of indirect pathways are done through what is known as the tracing rules. The coefficients along each path are multiplied together; those products are them summed across different tracings or paths. In short, one finds the sum of all compound paths between two variables.</p>
 <p>Maxwell, S. E., Cole, D. A., &amp; Mitchell, M. A. (2011). Bias in cross-sectional analyses of longitudinal mediation: Partial and complete mediation under an autoregressive model. Multivariate Behavioral Research, 46(5), 816-841.</p>
 <p>Selig, J. P., &amp; Preacher, K. J. (2009). Mediation models for longitudinal data in developmental research. Research in Human Development, 6(2-3), 144-164.</p>
@@ -5550,6 +5757,7 @@ Variances:
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='co'>#Do Self-Reported Social Experiences Mediate the Effect of Extraversion on Life Satisfaction and Happiness?</span>
 <span class='co'>#number close friends</span>
+
 <span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://readr.tidyverse.org'>readr</a></span><span class='op'>)</span>
 <span class='va'>TSS_sub</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://readr.tidyverse.org/reference/read_delim.html'>read_csv</a></span><span class='op'>(</span><span class='st'>"~/Box/5165 Applied Longitudinal Data Analysis/Longitudinal/TSS_sub.csv"</span><span class='op'>)</span>
 
@@ -6007,16 +6215,7 @@ Defined Parameters:
 </code></pre>
 </div>
 </div>
-<p>We will come back to extensions of these panel models in later weeks, incorporating mean levels as well as seperating between and within person sources.</p>
-<h3 id="c-including-covariates">2.c Including covariates</h3>
-<p>Many times we would like to control for the influence of a variable. If we wanted to, how would we go about doing this with our panel model?</p>
-<p>First, you have to ask yourself is it a time varying covariate (tvc), akin to a level 1 predictor variable ie one that varies from wave to wave. Or is it a time invariate covariate that does not differ across time?</p>
-<p>Second, you have to ask where in the model you want to introduce covariates? The DV is tradiational in standard regression. But we could also control for with the IVs. But there are multiple IVs, do we control for them all?</p>
-<p>Third, do you want to control at the latent level or at the level of the indicators?</p>
-<p>It is potential defensible to: 1. only control for the DV or focal association. 2. only control for initial time. 3. control at all time points 4 control for only downstream timepoints ie those predicted by another variable. Each of these have different interpretation for how you think the covariates could influence the model.</p>
-<p>I would suggest 1. try to use covariates as closely as possible to your theoretical model and 2. not to over control. Remember that statistical models can be both too liberal (you get an asterisk, everyone gets an asterisk!) and too conservative (this one of many reasons why Josh dislikes correcting for type 1 error). The goal is to be accurate. Try them multiple ways.</p>
 <h1 id="growth-models">3. Growth models</h1>
-<p>The above models are well suited to address between subjects questions, but does not get at a within subjects questions at all. There are some that can separate these effects, which we will turn to in a few weeks. However, we will start with the most basic model, the model you are familiar with, the growth model.</p>
 <p>The implementation of growth models in an SEM framework is very similar to the HLM framework. The major differences is how time is treated. Here, time variables must be the same for everyone in that each assessment point must have a particular variable name associated with it. That is, time is considered categorical in SEM, whereas in MLM it could be treated continuously. This requirement also makes a differences in how our data need to be structured. Whereas previously we had a time variable, now we indirectly include time into our model by specifying when variables were assessed. This has the consequence of necessitating a wide format, as opposed to the long format of MLM.</p>
 <p>Other than time, the idea behind the growth model is exactly the same.</p>
 <h2 id="coding-time">Coding time</h2>
@@ -6060,72 +6259,23 @@ Defined Parameters:
 6     6     1     1 1.55   0.531      3            3      3.16</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
-<pre><code>lavaan 0.6-8 ended normally after 22 iterations
 
-  Estimator                                         ML
-  Optimization method                           NLMINB
-  Number of model parameters                         8
-                                                      
-  Number of observations                            82
-                                                      
-Model Test User Model:
-                                                      
-  Test statistic                                 0.636
-  Degrees of freedom                                 1
-  P-value (Chi-square)                           0.425
-
-Parameter Estimates:
-
-  Standard errors                             Standard
-  Information                                 Expected
-  Information saturated (h1) model          Structured
-
-Latent Variables:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)
-  i =~                                                
-    alcuse_14         1.000                           
-    alcuse_15         1.000                           
-    alcuse_16         1.000                           
-  s =~                                                
-    alcuse_14         0.000                           
-    alcuse_15         1.000                           
-    alcuse_16         2.000                           
-
-Covariances:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)
-  i ~~                                                
-    s                -0.187    0.102   -1.841    0.066
-
-Intercepts:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)
-   .alcuse_14         0.000                           
-   .alcuse_15         0.000                           
-   .alcuse_16         0.000                           
-    i                 0.634    0.103    6.163    0.000
-    s                 0.277    0.062    4.481    0.000
-
-Variances:
-                   Estimate  Std.Err  z-value  P(&gt;|z|)
-   .alcuse_14         0.064    0.147    0.436    0.663
-   .alcuse_15         0.420    0.094    4.463    0.000
-   .alcuse_16         0.280    0.180    1.556    0.120
-    i                 0.807    0.193    4.177    0.000
-    s                 0.234    0.083    2.803    0.005</code></pre>
 </div>
 <p>To fit a growth model within SEM we are going to create two latent variables: an intercept and a slope/trajectory. This is the same we did prior when we fit an MLM growth model with time as a predictor.</p>
+<p>To define the latent variables we have to set constraints. These constraints are based on how we want to define each of these variables.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/semPlot/man/semPaths.html'>semPaths</a></span><span class='op'>(</span><span class='va'>fit.1</span><span class='op'>)</span>
 </code></pre>
 </div>
-<p><img src="sem-longitudinal_files/figure-html5/unnamed-chunk-31-1.png" width="624" /></p>
+<p><img src="sem-longitudinal_files/figure-html5/unnamed-chunk-32-1.png" width="624" /></p>
 </div>
 <p>How do we define these two latent factors? They are going to be made up of our repeated measures. We then add constraints on the loadings to force the latent variables to be interpreted how we want them to be interpreted.</p>
-<p>As before, the simplest way to think of the intercept is the initial value. While the slope indexes change. To obtain that, we will constrain the loadings to the intercept to be 1 for all repeated measures. This will obtain what is <em>constant</em> across time.</p>
+<p>As before, the simplest way to think of the intercept is the initial value. While the slope indexes change. To obtain that, we will constrain the loadings to the intercept to be 1 for all repeated measures. This will obtain what is <em>constant</em> with respect to time. Note the similarity with using 1 for our mlm models to indicate intercept.</p>
 <p>But where is that constant located? Previously we could center or change our time variable to change the interpretation of the intercept. We do the same thing within SEM whereby we change the interpretation of intercept by changing how we define the slope parameter. As always, the intercept is defined as when X (or time in this case) equals zero. That is, the intercept is the mean of the DV when the predictor is 0, where we have time as the predictor.</p>
-<p>The slope loadings typically include 0, so as to make the intercept interpretable. However, it is up to you to define where zero goes and what the rest of the loadings are. A few rules: First, how you code the loadings represent the pattern of change you expect. 0,1,2 suggests a straight line that does not increase in speed. 0,1,5, suggests something different. Usually it is better to stick with linear change to start out with.</p>
+<p>The slope loadings typically include 0, so as to make the intercept interpretable. However, it is up to you to define where zero goes and what the rest of the loadings are.</p>
+<p>A few rules: First, how you code the loadings represent the pattern of change you expect. 0,1,2 suggests a straight line that does not increase in speed. 0,1,5, suggests something different. Usually it is better to stick with linear change to start out with.</p>
 <p>Second, remember that this is just fancy regression. So the coefficients are interpreted as in regression whereas for a one unit change in the slope (time) corresponds to a coef change in your DV. Thus, you will change the magnitude of your slope parameter by choosing 0, .5, 1 versus 0,1,2 versus 0, 10, 20. As always, choose what makes sense to interpret. Changing the loadings (if they are just a multiple) will not change the substantive interpretation.</p>
-<h3 id="how-do-we-do-that-in-lavaan">How do we do that in lavaan?</h3>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>model.1</span> <span class='op'>&lt;-</span> <span class='st'>'  i =~ 1*alcuse_14 + 1*alcuse_15 + 1*alcuse_16 
@@ -6190,35 +6340,8 @@ Variances:
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/lme4/lme4/'>lme4</a></span><span class='op'>)</span>
-<span class='va'>fit1.mlm</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lme4/man/lmer.html'>lmer</a></span><span class='op'>(</span><span class='va'>alcuse</span> <span class='op'>~</span>  <span class='va'>age</span> <span class='op'>+</span> <span class='op'>(</span><span class='va'>age</span> <span class='op'>|</span> <span class='va'>id</span><span class='op'>)</span>, data <span class='op'>=</span> <span class='va'>alcohol1_pp</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>fit1.mlm</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>Linear mixed model fit by REML [&#39;lmerMod&#39;]
-Formula: alcuse ~ age + (age | id)
-   Data: alcohol1_pp
-
-REML criterion at convergence: 643.2
-
-Scaled residuals: 
-     Min       1Q   Median       3Q      Max 
--2.48287 -0.37933 -0.07858  0.38875  2.49283 
-
-Random effects:
- Groups   Name        Variance Std.Dev. Corr 
- id       (Intercept) 33.0434  5.7483        
-          age          0.1552  0.3939   -0.99
- Residual              0.3373  0.5808        
-Number of obs: 246, groups:  id, 82
-
-Fixed effects:
-            Estimate Std. Error t value
-(Intercept) -3.13782    0.93118  -3.370
-age          0.27065    0.06284   4.307
-
-Correlation of Fixed Effects:
-    (Intr)
-age -0.995</code></pre>
 </div>
 centered MLM
 <div class="layout-chunk" data-layout="l-body">
@@ -6253,13 +6376,9 @@ Correlation of Fixed Effects:
        (Intr)
 age_14 -0.441</code></pre>
 </div>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/semPlot/man/semPaths.html'>semPaths</a></span><span class='op'>(</span><span class='va'>fit.1</span>, <span class='st'>'est'</span><span class='op'>)</span>
-</code></pre>
-</div>
-<p><img src="sem-longitudinal_files/figure-html5/unnamed-chunk-35-1.png" width="624" /></p>
-</div>
+<p>What is the same, what is different?</p>
+<p>One notable difference is there is no residual. Instead of a single residual/sigma that we have with MLM here we have separate residuals.</p>
+<p>The default of MLM is that these residuals are the same across measurement occasions. How could we model that here?</p>
 <h3 id="we-can-rescale-our-time-variable-to-be-whatever-we-want">we can rescale our time variable to be whatever we want</h3>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -6321,10 +6440,7 @@ Variances:
     i                 0.807    0.193    4.177    0.000
     s                 0.936    0.334    2.803    0.005</code></pre>
 </div>
-<p>This does not change our conclusions but it does change our numnbers.</p>
-<h2 id="interpretation-of-variances">Interpretation of variances</h2>
-<p>Intercept will reflect our fixed effects whereas our random effects are indexed by variances of the latent variables. These are interpreted the same as before. More variance means that more people differ from the fixed effect.</p>
-<p>In MLM we assumed that the residual variances were equal. Here we can better model if that is the case. Right now we are able to fit separate variances for each repeated measure. These residual variances are interpreted as what is left over or what is unique at each time point that cannot be explained by the trajectory.</p>
+<p>This does not change our conclusions but it does change our numbers.</p>
 <h3 id="constraining-slope-to-be-fixed-only">constraining slope to be fixed only</h3>
 <p>As with MLM we have options to handle the inclusion of random effects.</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -6390,9 +6506,10 @@ Variances:
     i                 0.541    0.147    3.676    0.000</code></pre>
 </div>
 <h2 id="introducing-covariatespredictors">introducing covariates/predictors</h2>
+<p>The strategy for including predictors is similar to working with a level 2 mlm equation. Do you want to predict the intercept or the slope? No need to explicitly model an interaction as that is implied.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='co'># a linear growth model with a time invariatnt covariate</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='co'># a linear growth model with a time invariant covariate</span>
 
 <span class='va'>model.3</span> <span class='op'>&lt;-</span> <span class='st'>'  i =~ 1*alcuse_14 + 1*alcuse_15 + 1*alcuse_16 
             s =~ 0*alcuse_14 + .5*alcuse_15 + 1*alcuse_16
@@ -6591,6 +6708,10 @@ Variances:
 </div>
 <p>What is different what is the same? Notice that the main difference is the intercepts ie fixed effects.</p>
 <h3 id="introducing-time-varying-covariates">introducing time varying covariates</h3>
+<p>Level 1 variables (tvs) are flexibly handled in SEM. Whereas previously a level 1 variable had a constant effect (ie you just had a single parameter) here you can model separate effects for different times. Or you can have a tvc for one timepoint but not another. Doing this in an MLM framework is awkward at best.</p>
+<div class="layout-chunk" data-layout="l-body">
+
+</div>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='co'># a linear growth model with a time-varying covariate</span>
@@ -6605,18 +6726,87 @@ Variances:
     
 # time-varying covariates
 
-    alcuse_14 ~ c1
-    alcuse_15 ~ c2
-    alcuse_16 ~ c3
+    alcuse_14 ~ tvc1
+    alcuse_15 ~ tvc2
+    alcuse_16 ~ tvc3
 
 '</span>
 <span class='va'>fit.5</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lavaan/man/growth.html'>growth</a></span><span class='op'>(</span><span class='va'>model.5</span>, data <span class='op'>=</span> <span class='va'>alcohol.wide</span><span class='op'>)</span>
+
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>fit.5</span><span class='op'>)</span>
 </code></pre>
 </div>
+<pre><code>lavaan 0.6-8 ended normally after 32 iterations
+
+  Estimator                                         ML
+  Optimization method                           NLMINB
+  Number of model parameters                        15
+                                                      
+  Number of observations                            82
+                                                      
+Model Test User Model:
+                                                      
+  Test statistic                                12.816
+  Degrees of freedom                                 9
+  P-value (Chi-square)                           0.171
+
+Parameter Estimates:
+
+  Standard errors                             Standard
+  Information                                 Expected
+  Information saturated (h1) model          Structured
+
+Latent Variables:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+  i =~                                                
+    alcuse_14         1.000                           
+    alcuse_15         1.000                           
+    alcuse_16         1.000                           
+  s =~                                                
+    alcuse_14         0.000                           
+    alcuse_15         0.500                           
+    alcuse_16         1.000                           
+
+Regressions:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+  i ~                                                 
+    male.c           -0.169    0.187   -0.900    0.368
+    coa.c             0.682    0.190    3.587    0.000
+  s ~                                                 
+    male.c            0.530    0.234    2.261    0.024
+    coa.c            -0.000    0.238   -0.001    0.999
+  alcuse_14 ~                                         
+    tvc1             -0.176    0.073   -2.412    0.016
+  alcuse_15 ~                                         
+    tvc2              0.040    0.086    0.463    0.644
+  alcuse_16 ~                                         
+    tvc3              0.186    0.102    1.823    0.068
+
+Covariances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+ .i ~~                                                
+   .s                -0.318    0.175   -1.815    0.069
+
+Intercepts:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+   .alcuse_14         0.000                           
+   .alcuse_15         0.000                           
+   .alcuse_16         0.000                           
+   .i                 0.664    0.094    7.058    0.000
+   .s                 0.507    0.117    4.332    0.000
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+   .alcuse_14         0.057    0.130    0.438    0.661
+   .alcuse_15         0.417    0.089    4.705    0.000
+   .alcuse_16         0.215    0.162    1.327    0.184
+   .i                 0.658    0.166    3.974    0.000
+   .s                 0.847    0.295    2.868    0.004</code></pre>
 </div>
-<p>How do we interpet tvcs?</p>
+<p>Can we fix the TVCs to be the same?</p>
 <h2 id="multiple-groups-again">Multiple groups, again</h2>
-<p>For Longitudinal models you are faced with a choice: do you want to use group status to predict your slope, for example, or do you want to use multiple groups. The short answer is that it does not matter! The semi-longer answer is that including group as a predictor is simple while multiple groups analyses are more complex but also more flexible. Using one or the other depends on what your theory about where the group differences occur. If they occur in only the regression relationship indicating group mean differences then go with the easy option. If you think that the measurement model also may differ for your groups you have a more nuanced theory that necessitates multiple groups.</p>
+<p>Say you have a two level categorical predictor. For SEM models you are faced with a choice: do you want to use group status to predict your slope or do you want to use multiple groups. The short answer is that it does not matter!</p>
+<p>The semi-longer answer is that including group as a predictor is simple while multiple groups analyses are more complex but also more flexible. Using one or the other depends on what your theory about where the group differences occur. If they occur in only the regression relationship indicating group mean differences then go with the easy option. If you think that the measurement model also may differ for your groups you have a more nuanced theory that necessitates multiple groups.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>Demo.growth</span><span class='op'>$</span><span class='va'>group</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>as.numeric</a></span><span class='op'>(</span><span class='fu'>cut_number</span><span class='op'>(</span><span class='va'>Demo.growth</span><span class='op'>$</span><span class='va'>x1</span>,<span class='fl'>2</span><span class='op'>)</span><span class='op'>)</span>
@@ -7155,7 +7345,11 @@ Variances:
 </div>
 </div>
 <h2 id="b-second-order-growth-model">3.b Second order growth model</h2>
-<p>Repeated measures are latent. Why would we want to do this? At least two reasons. 1. We can take advantage of the benefits of latent variables ie no measurement error. 2. we can impose constraints for MI across time.</p>
+<p>Repeated measures are latent. Why would we want to do this? At least two reasons.</p>
+<ol type="1">
+<li><p>We can take advantage of the benefits of latent variables ie no measurement error.</p></li>
+<li><p>we can impose constraints for MI across time.</p></li>
+</ol>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>sec.order</span> <span class='op'>&lt;-</span> <span class='st'>'
@@ -7203,7 +7397,19 @@ s =~ 0*Pos1 + 1*Pos2 + 2*Pos3 '</span>
 
 
 <span class='va'>fit.sec.order</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lavaan/man/growth.html'>growth</a></span><span class='op'>(</span><span class='va'>sec.order</span>, data<span class='op'>=</span><span class='va'>long</span>, missing <span class='op'>=</span> <span class='st'>"ML"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>fit.sec.order</span>, fit.measures<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/semPlot/man/semPaths.html'>semPaths</a></span><span class='op'>(</span><span class='va'>fit.sec.order</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="sem-longitudinal_files/figure-html5/unnamed-chunk-52-1.png" width="624" /></p>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>fit.sec.order</span>, fit.measures<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code>lavaan 0.6-8 ended normally after 99 iterations
@@ -7346,17 +7552,29 @@ Constraints:
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/semPlot/man/semPaths.html'>semPaths</a></span><span class='op'>(</span><span class='va'>fit.sec.order</span><span class='op'>)</span>
 </code></pre>
 </div>
-<p><img src="sem-longitudinal_files/figure-html5/unnamed-chunk-51-1.png" width="624" /></p>
+<p><img src="sem-longitudinal_files/figure-html5/unnamed-chunk-54-1.png" width="624" /></p>
 </div>
 <h2 id="c-multivariate-models">3.c Multivariate models</h2>
-<p>For all of the growth models this semester we have focused only on a single outcome.</p>
+<p>For all of the growth models this semester we have focused only on a single outcome. We can now look at two processes simultaneously. This primarily gets us correlated change estimates between the slopes.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>mv.sec.order</span> <span class='op'>&lt;-</span> <span class='st'>[1478 chars quoted with ''']</span>
 
 
 <span class='va'>mv.secondorder</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lavaan/man/growth.html'>growth</a></span><span class='op'>(</span><span class='va'>mv.sec.order</span>, data<span class='op'>=</span><span class='va'>long</span>, missing <span class='op'>=</span> <span class='st'>"ML"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>mv.secondorder</span>, fit.measures<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/semPlot/man/semPaths.html'>semPaths</a></span><span class='op'>(</span><span class='va'>mv.secondorder</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="sem-longitudinal_files/figure-html5/unnamed-chunk-56-1.png" width="624" /></p>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>mv.secondorder</span>, fit.measures<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code>lavaan 0.6-8 ended normally after 189 iterations
@@ -7566,13 +7784,7 @@ Constraints:
     t1 - (0-t2-t3)                               0.000
     tt1 - (0-tt2-tt3)                            0.000</code></pre>
 </div>
-<div class="layout-chunk" data-layout="l-body">
-<div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/semPlot/man/semPaths.html'>semPaths</a></span><span class='op'>(</span><span class='va'>mv.secondorder</span><span class='op'>)</span>
-</code></pre>
-</div>
-<p><img src="sem-longitudinal_files/figure-html5/unnamed-chunk-53-1.png" width="624" /></p>
-</div>
+<p>You don’t have to do this with a second order model.</p>
 <h2 id="d-factor-of-curves-model">3.d Factor of curves model</h2>
 <p>This type of model takes multiple slope terms and asks is there a latent variable associated with the change?</p>
 <div class="layout-chunk" data-layout="l-body">
