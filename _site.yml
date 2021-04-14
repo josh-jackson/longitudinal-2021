@@ -31,6 +31,8 @@ navbar:
           href: brms.html
         - text: "Longitudinal SEM"
           href: sem-longitudinal.html
+        - text: "2-wave designs"
+          href: 2-wave.html
     - text: "Syllabus"
       href: syllabus.html
     - text: "Homeworks"

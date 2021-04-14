@@ -23,3 +23,6 @@ ggeffects
 Matrix
 lme4
 metRology
+lavaan
+semPlot
+semTools

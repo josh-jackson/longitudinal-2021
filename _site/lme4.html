@@ -2403,6 +2403,7 @@ Workshops
 <a href="plotting.html">plotting</a>
 <a href="brms.html">brms</a>
 <a href="sem-longitudinal.html">Longitudinal SEM</a>
+<a href="2-wave.html">2-wave designs</a>
 </div>
 </div>
 <a href="syllabus.html">Syllabus</a>
@@ -2860,7 +2861,7 @@ Adjusted for:
 <p>REML comparison, which again is what we need to compare random effects. ML is not good for comparing models with different random effects.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
-<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/stats/anova.html'>anova</a></span><span class='op'>(</span><span class='va'>mod.2f</span>, <span class='va'>mod.2</span><span class='op'>)</span>
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/lavaan/man/lavTestLRT.html'>anova</a></span><span class='op'>(</span><span class='va'>mod.2f</span>, <span class='va'>mod.2</span><span class='op'>)</span>
 </code></pre>
 </div>
 <pre><code>Data: example

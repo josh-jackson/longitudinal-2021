@@ -973,6 +973,7 @@ Workshops
 <a href="plotting.html">plotting</a>
 <a href="brms.html">brms</a>
 <a href="sem-longitudinal.html">Longitudinal SEM</a>
+<a href="2-wave.html">2-wave designs</a>
 </div>
 </div>
 <a href="syllabus.html">Syllabus</a>
@@ -1235,6 +1236,14 @@ summary(sleep_brm)
 
 ```r
 brms::get_prior(Reaction ~ Days + (1 + Days|Subject), data = sleepstudy)
+```
+
+```
+## Found more than one class "family" in cache; using the first, from namespace 'lme4'
+```
+
+```
+## Also defined by 'MatrixModels'
 ```
 
 ```
@@ -1911,11 +1920,6 @@ waic(ex2)
 ```
 
 ```
-## Warning: 
-## 41 (16.7%) p_waic estimates greater than 0.4. We recommend trying loo instead.
-```
-
-```
 ## 
 ## Computed from 4000 by 246 log-likelihood matrix
 ## 
@@ -1942,15 +1946,7 @@ But there’s a practical difficulty with LOO-CV: it's costly. As you may have n
 
 ```r
 l_fit1 &lt;- loo(ex2)
-```
 
-```
-## Warning: Found 2 observations with a pareto_k &gt; 0.7 in model 'ex2'. It is
-## recommended to set 'moment_match = TRUE' in order to perform moment matching for
-## problematic observations.
-```
-
-```r
 print(l_fit1)
 ```
 
@@ -2133,18 +2129,18 @@ spread_draws(`b_age_14`, r_id[id,])
 ```
 ## # A tibble: 656,000 x 6
 ## # Groups:   id [82]
-##    .chain .iteration .draw b_age_14    id     r_id
-##     &lt;int&gt;      &lt;int&gt; &lt;int&gt;    &lt;dbl&gt; &lt;int&gt;    &lt;dbl&gt;
-##  1      1          1     1    0.147     1 -0.308  
-##  2      1          1     1    0.147     1  0.450  
-##  3      1          1     1    0.147     2  0.00942
-##  4      1          1     1    0.147     2 -1.28   
-##  5      1          1     1    0.147     3  0.417  
-##  6      1          1     1    0.147     3 -0.454  
-##  7      1          1     1    0.147     4  0.211  
-##  8      1          1     1    0.147     4 -0.439  
-##  9      1          1     1    0.147     5 -0.661  
-## 10      1          1     1    0.147     5 -0.893  
+##    .chain .iteration .draw b_age_14    id    r_id
+##     &lt;int&gt;      &lt;int&gt; &lt;int&gt;    &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;
+##  1      1          1     1    0.298     1 -0.479 
+##  2      1          1     1    0.298     1  0.813 
+##  3      1          1     1    0.298     2  0.497 
+##  4      1          1     1    0.298     2 -0.782 
+##  5      1          1     1    0.298     3  0.0151
+##  6      1          1     1    0.298     3  0.591 
+##  7      1          1     1    0.298     4  0.164 
+##  8      1          1     1    0.298     4 -0.633 
+##  9      1          1     1    0.298     5 -0.322 
+## 10      1          1     1    0.298     5 -0.871 
 ## # … with 655,990 more rows
 ```
 
@@ -2161,16 +2157,16 @@ spread_draws(`b_age_14`, r_id[id,]) %&gt;%
 ## # A tibble: 82 x 7
 ##       id slope_mean .lower .upper .width .point .interval
 ##    &lt;int&gt;      &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;    
-##  1     1     0.489  -0.183  1.40    0.95 median qi       
-##  2     2    -0.0115 -1.17   0.805   0.95 median qi       
-##  3     3     0.644  -0.134  1.37    0.95 median qi       
-##  4     4     0.324  -0.647  1.07    0.95 median qi       
-##  5     5    -0.184  -1.25   0.568   0.95 median qi       
-##  6     6     0.871  -0.140  2.33    0.95 median qi       
-##  7     7     0.379  -0.412  1.49    0.95 median qi       
-##  8     8    -0.184  -1.22   0.549   0.95 median qi       
-##  9     9     0.472  -0.837  1.51    0.95 median qi       
-## 10    10     0.165  -0.535  0.867   0.95 median qi       
+##  1     1     0.494  -0.172  1.45    0.95 median qi       
+##  2     2    -0.0163 -1.16   0.790   0.95 median qi       
+##  3     3     0.652  -0.140  1.36    0.95 median qi       
+##  4     4     0.328  -0.622  1.04    0.95 median qi       
+##  5     5    -0.171  -1.22   0.567   0.95 median qi       
+##  6     6     0.879  -0.108  2.31    0.95 median qi       
+##  7     7     0.380  -0.400  1.50    0.95 median qi       
+##  8     8    -0.177  -1.22   0.572   0.95 median qi       
+##  9     9     0.484  -0.837  1.46    0.95 median qi       
+## 10    10     0.174  -0.530  0.846   0.95 median qi       
 ## # … with 72 more rows
 ```
 

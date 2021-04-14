@@ -1068,7 +1068,7 @@ model.6 <- '  i =~ 1*alcuse_14 + 1*alcuse_15 + 1*alcuse_16
               
 '
 
-fit.6 <- growth(model.6, data = alcohol.wide)
+fit.6 <- growth(model.6, data = alcohol.wide, missing = "ML")
 summary(fit.6)
 ```
 
@@ -1082,7 +1082,7 @@ model.6 <- '  i =~ 1*alcuse_14 + 1*alcuse_15 + 1*alcuse_16
             q =~ 0*alcuse_14 + 1*alcuse_15 + 4*alcuse_16  
 '
 
-fit.6 <- growth(model.6, data = alcohol.wide)
+fit.6 <- growth(model.6, data = alcohol.wide, missing = "ML")
 summary(fit.6)
 ```
 
@@ -1261,10 +1261,112 @@ summary(mv.secondorder, fit.measures=TRUE)
 
 You don't have to do this with a second order model. 
 
+## 3.d Bayesian multivariate models
+
+
+```{r}
+data <- "https://raw.githubusercontent.com/josh-jackson/bayes/master/mlm.csv"
+mlm <- read.csv(data) 
+head(mlm)
+```
+
+
+```{r}
+library(brms)
+mlm.4 <- 
+  brm(family = gaussian,
+      CON ~ 1 + time + (1 + time | ID),
+      prior = c(prior(normal(0, 1.5), class = Intercept),
+                prior(normal(0, 1.5), class = b),
+                prior(normal(0, 1.5), class = sd, coef = Intercept, group = ID), 
+                prior(normal(0, 1.5), class = sd, coef = time, group = ID), 
+                prior(exponential(1), class = sigma),
+                prior(lkj(2), class = cor)),
+      iter = 4000, warmup = 1000, chains = 4, cores = 4,
+      file = "mlm.4",
+      data = mlm)
+```
+
+
+```{r}
+summary(mlm.4)
+```
 
 
 
-## 3.d Factor of curves model
+```{r}
+mv.1 <- 
+  brm(family = gaussian,
+      mvbind(CON, DAN) ~ 1 + time + (1 + time | ID),
+      prior = c(prior(normal(0, 1.5), class = Intercept),
+                prior(normal(0, 1.5), class = b),
+                prior(lkj(2), class = cor),
+                prior(lkj(2), class = rescor)),
+      iter = 4000, warmup = 1000, chains = 4, cores = 4,
+      file = "mv.1",
+      data = mlm)
+
+
+```
+
+
+
+```{r}
+summary(mv.1)
+```
+
+
+
+```{r}
+fixef(mv.1)
+```
+
+```{r}
+
+mv.1 %>% 
+  spread_draws(rescor__CON__DAN) %>% 
+   median_qi()
+```
+
+
+
+```{r}
+mv.1 %>% 
+  spread_draws(rescor__CON__DAN) %>% 
+   ggplot(aes(x = rescor__CON__DAN)) +
+   stat_halfeye()
+
+```
+
+
+
+```{r}
+mlm.wide <- mlm %>% 
+  dplyr::select(ID, DAN, CON, wave) %>% 
+  pivot_longer(cols = DAN:CON, names_to = "trait", values_to = "value") %>% 
+  pivot_wider(id_cols = "ID", names_from = c("trait", "wave"), values_from = value)
+
+head(mlm.wide)
+```
+
+
+
+```{r}
+bv.c <- '
+
+    i.dan =~ 1*DAN_1 + 1*DAN_2 + 1*DAN_3 + 1*DAN_4
+    s.dan =~ 0*DAN_1 + 1*DAN_2 + 2*DAN_3 + 3*DAN_4
+
+    i.con =~ 1*CON_1 + 1*CON_2 + 1*CON_3 + 1*CON_4
+    s.con =~ 0*CON_1 + 1*CON_2 + 2*CON_3 + 3*CON_4
+
+'
+fit.bv.c <- growth(bv.c, data = mlm.wide, missing = "ML")
+summary(fit.bv.c,standardized=TRUE)
+```
+
+
+## 3.e Factor of curves model
 This type of model takes multiple slope terms and asks is there a latent variable associated with the change?
 
 
