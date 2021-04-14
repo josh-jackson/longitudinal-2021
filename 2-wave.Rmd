@@ -67,6 +67,7 @@ The issues with this however are:
 This has lead to what is known as Lord's paradox. Take the two approaches above, simplified to: 
 
 `lm(t2-t1 ~ group)`
+  
 `lm(t2 ~ t1 + group)`
 
 ```{r, echo = FALSE}

@@ -1,0 +1,36 @@
+---
+title: "Homework 4"
+output:
+  distill::distill_article:
+    toc: true
+    toc_depth: 2
+---
+
+due: 4/26
+
+Use the dataHW4-6 to answer the questions below. Note that there is also a codebook to help interpret the variables (there are more variables in the codebook than in the file, fyi).
+
+Files are available in github. See here: https://raw.githubusercontent.com/josh-jackson/ALDA/master/dataHW4-6.csv
+https://raw.githubusercontent.com/josh-jackson/ALDA/master/codebookHW4-6.xlsx
+
+For the main growth modeling questions please choose one of the big five as your main variable for analysis. Note that for some of the  questions you may need to create a composite variable AND take the dataset from wide into long format. Starting with #5 you will use the item variables. 
+
+1. Run a growth model using one of the variables using both MLM (lme4 or brms) and lavaan. What is the same, what is different?  
+
+2. Using SEM, try two different time coding schemes. First, use a different time coding that defines the intercept as the final time point. Second, try a latent basis coding where you allow the data to inform how time should be coded. For each, describe how this differs from the initial latent growth curve model. 
+
+3. Introduce a predictor to the lgc model (such as current health). How does this impact the model compared to a) no predictor b) if you centered health c) to how you would run an MLM. 
+
+4. Create a graph of the model showing the effect of the predictor. Hint: use lavPredict()
+
+5. Using the items for the variable you are using, create latent variables for each wave. Check for measurement invariance. 
+
+6. Fit a second order latent growth model, imposing measurement invariance. Compare the fit and statistics from this model to the lgc model that used composites for the repeated measures. 
+
+7. Create another figure, showing the individual slopes and the overall mean level trend. 
+
+8. Introduce the same predictor to the model as you did in #3. Did you find any differences or are the results mostly the same? 
+
+9. Code time differently in this model as you did for #3 above. Did you find any differences or are  the results mostly the same? 
+
+10. Run a multivariate second order latent growth model where you are examining two growth processes simultaneously. What parameters are you most interested in? How do the results of the growth process modeled above (mean, variances, etc) change when you model two processes simultaneously? 

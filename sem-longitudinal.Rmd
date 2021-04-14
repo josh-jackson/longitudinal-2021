@@ -885,7 +885,7 @@ The strategy for including predictors is similar to working with a level 2 mlm e
 # a linear growth model with a time invariant covariate
 
 model.3 <- '  i =~ 1*alcuse_14 + 1*alcuse_15 + 1*alcuse_16 
-            s =~ 0*alcuse_14 + .5*alcuse_15 + 1*alcuse_16
+            s =~ 0*alcuse_14 + 1*alcuse_15 + 2*alcuse_16
                
 # regressions
     
@@ -913,7 +913,7 @@ alcohol.wide$male.c <- scale(alcohol.wide$male, center=TRUE, scale = FALSE)
 
 
 model.4 <- '  i =~ 1*alcuse_14 + 1*alcuse_15 + 1*alcuse_16 
-            s =~ 0*alcuse_14 + .5*alcuse_15 + 1*alcuse_16
+            s =~ 0*alcuse_14 + 1*alcuse_15 + 2*alcuse_16
                
 # regressions
     

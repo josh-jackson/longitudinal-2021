@@ -2415,6 +2415,7 @@ Homeworks
 <a href="hw-1.html">homework 1</a>
 <a href="hw-2.html">homework 2</a>
 <a href="hw-3.html">homework 3</a>
+<a href="hw-4.html">homework 4</a>
 </div>
 </div>
 <a href="https://github.com/josh-jackson/longitudinal-2021">
@@ -6514,7 +6515,7 @@ Variances:
 <pre class="sourceCode r"><code class="sourceCode r"><span class='co'># a linear growth model with a time invariant covariate</span>
 
 <span class='va'>model.3</span> <span class='op'>&lt;-</span> <span class='st'>'  i =~ 1*alcuse_14 + 1*alcuse_15 + 1*alcuse_16 
-            s =~ 0*alcuse_14 + .5*alcuse_15 + 1*alcuse_16
+            s =~ 0*alcuse_14 + 1*alcuse_15 + 2*alcuse_16
                
 # regressions
     
@@ -6553,8 +6554,8 @@ Latent Variables:
     alcuse_16         1.000                           
   s =~                                                
     alcuse_14         0.000                           
-    alcuse_15         0.500                           
-    alcuse_16         1.000                           
+    alcuse_15         1.000                           
+    alcuse_16         2.000                           
 
 Regressions:
                    Estimate  Std.Err  z-value  P(&gt;|z|)
@@ -6562,13 +6563,13 @@ Regressions:
     male             -0.147    0.188   -0.779    0.436
     coa               0.759    0.189    4.016    0.000
   s ~                                                 
-    male              0.550    0.240    2.289    0.022
-    coa              -0.132    0.242   -0.545    0.586
+    male              0.275    0.120    2.289    0.022
+    coa              -0.066    0.121   -0.545    0.586
 
 Covariances:
                    Estimate  Std.Err  z-value  P(&gt;|z|)
  .i ~~                                                
-   .s                -0.328    0.179   -1.827    0.068
+   .s                -0.164    0.090   -1.827    0.068
 
 Intercepts:
                    Estimate  Std.Err  z-value  P(&gt;|z|)
@@ -6576,7 +6577,7 @@ Intercepts:
    .alcuse_15         0.000                           
    .alcuse_16         0.000                           
    .i                 0.368    0.157    2.346    0.019
-   .s                 0.327    0.200    1.635    0.102
+   .s                 0.164    0.100    1.635    0.102
 
 Variances:
                    Estimate  Std.Err  z-value  P(&gt;|z|)
@@ -6584,7 +6585,7 @@ Variances:
    .alcuse_15         0.435    0.092    4.747    0.000
    .alcuse_16         0.210    0.167    1.257    0.209
    .i                 0.653    0.168    3.884    0.000
-   .s                 0.907    0.307    2.951    0.003</code></pre>
+   .s                 0.227    0.077    2.951    0.003</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -6636,7 +6637,7 @@ age_14:coa   0.229 -0.513  0.023 -0.446 -0.051 </code></pre>
 
 
 <span class='va'>model.4</span> <span class='op'>&lt;-</span> <span class='st'>'  i =~ 1*alcuse_14 + 1*alcuse_15 + 1*alcuse_16 
-            s =~ 0*alcuse_14 + .5*alcuse_15 + 1*alcuse_16
+            s =~ 0*alcuse_14 + 1*alcuse_15 + 2*alcuse_16
                
 # regressions
     
@@ -6647,7 +6648,7 @@ age_14:coa   0.229 -0.513  0.023 -0.446 -0.051 </code></pre>
 <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>fit.4</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>lavaan 0.6-8 ended normally after 31 iterations
+<pre><code>lavaan 0.6-8 ended normally after 26 iterations
 
   Estimator                                         ML
   Optimization method                           NLMINB
@@ -6675,8 +6676,8 @@ Latent Variables:
     alcuse_16         1.000                           
   s =~                                                
     alcuse_14         0.000                           
-    alcuse_15         0.500                           
-    alcuse_16         1.000                           
+    alcuse_15         1.000                           
+    alcuse_16         2.000                           
 
 Regressions:
                    Estimate  Std.Err  z-value  P(&gt;|z|)
@@ -6684,13 +6685,13 @@ Regressions:
     male.c           -0.147    0.188   -0.779    0.436
     coa.c             0.759    0.189    4.016    0.000
   s ~                                                 
-    male.c            0.550    0.240    2.289    0.022
-    coa.c            -0.132    0.242   -0.545    0.586
+    male.c            0.275    0.120    2.289    0.022
+    coa.c            -0.066    0.121   -0.545    0.586
 
 Covariances:
                    Estimate  Std.Err  z-value  P(&gt;|z|)
  .i ~~                                                
-   .s                -0.328    0.179   -1.827    0.068
+   .s                -0.164    0.090   -1.827    0.068
 
 Intercepts:
                    Estimate  Std.Err  z-value  P(&gt;|z|)
@@ -6698,7 +6699,7 @@ Intercepts:
    .alcuse_15         0.000                           
    .alcuse_16         0.000                           
    .i                 0.635    0.094    6.760    0.000
-   .s                 0.550    0.120    4.580    0.000
+   .s                 0.275    0.060    4.580    0.000
 
 Variances:
                    Estimate  Std.Err  z-value  P(&gt;|z|)
@@ -6706,7 +6707,7 @@ Variances:
    .alcuse_15         0.435    0.092    4.747    0.000
    .alcuse_16         0.210    0.167    1.257    0.209
    .i                 0.653    0.168    3.884    0.000
-   .s                 0.907    0.307    2.951    0.003</code></pre>
+   .s                 0.227    0.077    2.951    0.003</code></pre>
 </div>
 <p>What is different what is the same? Notice that the main difference is the intercepts ie fixed effects.</p>
 <h3 id="introducing-time-varying-covariates">introducing time varying covariates</h3>

@@ -43,6 +43,8 @@ navbar:
           href: hw-2.html
         - text: "homework 3"
           href: hw-3.html
+        - text: "homework 4"
+          href: hw-4.html
     - icon: fab fa-github
       href: https://github.com/josh-jackson/longitudinal-2021
 
