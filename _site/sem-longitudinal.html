@@ -2465,6 +2465,11 @@ Homeworks
 <li><a href="#d-bayesian-multivariate-models">3.d Bayesian multivariate models</a></li>
 <li><a href="#e-factor-of-curves-model">3.e Factor of curves model</a></li>
 </ul></li>
+<li><a href="#quick-graphing">4. Quick graphing</a>
+<ul>
+<li><a href="#second-order">Second order</a></li>
+<li><a href="#covariates">covariates</a></li>
+</ul></li>
 </ul>
 </nav>
 </div>
@@ -6739,7 +6744,7 @@ Variances:
 <span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>fit.5</span><span class='op'>)</span>
 </code></pre>
 </div>
-<pre><code>lavaan 0.6-8 ended normally after 32 iterations
+<pre><code>lavaan 0.6-8 ended normally after 33 iterations
 
   Estimator                                         ML
   Optimization method                           NLMINB
@@ -6749,9 +6754,9 @@ Variances:
                                                       
 Model Test User Model:
                                                       
-  Test statistic                                12.816
+  Test statistic                                 8.129
   Degrees of freedom                                 9
-  P-value (Chi-square)                           0.171
+  P-value (Chi-square)                           0.521
 
 Parameter Estimates:
 
@@ -6773,38 +6778,38 @@ Latent Variables:
 Regressions:
                    Estimate  Std.Err  z-value  P(&gt;|z|)
   i ~                                                 
-    male.c           -0.169    0.187   -0.900    0.368
-    coa.c             0.682    0.190    3.587    0.000
+    male.c           -0.140    0.187   -0.745    0.456
+    coa.c             0.748    0.188    3.971    0.000
   s ~                                                 
-    male.c            0.530    0.234    2.261    0.024
-    coa.c            -0.000    0.238   -0.001    0.999
+    male.c            0.578    0.240    2.413    0.016
+    coa.c            -0.081    0.242   -0.337    0.736
   alcuse_14 ~                                         
-    tvc1             -0.176    0.073   -2.412    0.016
+    tvc1              0.077    0.076    1.026    0.305
   alcuse_15 ~                                         
-    tvc2              0.040    0.086    0.463    0.644
+    tvc2             -0.059    0.071   -0.833    0.405
   alcuse_16 ~                                         
-    tvc3              0.186    0.102    1.823    0.068
+    tvc3              0.118    0.080    1.471    0.141
 
 Covariances:
                    Estimate  Std.Err  z-value  P(&gt;|z|)
  .i ~~                                                
-   .s                -0.318    0.175   -1.815    0.069
+   .s                -0.359    0.177   -2.031    0.042
 
 Intercepts:
                    Estimate  Std.Err  z-value  P(&gt;|z|)
    .alcuse_14         0.000                           
    .alcuse_15         0.000                           
    .alcuse_16         0.000                           
-   .i                 0.664    0.094    7.058    0.000
-   .s                 0.507    0.117    4.332    0.000
+   .i                 0.632    0.093    6.763    0.000
+   .s                 0.543    0.119    4.547    0.000
 
 Variances:
                    Estimate  Std.Err  z-value  P(&gt;|z|)
-   .alcuse_14         0.057    0.130    0.438    0.661
-   .alcuse_15         0.417    0.089    4.705    0.000
-   .alcuse_16         0.215    0.162    1.327    0.184
-   .i                 0.658    0.166    3.974    0.000
-   .s                 0.847    0.295    2.868    0.004</code></pre>
+   .alcuse_14         0.050    0.132    0.376    0.707
+   .alcuse_15         0.447    0.092    4.847    0.000
+   .alcuse_16         0.159    0.163    0.976    0.329
+   .i                 0.668    0.168    3.967    0.000
+   .s                 0.966    0.302    3.203    0.001</code></pre>
 </div>
 <p>Can we fix the TVCs to be the same?</p>
 <h2 id="multiple-groups-again">Multiple groups, again</h2>
@@ -8214,7 +8219,200 @@ Variances:
 <span id="cb51-17"><a href="#cb51-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb51-18"><a href="#cb51-18" aria-hidden="true" tabindex="-1"></a><span class="st">&#39;</span></span></code></pre></div>
 </div>
-<div class="sourceCode" id="cb52"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<h1 id="quick-graphing">4. Quick graphing</h1>
+<p>Unfortunately, most of the packages we have been using to get predicted values and thus create plots do not work with lavaan objects :( However, there is a function that can help us graph. <em>lavPredict</em></p>
+<div class="layout-chunk" data-layout="l-body">
+<pre><code>lavaan 0.6-8 ended normally after 22 iterations
+
+  Estimator                                         ML
+  Optimization method                           NLMINB
+  Number of model parameters                         8
+                                                      
+  Number of observations                            82
+                                                      
+Model Test User Model:
+                                                      
+  Test statistic                                 0.636
+  Degrees of freedom                                 1
+  P-value (Chi-square)                           0.425
+
+Parameter Estimates:
+
+  Standard errors                             Standard
+  Information                                 Expected
+  Information saturated (h1) model          Structured
+
+Latent Variables:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+  i =~                                                
+    alcuse_14         1.000                           
+    alcuse_15         1.000                           
+    alcuse_16         1.000                           
+  s =~                                                
+    alcuse_14         0.000                           
+    alcuse_15         1.000                           
+    alcuse_16         2.000                           
+
+Covariances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+  i ~~                                                
+    s                -0.187    0.102   -1.841    0.066
+
+Intercepts:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+   .alcuse_14         0.000                           
+   .alcuse_15         0.000                           
+   .alcuse_16         0.000                           
+    i                 0.634    0.103    6.163    0.000
+    s                 0.277    0.062    4.481    0.000
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+   .alcuse_14         0.064    0.147    0.436    0.663
+   .alcuse_15         0.420    0.094    4.463    0.000
+   .alcuse_16         0.280    0.180    1.556    0.120
+    i                 0.807    0.193    4.177    0.000
+    s                 0.234    0.083    2.803    0.005</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>pred</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/lavaan/man/lavPredict.html'>lavPredict</a></span><span class='op'>(</span><span class='va'>fit.1</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>pred</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>           i          s
+1 1.67339200 0.15061147
+2 0.01577357 0.41987762
+3 1.03717373 0.89157072
+4 0.15472328 0.80763226
+5 0.01182452 0.09588422
+6 2.85697940 0.05794456</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>pred</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'>ggplot</span><span class='op'>(</span><span class='op'>)</span><span class='op'>+</span>
+<span class='fu'>geom_abline</span><span class='op'>(</span><span class='fu'>aes</span><span class='op'>(</span>intercept<span class='op'>=</span><span class='va'>i</span>, slope<span class='op'>=</span><span class='va'>s</span><span class='op'>)</span><span class='op'>)</span><span class='op'>+</span>
+  <span class='fu'><a href='https://rdrr.io/r/graphics/plot.window.html'>xlim</a></span><span class='op'>(</span><span class='fl'>0</span>,<span class='fl'>2</span><span class='op'>)</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/graphics/plot.window.html'>ylim</a></span><span class='op'>(</span><span class='op'>-</span><span class='fl'>1</span>,<span class='fl'>4</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="sem-longitudinal_files/figure-html5/unnamed-chunk-71-1.png" width="624" /></p>
+</div>
+<p>In addition to getting the latent variable values we can also get the estimated observed values for each repeated measure that meakes up the latent variables.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>pred2</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/lavaan/man/lavPredict.html'>lavPredict</a></span><span class='op'>(</span><span class='va'>fit.1</span>, type <span class='op'>=</span> <span class='st'>"yhat"</span> <span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>pred2</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>   alcuse_14 alcuse_15 alcuse_16
+1 1.67339200 1.8240035 1.9746149
+2 0.01577357 0.4356512 0.8555288
+3 1.03717373 1.9287445 2.8203152
+4 0.15472328 0.9623555 1.7699878
+5 0.01182452 0.1077087 0.2035930
+6 2.85697940 2.9149240 2.9728685</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>pred2</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'>rowid_to_column</span><span class='op'>(</span><span class='st'>"ID"</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'>pivot_longer</span><span class='op'>(</span>cols <span class='op'>=</span> <span class='va'>alcuse_14</span><span class='op'>:</span><span class='va'>alcuse_16</span> ,names_to <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"alcuse"</span>,<span class='st'>"age"</span><span class='op'>)</span>, names_sep <span class='op'>=</span> <span class='st'>"_"</span>, values_to <span class='op'>=</span> <span class='st'>"value"</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code># A tibble: 246 x 4
+      ID alcuse age    value
+   &lt;int&gt; &lt;chr&gt;  &lt;chr&gt;  &lt;dbl&gt;
+ 1     1 alcuse 14    1.67  
+ 2     1 alcuse 15    1.82  
+ 3     1 alcuse 16    1.97  
+ 4     2 alcuse 14    0.0158
+ 5     2 alcuse 15    0.436 
+ 6     2 alcuse 16    0.856 
+ 7     3 alcuse 14    1.04  
+ 8     3 alcuse 15    1.93  
+ 9     3 alcuse 16    2.82  
+10     4 alcuse 14    0.155 
+# … with 236 more rows</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>pred2</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'>rowid_to_column</span><span class='op'>(</span><span class='st'>"ID"</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'>pivot_longer</span><span class='op'>(</span>cols <span class='op'>=</span> <span class='va'>alcuse_14</span><span class='op'>:</span><span class='va'>alcuse_16</span> ,names_to <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"alcuse"</span>,<span class='st'>"age"</span><span class='op'>)</span>, names_sep <span class='op'>=</span> <span class='st'>"_"</span>, values_to <span class='op'>=</span> <span class='st'>"value"</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'>ggplot</span><span class='op'>(</span> <span class='fu'>aes</span><span class='op'>(</span>x <span class='op'>=</span> <span class='va'>age</span>, y <span class='op'>=</span> <span class='va'>value</span>, group <span class='op'>=</span> <span class='va'>ID</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_line</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/graphics/plot.window.html'>ylim</a></span><span class='op'>(</span><span class='op'>-</span><span class='fl'>1</span>,<span class='fl'>4</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="sem-longitudinal_files/figure-html5/unnamed-chunk-74-1.png" width="624" /></p>
+</div>
+<h2 id="second-order">Second order</h2>
+<p>It works the same for second order, but you dont have to specify ov because the default provides predicted latent scores.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>pred3</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/lavaan/man/lavPredict.html'>lavPredict</a></span><span class='op'>(</span><span class='va'>fit.sec.order</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>pred3</span><span class='op'>)</span> 
+</code></pre>
+</div>
+<pre><code>      Pos1     Pos2     Pos3        i           s
+1 3.065422 3.056903 3.623677 3.175961  0.08196909
+2 2.689349 3.036920 2.810290 2.877698  0.04942238
+3 3.080904 2.935000 2.677100 2.982514 -0.01469247
+4 4.560838 3.944865 3.156714 3.893066 -0.19996142
+5 2.049166 4.082070 3.130903 2.937548  0.13647085
+6 3.773779 4.062185 3.505470 3.675728 -0.05981511</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>pred4</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/lavaan/man/lavPredict.html'>lavPredict</a></span><span class='op'>(</span><span class='va'>fit.sec.order</span>, type <span class='op'>=</span> <span class='st'>"ov"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>pred4</span><span class='op'>)</span> 
+</code></pre>
+</div>
+<pre><code>  PosAFF11 PosAFF21 PosAFF31 PosAFF12 PosAFF22 PosAFF32 PosAFF13
+1 3.120609 2.958865 3.116792 3.112520 2.950195 3.107994 3.650707
+2 2.763504 2.576131 2.728412 3.093545 2.929858 3.087357 2.878345
+3 3.135310 2.974621 3.132781 2.996765 2.826133 2.982102 2.751873
+4 4.540600 4.480771 4.661145 3.955694 3.853886 4.025014 3.207297
+5 2.155611 1.924608 2.067280 4.085980 3.993522 4.166709 3.182787
+6 3.793238 3.679770 3.848330 4.067098 3.973285 4.146174 3.538462
+  PosAFF23 PosAFF33
+1 3.527009 3.693316
+2 2.699214 2.853311
+3 2.563665 2.715763
+4 3.051774 3.211072
+5 3.025506 3.184416
+6 3.406708 3.571240</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>model.3</span> <span class='op'>&lt;-</span> <span class='st'>'  i =~ 1*alcuse_14 + 1*alcuse_15 + 1*alcuse_16 
+            s =~ 0*alcuse_14 + 1*alcuse_15 + 2*alcuse_16
+               
+# regressions
+    
+    i ~ male + coa
+    s ~ male + coa
+'</span>
+<span class='va'>fit.3</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lavaan/man/growth.html'>growth</a></span><span class='op'>(</span><span class='va'>model.3</span>, data <span class='op'>=</span> <span class='va'>alcohol.wide</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h2 id="covariates">covariates</h2>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>pred5</span><span class='op'>&lt;-</span><span class='fu'><a href='https://rdrr.io/r/base/as.data.frame.html'>as.data.frame</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/lavaan/man/lavPredict.html'>lavPredict</a></span><span class='op'>(</span><span class='va'>fit.3</span>, type <span class='op'>=</span> <span class='st'>"ov"</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>pred5</span><span class='op'>)</span> 
+</code></pre>
+</div>
+<pre><code>   alcuse_14 alcuse_15 alcuse_16 male coa
+1 1.69926337 1.8229559 1.9466484    0   1
+2 0.04756942 0.5051019 0.9626343    1   1
+3 1.05076788 2.0108789 2.9709899    1   1
+4 0.19606092 1.0132670 1.8304730    1   1
+5 0.07666777 0.1157443 0.1548208    0   1
+6 2.81870674 2.9387364 3.0587660    1   1</code></pre>
+</div>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>

@@ -1397,12 +1397,86 @@ Slope =~ s.a + s.b + s.c + s.d
 ```
 
 
+# 4. Quick graphing
+
+Unfortunately, most of the packages we have been using to get predicted values and thus create plots do not work with lavaan objects :( However, there is a function that can help us graph. *lavPredict*
+
+```{r, echo = FALSE}
+model.1 <- '  i =~ 1*alcuse_14 + 1*alcuse_15 + 1*alcuse_16 
+            s =~ 0*alcuse_14 + 1*alcuse_15 + 2*alcuse_16'
+fit.1 <- growth(model.1, data=alcohol.wide)
+summary(fit.1)
+```
+
+
+```{r}
+pred<-as.data.frame(lavPredict(fit.1))
+head(pred)
+```
+
+```{r}
+pred %>% 
+  ggplot()+
+geom_abline(aes(intercept=i, slope=s))+
+  xlim(0,2) + ylim(-1,4)
+```
 
 
 
+In addition to getting the latent variable values we can also get the estimated observed values for each repeated measure that meakes up the latent variables. 
+
+```{r}
+pred2<-as.data.frame(lavPredict(fit.1, type = "yhat" ))
+head(pred2)
+```
+
+```{r}
+pred2 %>% 
+  rowid_to_column("ID") %>% 
+  pivot_longer(cols = alcuse_14:alcuse_16 ,names_to = c("alcuse","age"), names_sep = "_", values_to = "value")
+```
+
+```{r}
+pred2 %>% 
+  rowid_to_column("ID") %>% 
+  pivot_longer(cols = alcuse_14:alcuse_16 ,names_to = c("alcuse","age"), names_sep = "_", values_to = "value") %>% 
+  ggplot( aes(x = age, y = value, group = ID)) +
+  geom_line() + ylim(-1,4)
+```
 
 
 
+## Second order
+
+It works the same for second order, but you dont have to specify ov because the default provides predicted latent scores. 
+
+```{r}
+pred3<-as.data.frame(lavPredict(fit.sec.order))
+head(pred3) 
+```
 
 
+```{r}
+pred4<-as.data.frame(lavPredict(fit.sec.order, type = "ov"))
+head(pred4) 
+```
+
+
+```{r, eval=FALSE}
+model.3 <- '  i =~ 1*alcuse_14 + 1*alcuse_15 + 1*alcuse_16 
+            s =~ 0*alcuse_14 + 1*alcuse_15 + 2*alcuse_16
+               
+# regressions
+    
+    i ~ male + coa
+    s ~ male + coa
+'
+fit.3 <- growth(model.3, data = alcohol.wide)
+```
+
+## covariates 
+```{r}
+pred5<-as.data.frame(lavPredict(fit.3, type = "ov"))
+head(pred5) 
+```
 

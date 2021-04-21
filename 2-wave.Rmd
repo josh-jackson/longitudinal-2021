@@ -94,6 +94,7 @@ summary(lm(diff ~ group, df))
 ```
 
 residualized change score model
+
 ```{r}
 summary(lm(T2 ~ group + T1, df))
 ```
@@ -132,12 +133,11 @@ In other words, a change score is equivalent to assuming a perfect regression as
 
 Here, the residual will be equal to the average change and the variance of that will be the variance in the change. This can be thought of as akin to the mean and variance of our latent slope variable.
 
-# common two wave models in path analysis form
+
+
 Lets visualize each of these models via path models
 
-## Residualized change model
-
-
+# Residualized change model
 
 
 ```{r}
@@ -148,7 +148,6 @@ knitr::include_graphics("res.change.png")
 
 Our latent residual can be conceptualized as what is left over from T2 after accounting for T1 (based on the average association between T1 and T2). We now have a measure of error/change that is not correlated to T1. 
 
-If we wanted to, because this is SEM, we could test this model against a no change model. What would this look like? Well we would fix $\beta_1$⁩ to zero and compare the models
 
 ```{r}
 res.change <- '
@@ -159,21 +158,100 @@ summary(res.change)
 
 ```
 
-## Latent change score
-Looping back to concerns about difference scores and residualized change scores, we can address these using SEM. The problems raised above go away when: 1) measuring change latently, and thus error free. 2.) separate initial levels from change. Both of these are accomplished above. However, what is not accomplished is getting terms similar to the slope component ie a mean and a variance of a slope. 
+```{r}
+summary(lm(T2~T1, df))
+```
 
-Knowing what we know about recreating difference scores via constraints, we can also make a latent change score by modifying this path model. 
+
+
+```{r}
+res.change.m <- '
+  T2 ~ T1
+'
+res.change.m <- sem(res.change.m, data=df,meanstructure = TRUE)
+summary(res.change.m)
+
+```
+
+### residual sd from the regression output is equal to the SEM variance
+```{r}
+
+0.1565^2
+```
+
+Note that this isn't telling us anything about the difference score or even the means of the numbers per se. 
+```{r}
+library(psych)
+describe(df)
+```
+
+This is why I am not a fan of the residualzed change score. It doesn't get at change the way we typically think of it. Previously our MLMs provide a way to think about what change means, and SEMs will do the same.  
+
+#  Latent change score
+Looping back to concerns about difference scores and residualized change scores, we can address these using SEM. The problems raised above 
+
+- It isn't true change, as you are implying people change similarly
+- Change is likely associated with T1
+- Hard to separate measurement error from true change
+
+go away when: 
+
+1) Examine absolute differences   
+2) Able to separate (account for) initial levels from change.   
+3) Measuring change latently, and thus error free.
+
+Number 2 is accomplished above in the residualized change models. However, what is not accomplished is getting terms similar to the slope component of a growth curve ie absolute change. Nor does it account for measurement error
+
+## Lets compare this with our old trusty mlm friend
+
+```{r}
+# make df long
+df.long <- df %>% 
+  pivot_longer(cols=T1:T2, names_to = c("drop","time"),names_pattern = "([A-Za-z]+)(\\d+)", values_to = "value") %>% 
+  select(-drop) %>% 
+  mutate(time = as.numeric(time)) %>% 
+  mutate(time = time -1)
+head(df.long)
+```
+
+
+```{r}
+library(lme4)
+mlm.1 <- lmer(value ~  time + (1  | id ), data = df.long)
+summary(mlm.1)
+```
+
+Time equals the absolute difference!! Intercept is the value at T1. I can recreate the mean values with this output. And I can see how people differ at T1. 
+
+However, this does not tell you differences in how people change. That is, everyone is assumed to change similarly ie fixed slope. 
+
+
+```{r,eval = FALSE}
+library(lme4)
+mlm.2 <- lmer(value ~  time + (1 + time  | id ), data = df.long)
+```
+output: 
+Error: number of observations (=400) <= number of random effects (=400) for term (1 + time | id); the random-effects parameters and the residual variance (or scale parameter) are probably unidentifiable
+
+<sad trombone noise>
+
+We can either do two things: go with Bayes or go with SEM. SEM is actully more flexible here so lets explore this option. 
+
+Knowing what we know about recreating difference scores via constraints, we can also make a latent change score by modifying the same residual path model. This time assuming the association between t1 and t2 are the same. 
 
 
 ```{r}
 knitr::include_graphics("latent.change.png")
 ```
 
-Now we can interpret the residual as change, as it is explicitly what is left over from T2 after accoutering for T1. This is starting to look like what we have been doing recently. We have: 
+Now we can interpret the residual as change, as it is explicitly what is left over from T2 after accoutering for T1. This is starting to look like what we for a growth model. 
+
+We have: 
 1. Mean and variance of the slope(change), akin to our random and fixed effects in MLM
 2. Covariance between intercept and slope. 
 
 To test whether or not our slope is significant we can compare that with a model where slope is constrained to be zero. Same for testing the slope variance. 
+
 
 ```{r}
 library(lavaan)
@@ -209,8 +287,17 @@ summary(latent.change)
 
 ```
 
+```{r}
+describe(df)
+```
+
+Change now has an intercept and a variance -- just like in growth curves! 
+
+
 ## Residualized latent change score
-Note that we haven't yet removed the variance from the T1. This may or may not be something you want to do. It is mostly helpful if change has occurred prior to T1 and you are looking at the impact of some variable on change. If you are doing an intervention that takes place after T1 then maybe stick to latent change model. If you are measuring a developmental process across time and want to make sure that initial levels aren't influencing change then you may want to do this. If you are doing that but think that initial levels are related to the change process then maybe you would be over controlling, wiping away what may be important. ¯\_(ツ)_/¯
+Note that we haven't yet removed the variance from the T1 (control for T1). There is a negative assocaition between where people start and how much they change. 
+
+This may or may not be something you want to do. It is mostly helpful if change has occurred prior to T1 and you are looking at the impact of some variable on change. If you are doing an intervention that takes place after T1 then maybe stick to latent change model. If you are measuring a developmental process across time and want to make sure that initial levels aren't influencing change then you may want to do this. If you are doing that but think that initial levels are related to the change process then maybe you would be over controlling, wiping away what may be important. ¯\_(ツ)_/¯
 
 ![](res.lat.change.png)
 
@@ -248,10 +335,11 @@ res.lat.change <- sem(res.latent.change , data=df)
 summary(res.lat.change)
 ```
 
+-.155 is the association between starting values and how someone changed. Because we are controlling for that, our change estimates will not be uncorrelated with T1. 
 
 ## Conditional Models
 
-What if we want to predict initial status (or control for covariate) as well as see if change is predicted by some variable? 
+What if we want to predict initial status (or control for a covariate) as well as see if change is predicted by some variable? 
 
 
 ```{r}
@@ -299,7 +387,14 @@ summary(cond)
 
 Does that change regressed on group look familiar? 
 
-This approach works the case with categorical as well as continuous predictors. 
+```{r}
+
+summary(lm(diff ~ group, df)) 
+
+```
+
+This approach works with categorical as well as continuous predictors. 
+
 
 ## Multiple group models
 As we have seen before, simple predictors does not allow the full range of tests on how two groups may differ. Just like before, we can specify multiple group models with this data. 
@@ -344,6 +439,7 @@ summary(group)
 
 
 Compare that with a model where we constrain the slopes to be the same
+
 ```{r}
 group2 <- '
   #define difference score
@@ -382,8 +478,8 @@ summary(group2)
 ```{r}
 anova(group, group2)
 ```
-
 Notice that p value from before? 
+
 
 
 ## Bi-variate latent change model
@@ -529,6 +625,12 @@ library(tidyverse)
 simdat <- as_tibble(simdat)
 ```
 
+
+```{r}
+head(simdat)
+```
+
+
 ```{r}
 change <-
 
@@ -576,11 +678,17 @@ change.fit <- sem(change, data=simdat, missing="ML")
 summary(change.fit, fit.measures=TRUE, standardized=TRUE, rsquare=TRUE)
 ```
 
+
 ```{r}
 semPaths(change.fit )
 ```
 
-Same as before, we can run multiple groups analyses, introduce covariates/predictors, regress change onto time 1 and look at bi-variate processes simultanously. 
+Same as before, we can run multiple groups analyses, introduce covariates/predictors, regress change onto time 1 and look at bi-variate processes simultaneously. 
+
+
+
+
+
 
 
 # Multiple wave Latent Difference Score model (LDS)

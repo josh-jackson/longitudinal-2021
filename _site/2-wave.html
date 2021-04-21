@@ -2447,10 +2447,10 @@ Homeworks
 <ul>
 <li><a href="#lords-paradox">Lords Paradox</a></li>
 </ul></li>
-<li><a href="#common-two-wave-models-in-path-analysis-form">common two wave models in path analysis form</a>
-<ul>
 <li><a href="#residualized-change-model">Residualized change model</a></li>
-<li><a href="#latent-change-score">Latent change score</a></li>
+<li><a href="#latent-change-score">Latent change score</a>
+<ul>
+<li><a href="#lets-compare-this-with-our-old-trusty-mlm-friend">Lets compare this with our old trusty mlm friend</a></li>
 <li><a href="#residualized-latent-change-score">Residualized latent change score</a></li>
 <li><a href="#conditional-models">Conditional Models</a></li>
 <li><a href="#multiple-group-models">Multiple group models</a></li>
@@ -2526,7 +2526,7 @@ Residual standard error: 0.173 on 198 degrees of freedom
 Multiple R-squared:  0.0001369, Adjusted R-squared:  -0.004913 
 F-statistic: 0.02711 on 1 and 198 DF,  p-value: 0.8694</code></pre>
 </div>
-residualized change score model
+<p>residualized change score model</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span><span class='op'>(</span><span class='va'>T2</span> <span class='op'>~</span> <span class='va'>group</span> <span class='op'>+</span> <span class='va'>T1</span>, <span class='va'>df</span><span class='op'>)</span><span class='op'>)</span>
@@ -2617,9 +2617,8 @@ Defined Parameters:
 <p><code>T2 - T1 = e</code></p>
 <p>In other words, a change score is equivalent to assuming a perfect regression association (correlation) between timepoints.</p>
 <p>Here, the residual will be equal to the average change and the variance of that will be the variance in the change. This can be thought of as akin to the mean and variance of our latent slope variable.</p>
-<h1 id="common-two-wave-models-in-path-analysis-form">common two wave models in path analysis form</h1>
 <p>Lets visualize each of these models via path models</p>
-<h2 id="residualized-change-model">Residualized change model</h2>
+<h1 id="residualized-change-model">Residualized change model</h1>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>knitr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/knitr/man/include_graphics.html'>include_graphics</a></span><span class='op'>(</span><span class='st'>"res.change.png"</span><span class='op'>)</span>
@@ -2628,7 +2627,6 @@ Defined Parameters:
 <p><img src="res.change.png" width="560" /></p>
 </div>
 <p>Our latent residual can be conceptualized as what is left over from T2 after accounting for T1 (based on the average association between T1 and T2). We now have a measure of error/change that is not correlated to T1.</p>
-<p>If we wanted to, because this is SEM, we could test this model against a no change model. What would this look like? Well we would fix <span class="math inline">\(\beta_1\)</span>⁩ to zero and compare the models</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>res.change</span> <span class='op'>&lt;-</span> <span class='st'>'
@@ -2666,9 +2664,183 @@ Variances:
                    Estimate  Std.Err  z-value  P(&gt;|z|)
    .T2                0.024    0.002   10.000    0.000</code></pre>
 </div>
-<h2 id="latent-change-score">Latent change score</h2>
-<p>Looping back to concerns about difference scores and residualized change scores, we can address these using SEM. The problems raised above go away when: 1) measuring change latently, and thus error free. 2.) separate initial levels from change. Both of these are accomplished above. However, what is not accomplished is getting terms similar to the slope component ie a mean and a variance of a slope.</p>
-<p>Knowing what we know about recreating difference scores via constraints, we can also make a latent change score by modifying this path model.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span><span class='op'>(</span><span class='va'>T2</span><span class='op'>~</span><span class='va'>T1</span>, <span class='va'>df</span><span class='op'>)</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>
+Call:
+lm(formula = T2 ~ T1, data = df)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.46327 -0.10765  0.00553  0.11529  0.44807 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)  0.09699    0.01391   6.974 4.51e-11 ***
+T1           0.84469    0.02338  36.135  &lt; 2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.1565 on 198 degrees of freedom
+Multiple R-squared:  0.8683,    Adjusted R-squared:  0.8677 
+F-statistic:  1306 on 1 and 198 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='va'>res.change.m</span> <span class='op'>&lt;-</span> <span class='st'>'
+  T2 ~ T1
+'</span>
+<span class='va'>res.change.m</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lavaan/man/sem.html'>sem</a></span><span class='op'>(</span><span class='va'>res.change.m</span>, data<span class='op'>=</span><span class='va'>df</span>,meanstructure <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>res.change.m</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>lavaan 0.6-8 ended normally after 23 iterations
+
+  Estimator                                         ML
+  Optimization method                           NLMINB
+  Number of model parameters                         3
+                                                      
+  Number of observations                           200
+                                                      
+Model Test User Model:
+                                                      
+  Test statistic                                 0.000
+  Degrees of freedom                                 0
+
+Parameter Estimates:
+
+  Standard errors                             Standard
+  Information                                 Expected
+  Information saturated (h1) model          Structured
+
+Regressions:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+  T2 ~                                                
+    T1                0.845    0.023   36.317    0.000
+
+Intercepts:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+   .T2                0.097    0.014    7.009    0.000
+
+Variances:
+                   Estimate  Std.Err  z-value  P(&gt;|z|)
+   .T2                0.024    0.002   10.000    0.000</code></pre>
+</div>
+<h3 id="residual-sd-from-the-regression-output-is-equal-to-the-sem-variance">residual sd from the regression output is equal to the SEM variance</h3>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fl'>0.1565</span><span class='op'>^</span><span class='fl'>2</span>
+</code></pre>
+</div>
+<pre><code>[1] 0.02449225</code></pre>
+</div>
+Note that this isn’t telling us anything about the difference score or even the means of the numbers per se.
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://personality-project.org/r/psych/'>psych</a></span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/pkg/psych/man/describe.html'>describe</a></span><span class='op'>(</span><span class='va'>df</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>       vars   n   mean    sd median trimmed   mad   min    max  range
+id*       1 200 100.50 57.88 100.50  100.50 74.13  1.00 200.00 199.00
+group*    2 200   1.50  0.50   1.50    1.50  0.74  1.00   2.00   1.00
+T1        3 200   0.36  0.47   0.41    0.35  0.61 -0.59   1.51   2.10
+T2        4 200   0.40  0.43   0.35    0.40  0.61 -0.54   1.17   1.71
+diff      5 200   0.04  0.17   0.06    0.05  0.17 -0.47   0.50   0.98
+        skew kurtosis   se
+id*     0.00    -1.22 4.09
+group*  0.00    -2.01 0.04
+T1      0.06    -1.16 0.03
+T2      0.01    -1.59 0.03
+diff   -0.44    -0.05 0.01</code></pre>
+</div>
+<p>This is why I am not a fan of the residualzed change score. It doesn’t get at change the way we typically think of it. Previously our MLMs provide a way to think about what change means, and SEMs will do the same.</p>
+<h1 id="latent-change-score">Latent change score</h1>
+<p>Looping back to concerns about difference scores and residualized change scores, we can address these using SEM. The problems raised above</p>
+<ul>
+<li>It isn’t true change, as you are implying people change similarly</li>
+<li>Change is likely associated with T1</li>
+<li>Hard to separate measurement error from true change</li>
+</ul>
+<p>go away when:</p>
+<ol type="1">
+<li>Examine absolute differences<br />
+</li>
+<li>Able to separate (account for) initial levels from change.<br />
+</li>
+<li>Measuring change latently, and thus error free.</li>
+</ol>
+<p>Number 2 is accomplished above in the residualized change models. However, what is not accomplished is getting terms similar to the slope component of a growth curve ie absolute change. Nor does it account for measurement error</p>
+<h2 id="lets-compare-this-with-our-old-trusty-mlm-friend">Lets compare this with our old trusty mlm friend</h2>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='co'># make df long</span>
+<span class='va'>df.long</span> <span class='op'>&lt;-</span> <span class='va'>df</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'>pivot_longer</span><span class='op'>(</span>cols<span class='op'>=</span><span class='va'>T1</span><span class='op'>:</span><span class='va'>T2</span>, names_to <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"drop"</span>,<span class='st'>"time"</span><span class='op'>)</span>,names_pattern <span class='op'>=</span> <span class='st'>"([A-Za-z]+)(\\d+)"</span>, values_to <span class='op'>=</span> <span class='st'>"value"</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'>select</span><span class='op'>(</span><span class='op'>-</span><span class='va'>drop</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'>mutate</span><span class='op'>(</span>time <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/numeric.html'>as.numeric</a></span><span class='op'>(</span><span class='va'>time</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>%&gt;%</span> 
+  <span class='fu'>mutate</span><span class='op'>(</span>time <span class='op'>=</span> <span class='va'>time</span> <span class='op'>-</span><span class='fl'>1</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>df.long</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code># A tibble: 6 x 5
+  id    group    diff  time   value
+  &lt;fct&gt; &lt;fct&gt;   &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+1 1     Tx     0.230      0 -0.302 
+2 1     Tx     0.230      1 -0.0722
+3 2     Tx     0.0281     0  0.0694
+4 2     Tx     0.0281     1  0.0974
+5 3     Tx    -0.144      0  0.271 
+6 3     Tx    -0.144      1  0.127 </code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/lme4/lme4/'>lme4</a></span><span class='op'>)</span>
+<span class='va'>mlm.1</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lme4/man/lmer.html'>lmer</a></span><span class='op'>(</span><span class='va'>value</span> <span class='op'>~</span>  <span class='va'>time</span> <span class='op'>+</span> <span class='op'>(</span><span class='fl'>1</span>  <span class='op'>|</span> <span class='va'>id</span> <span class='op'>)</span>, data <span class='op'>=</span> <span class='va'>df.long</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='va'>mlm.1</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>Linear mixed model fit by REML [&#39;lmerMod&#39;]
+Formula: value ~ time + (1 | id)
+   Data: df.long
+
+REML criterion at convergence: 118.1
+
+Scaled residuals: 
+     Min       1Q   Median       3Q      Max 
+-1.99283 -0.47843 -0.02817  0.51432  2.38752 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ id       (Intercept) 0.19014  0.436   
+ Residual             0.01489  0.122   
+Number of obs: 400, groups:  id, 200
+
+Fixed effects:
+            Estimate Std. Error t value
+(Intercept)  0.36056    0.03202  11.261
+time         0.04099    0.01220   3.359
+
+Correlation of Fixed Effects:
+     (Intr)
+time -0.191</code></pre>
+</div>
+<p>Time equals the absolute difference!! Intercept is the value at T1. I can recreate the mean values with this output. And I can see how people differ at T1.</p>
+<p>However, this does not tell you differences in how people change. That is, everyone is assumed to change similarly ie fixed slope.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/lme4/lme4/'>lme4</a></span><span class='op'>)</span>
+<span class='va'>mlm.2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/lme4/man/lmer.html'>lmer</a></span><span class='op'>(</span><span class='va'>value</span> <span class='op'>~</span>  <span class='va'>time</span> <span class='op'>+</span> <span class='op'>(</span><span class='fl'>1</span> <span class='op'>+</span> <span class='va'>time</span>  <span class='op'>|</span> <span class='va'>id</span> <span class='op'>)</span>, data <span class='op'>=</span> <span class='va'>df.long</span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<p>output: Error: number of observations (=400) &lt;= number of random effects (=400) for term (1 + time | id); the random-effects parameters and the residual variance (or scale parameter) are probably unidentifiable</p>
+<p><sad trombone noise></p>
+<p>We can either do two things: go with Bayes or go with SEM. SEM is actully more flexible here so lets explore this option.</p>
+<p>Knowing what we know about recreating difference scores via constraints, we can also make a latent change score by modifying the same residual path model. This time assuming the association between t1 and t2 are the same.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>knitr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/knitr/man/include_graphics.html'>include_graphics</a></span><span class='op'>(</span><span class='st'>"latent.change.png"</span><span class='op'>)</span>
@@ -2676,7 +2848,8 @@ Variances:
 </div>
 <p><img src="latent.change.png" width="527" /></p>
 </div>
-<p>Now we can interpret the residual as change, as it is explicitly what is left over from T2 after accoutering for T1. This is starting to look like what we have been doing recently. We have: 1. Mean and variance of the slope(change), akin to our random and fixed effects in MLM 2. Covariance between intercept and slope.</p>
+<p>Now we can interpret the residual as change, as it is explicitly what is left over from T2 after accoutering for T1. This is starting to look like what we for a growth model.</p>
+<p>We have: 1. Mean and variance of the slope(change), akin to our random and fixed effects in MLM 2. Covariance between intercept and slope.</p>
 <p>To test whether or not our slope is significant we can compare that with a model where slope is constrained to be zero. Same for testing the slope variance.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -2758,8 +2931,28 @@ Variances:
     T1                0.224    0.022   10.000    0.000
    .T2                0.000                           </code></pre>
 </div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/psych/man/describe.html'>describe</a></span><span class='op'>(</span><span class='va'>df</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code>       vars   n   mean    sd median trimmed   mad   min    max  range
+id*       1 200 100.50 57.88 100.50  100.50 74.13  1.00 200.00 199.00
+group*    2 200   1.50  0.50   1.50    1.50  0.74  1.00   2.00   1.00
+T1        3 200   0.36  0.47   0.41    0.35  0.61 -0.59   1.51   2.10
+T2        4 200   0.40  0.43   0.35    0.40  0.61 -0.54   1.17   1.71
+diff      5 200   0.04  0.17   0.06    0.05  0.17 -0.47   0.50   0.98
+        skew kurtosis   se
+id*     0.00    -1.22 4.09
+group*  0.00    -2.01 0.04
+T1      0.06    -1.16 0.03
+T2      0.01    -1.59 0.03
+diff   -0.44    -0.05 0.01</code></pre>
+</div>
+<p>Change now has an intercept and a variance – just like in growth curves!</p>
 <h2 id="residualized-latent-change-score">Residualized latent change score</h2>
-<p>Note that we haven’t yet removed the variance from the T1. This may or may not be something you want to do. It is mostly helpful if change has occurred prior to T1 and you are looking at the impact of some variable on change. If you are doing an intervention that takes place after T1 then maybe stick to latent change model. If you are measuring a developmental process across time and want to make sure that initial levels aren’t influencing change then you may want to do this. If you are doing that but think that initial levels are related to the change process then maybe you would be over controlling, wiping away what may be important. ¯_(ツ)_/¯</p>
+<p>Note that we haven’t yet removed the variance from the T1 (control for T1). There is a negative assocaition between where people start and how much they change.</p>
+<p>This may or may not be something you want to do. It is mostly helpful if change has occurred prior to T1 and you are looking at the impact of some variable on change. If you are doing an intervention that takes place after T1 then maybe stick to latent change model. If you are measuring a developmental process across time and want to make sure that initial levels aren’t influencing change then you may want to do this. If you are doing that but think that initial levels are related to the change process then maybe you would be over controlling, wiping away what may be important. ¯_(ツ)_/¯</p>
 <p><img src="res.lat.change.png" /></p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -2838,8 +3031,9 @@ Variances:
     T1                0.224    0.022   10.000    0.000
    .T2                0.000                           </code></pre>
 </div>
+<p>-.155 is the association between starting values and how someone changed. Because we are controlling for that, our change estimates will not be uncorrelated with T1.</p>
 <h2 id="conditional-models">Conditional Models</h2>
-<p>What if we want to predict initial status (or control for covariate) as well as see if change is predicted by some variable?</p>
+<p>What if we want to predict initial status (or control for a covariate) as well as see if change is predicted by some variable?</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>knitr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/knitr/man/include_graphics.html'>include_graphics</a></span><span class='op'>(</span><span class='st'>"cond.png"</span><span class='op'>)</span>
@@ -2937,7 +3131,31 @@ Variances:
    .T2                0.000                           </code></pre>
 </div>
 <p>Does that change regressed on group look familiar?</p>
-<p>This approach works the case with categorical as well as continuous predictors.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/base/summary.html'>summary</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/lm.html'>lm</a></span><span class='op'>(</span><span class='va'>diff</span> <span class='op'>~</span> <span class='va'>group</span>, <span class='va'>df</span><span class='op'>)</span><span class='op'>)</span> 
+</code></pre>
+</div>
+<pre><code>
+Call:
+lm(formula = diff ~ group, data = df)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-0.5174 -0.1133  0.0208  0.1310  0.4612 
+
+Coefficients:
+             Estimate Std. Error t value Pr(&gt;|t|)  
+(Intercept)  0.038975   0.017300   2.253   0.0254 *
+groupControl 0.004028   0.024466   0.165   0.8694  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.173 on 198 degrees of freedom
+Multiple R-squared:  0.0001369, Adjusted R-squared:  -0.004913 
+F-statistic: 0.02711 on 1 and 198 DF,  p-value: 0.8694</code></pre>
+</div>
+<p>This approach works with categorical as well as continuous predictors.</p>
 <h2 id="multiple-group-models">Multiple group models</h2>
 <p>As we have seen before, simple predictors does not allow the full range of tests on how two groups may differ. Just like before, we can specify multiple group models with this data.</p>
 <p><img src="multi.group.png" /></p>
@@ -3060,7 +3278,7 @@ Variances:
     T1                0.066    0.009    7.071    0.000
    .T2                0.000                           </code></pre>
 </div>
-Compare that with a model where we constrain the slopes to be the same
+<p>Compare that with a model where we constrain the slopes to be the same</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>group2</span> <span class='op'>&lt;-</span> <span class='st'>'
@@ -3273,7 +3491,7 @@ Variances:
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/semPlot/man/semPaths.html'>semPaths</a></span><span class='op'>(</span><span class='va'>bv.lcm</span><span class='op'>)</span>
 </code></pre>
 </div>
-<p><img src="2-wave_files/figure-html5/unnamed-chunk-17-1.png" width="624" /></p>
+<p><img src="2-wave_files/figure-html5/unnamed-chunk-26-1.png" width="624" /></p>
 </div>
 <h1 id="latent-differencechange-score-model">Latent difference/change score model</h1>
 <p>What if we had only two time points but had latent variables? This is where the model really starts to shine as we are better able to overcome some of the negatives of difference scores – namely that they are error filled. Here we will be measuring the variables latently to reduce error and constraining the measurement so that the assumption of measurement invariance holds.</p>
@@ -3287,6 +3505,21 @@ Variances:
 <div class="layout-chunk" data-layout="l-body">
 <pre><code>    T1X1     T1X2     T1X3     T2X1     T2X2     T2X3 
 4.857927 5.415410 4.218875 5.451574 6.204090 4.819225 </code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='va'>simdat</span><span class='op'>)</span>
+</code></pre>
+</div>
+<pre><code># A tibble: 6 x 6
+   T1X1  T1X2  T1X3  T2X1  T2X2  T2X3
+  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1  4.57  5.63  5.97  8.75  8.37  4.67
+2  5.52  6.45  3.62  4.44  4.74  4.88
+3  4.20  3.41  2.60  6.20  4.41  3.30
+4  7.98  7.48  5.49  7.44  9.60  7.22
+5  2.98  5.03  1.81  6.86  7.18  3.27
+6  4.68  4.97  3.78  7.05  4.44  2.99</code></pre>
 </div>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -3464,9 +3697,9 @@ R-Square:
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/semPlot/man/semPaths.html'>semPaths</a></span><span class='op'>(</span><span class='va'>change.fit</span> <span class='op'>)</span>
 </code></pre>
 </div>
-<p><img src="2-wave_files/figure-html5/unnamed-chunk-21-1.png" width="624" /></p>
+<p><img src="2-wave_files/figure-html5/unnamed-chunk-31-1.png" width="624" /></p>
 </div>
-<p>Same as before, we can run multiple groups analyses, introduce covariates/predictors, regress change onto time 1 and look at bi-variate processes simultanously.</p>
+<p>Same as before, we can run multiple groups analyses, introduce covariates/predictors, regress change onto time 1 and look at bi-variate processes simultaneously.</p>
 <h1 id="multiple-wave-latent-difference-score-model-lds">Multiple wave Latent Difference Score model (LDS)</h1>
 <p>What is especially nice is that we can extend the model into more than 2 waves. This is a rethinking of how to assess 3+ waves of data. As opposed to thinking of a standard growth process that is unchanging, this instead reconceptualizing the change as a set of difference scores. You can increase, then decrease, then increase, for example. There is flexibility in this approach. First, you can get more precise assessments of when change is occuring. If you are measuring grades 5-12 with some event predictor maybe the change only occured during grades 6-7. How would you test that in a standard growth model? Second, you can model more non-linear associations with parameters that are easier to interpret than quadratics and higher order terms.</p>
 <p>However there is also downsides. First, there are more parameters to estimate. More parameters mean a more difficult time in estimating the model. So it is possible that you have not as accurate (mean est) and not as precise (larger SEs) compared to a more simplistic model like a growth model. Second, there are increased analytic choices which could lead to confusing, p-hacking and all around disillusion on what is the correct model. For example, do you model all change paramters to have similar covariances across time? Do you constrain variance to be the same and allow the means to differ – or vice versa? Do you impose MI?</p>
@@ -3852,7 +4085,7 @@ Variances:
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/semPlot/man/semPaths.html'>semPaths</a></span><span class='op'>(</span><span class='va'>mw.model</span><span class='op'>)</span>
 </code></pre>
 </div>
-<p><img src="2-wave_files/figure-html5/unnamed-chunk-24-1.png" width="624" /></p>
+<p><img src="2-wave_files/figure-html5/unnamed-chunk-34-1.png" width="624" /></p>
 </div>
 <p>Gross. We have to draw this by hand to get a good representation.</p>
 <h2 id="predicting-change">predicting change</h2>
@@ -5892,7 +6125,7 @@ Variances:
 </div>
 <h2 id="alt-and-alt-sr">ALT and ALT-SR</h2>
 <p>Another way to build both a growth model and look at more specific time associations are through auto-regressive latent trajectory models (ALT) and ALT models with structured residuals (ALT-SR). The latter is a newer (and better) implimentation of the ALT idea.</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
@@ -5900,15 +6133,6 @@ Variances:
 <div class="d-appendix">
 </div>
 
-<!-- dynamically load mathjax for compatibility with self-contained -->
-<script>
-  (function () {
-    var script = document.createElement("script");
-    script.type = "text/javascript";
-    script.src  = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML";
-    document.getElementsByTagName("head")[0].appendChild(script);
-  })();
-</script>
 
 <!--radix_placeholder_site_after_body-->
 <!--/radix_placeholder_site_after_body-->
