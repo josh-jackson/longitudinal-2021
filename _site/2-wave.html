@@ -2465,9 +2465,12 @@ Homeworks
 <li><a href="#adding-time-varying-covariates">adding time varying covariates</a></li>
 </ul></li>
 <li><a href="#latent-duel-change-score-model-like-a-residualized-latent-change-score">Latent Duel change score model (like a residualized latent change score)</a></li>
-<li><a href="#bivariate-multi-wave-latent-change-model">Bivariate multi wave latent change model</a>
+<li><a href="#bivariate-multi-wave-latent-change-model">Bivariate multi wave latent change model</a></li>
+<li><a href="#ri-clpm-and-a-unifying-framework">RI-CLPM and a unifying framework</a>
 <ul>
-<li><a href="#alt-and-alt-sr">ALT and ALT-SR</a></li>
+<li><a href="#do-you-want-to-differentiate-between-within-person-and-between-person-effects">1. Do you want to differentiate between within person and between person effects?</a></li>
+<li><a href="#do-you-want-to-account-for-growth-across-time-or-do-you-want-to-model-it-wave-to-wave.">2. Do you want to account for growth across time? Or do you want to model it wave to wave.</a></li>
+<li><a href="#how-do-you-want-to-account-for-measurement-error">3. How do you want to account for measurement error?</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -3700,8 +3703,16 @@ R-Square:
 <p><img src="2-wave_files/figure-html5/unnamed-chunk-31-1.png" width="624" /></p>
 </div>
 <p>Same as before, we can run multiple groups analyses, introduce covariates/predictors, regress change onto time 1 and look at bi-variate processes simultaneously.</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>knitr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/knitr/man/include_graphics.html'>include_graphics</a></span><span class='op'>(</span><span class='st'>"f4.large.jpg"</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="f4.large.jpg" width="485" /></p>
+</div>
+<p>Gammas parameters here are new. They are similar to the cross lagged assoiations, only these are now predicting change directly, not just residualized change. We will see these more below when we look at these parameters with &gt;2 waves</p>
 <h1 id="multiple-wave-latent-difference-score-model-lds">Multiple wave Latent Difference Score model (LDS)</h1>
-<p>What is especially nice is that we can extend the model into more than 2 waves. This is a rethinking of how to assess 3+ waves of data. As opposed to thinking of a standard growth process that is unchanging, this instead reconceptualizing the change as a set of difference scores. You can increase, then decrease, then increase, for example. There is flexibility in this approach. First, you can get more precise assessments of when change is occuring. If you are measuring grades 5-12 with some event predictor maybe the change only occured during grades 6-7. How would you test that in a standard growth model? Second, you can model more non-linear associations with parameters that are easier to interpret than quadratics and higher order terms.</p>
+<p>What is especially nice is that we can extend the model into more than 2 waves. This is a rethinking of how to assess 3+ waves of data. As opposed to thinking of a standard growth process that is unchanging, this instead reconceptualizing the change as a set of difference scores. You can increase, then decrease, then increase, for example. There is flexibility in this approach. First, you can get more precise assessments of when change is occurring. If you are measuring grades 5-12 with some event predictor maybe the change only occurred during grades 6-7. How would you test that in a standard growth model? Second, you can model more non-linear associations with parameters that are easier to interpret than quadratics and higher order terms.</p>
 <p>However there is also downsides. First, there are more parameters to estimate. More parameters mean a more difficult time in estimating the model. So it is possible that you have not as accurate (mean est) and not as precise (larger SEs) compared to a more simplistic model like a growth model. Second, there are increased analytic choices which could lead to confusing, p-hacking and all around disillusion on what is the correct model. For example, do you model all change paramters to have similar covariances across time? Do you constrain variance to be the same and allow the means to differ – or vice versa? Do you impose MI?</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
@@ -4085,7 +4096,7 @@ Variances:
 <pre class="sourceCode r"><code class="sourceCode r"><span class='fu'><a href='https://rdrr.io/pkg/semPlot/man/semPaths.html'>semPaths</a></span><span class='op'>(</span><span class='va'>mw.model</span><span class='op'>)</span>
 </code></pre>
 </div>
-<p><img src="2-wave_files/figure-html5/unnamed-chunk-34-1.png" width="624" /></p>
+<p><img src="2-wave_files/figure-html5/unnamed-chunk-35-1.png" width="624" /></p>
 </div>
 <p>Gross. We have to draw this by hand to get a good representation.</p>
 <h2 id="predicting-change">predicting change</h2>
@@ -4475,7 +4486,7 @@ Variances:
 <h2 id="adding-intercept-and-growth-factors-to-lds-models">adding intercept and growth factors to LDS models</h2>
 <p>One top of this type of model you can fit a growth curve. Why? Can capture both general trends and more fine-grained temporal dynamics. This can be especially useful when trying to separate a known, more stable change occurring during development (e.g.natural aging process) from more specific fluctuations due to external factors (e.g., life events).</p>
 <p>However, there are some differences from our standard latent growth model. First, if the difference scores are equal across time the mean of the change factor will be 0. This is because the latent change variable are using difference scores as indicators, not standard indicators. As such, this can be interpreted as a constant rate of change (or not).</p>
-<p>If you want to get at a standard interpretation of a growth curve, seperate from change at a specific time point, you can define the change score with loadings of 1 for all difference score variables as opposed to increasing linearly eg 1,2,3,4,5…</p>
+<p>If you want to get at a standard interpretation of a growth curve, separate from change at a specific time point, you can define the change score with loadings of 1 for all difference score variables as opposed to increasing linearly eg 1,2,3,4,5…</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>lg.mw.model</span> <span class='op'>&lt;-</span>
@@ -4951,7 +4962,7 @@ Variances:
 </div>
 <p>What does the negative variance here mean?</p>
 <h2 id="steyer-models">“steyer” models</h2>
-<p>Similar to the above models but are addative in their interpretation. That is, the difference score between waves can be thought of adding or subtracting cumulatively from the previous wave. This is a closer hybrid between the growth model and the latent difference score model as the final difference score estimate is interpretted as across the entire time period.</p>
+<p>Similar to the above models but are additive in their interpretation. That is, the difference score between waves can be thought of adding or subtracting cumulatively from the previous wave. This is a closer hybrid between the growth model and the latent difference score model as the final difference score estimate is interpreted as across the entire time period.</p>
 <div class="layout-chunk" data-layout="l-body">
 <div class="sourceCode">
 <pre class="sourceCode r"><code class="sourceCode r"><span class='va'>model</span> <span class='op'>&lt;-</span>
@@ -5761,8 +5772,23 @@ Variances:
 <p>Notice the large changes within this model in terms of mean level change. This suggests that a lot of the change was due to intercept differences or that there is regression towards the mean.</p>
 <p>One could attempt to constrain each of the self-feedback parameters to be the same to see if this fit the model better or worse.</p>
 <h1 id="bivariate-multi-wave-latent-change-model">Bivariate multi wave latent change model</h1>
-<p>The real benefit of this type of framework is building on this type of change model to incorporate multiple change models simultanously. This allows one to look at multiple change processes in a single model, opening the door to analyzing more dynamic processes.</p>
+<p>The real benefit of this type of framework is building on this type of change model to incorporate multiple change models simultaneously. This allows one to look at multiple change processes in a single model, opening the door to analyzing more dynamic processes.</p>
 <p>One of the main parameters of interest is what is called a coupling parameter. Coupling parameter is like a self-feedback, but instead of feeding into change in the same variable, it is feeding into change in a different variable (not unlike the idea of cross-lags).</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>knitr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/knitr/man/include_graphics.html'>include_graphics</a></span><span class='op'>(</span><span class='st'>"F5.large.jpg"</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="F5.large.jpg" width="640" /></p>
+</div>
+<p>With coupling parameters you can see how change is associated with change at different levels. For example, think about changes in memory and brain size. As you decrease on memory, lets say you decrease on brain size. However, this may not occur for all levels of memory, or all levels of brain size. Much like an interaction, how you change depends on something. This time it depends it depends on where you are at a particular level of these two variables</p>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre class="sourceCode r"><code class="sourceCode r"><span class='fu'>knitr</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/knitr/man/include_graphics.html'>include_graphics</a></span><span class='op'>(</span><span class='st'>"topo.png"</span><span class='op'>)</span>
+</code></pre>
+</div>
+<p><img src="topo.png" width="566" /></p>
+</div>
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
@@ -6123,8 +6149,14 @@ Variances:
     0.000
     0.000</code></pre>
 </div>
-<h2 id="alt-and-alt-sr">ALT and ALT-SR</h2>
-<p>Another way to build both a growth model and look at more specific time associations are through auto-regressive latent trajectory models (ALT) and ALT models with structured residuals (ALT-SR). The latter is a newer (and better) implimentation of the ALT idea.</p>
+<h1 id="ri-clpm-and-a-unifying-framework">RI-CLPM and a unifying framework</h1>
+<p>All of these two wave and cross lagged models are monsters in a number of ways. 1. They are huge and complicated messes.2. They combine different aspects of other models. Much like Frakenstein, they are built by parts of other models.</p>
+<p>Because they all can be built from one another the models can be thought of as subsets of one another. The differences are typically theoretical in nature. See this paper for an overview:</p>
+<p><a href="https://pdfs.semanticscholar.org/fbf1/167a9ada8b416267ea75a258f8f2881f6654.pdf" class="uri">https://pdfs.semanticscholar.org/fbf1/167a9ada8b416267ea75a258f8f2881f6654.pdf</a></p>
+<p>The key questions are:</p>
+<h2 id="do-you-want-to-differentiate-between-within-person-and-between-person-effects">1. Do you want to differentiate between within person and between person effects?</h2>
+<h2 id="do-you-want-to-account-for-growth-across-time-or-do-you-want-to-model-it-wave-to-wave.">2. Do you want to account for growth across time? Or do you want to model it wave to wave.</h2>
+<h2 id="how-do-you-want-to-account-for-measurement-error">3. How do you want to account for measurement error?</h2>
 <div class="sourceCode" id="cb33"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->

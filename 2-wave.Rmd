@@ -687,13 +687,17 @@ Same as before, we can run multiple groups analyses, introduce covariates/predic
 
 
 
+```{r}
+knitr::include_graphics("f4.large.jpg")
+```
 
 
+Gammas parameters here are new. They are similar to the cross lagged assoiations, only these are now predicting change directly, not just residualized change. We will see these more below when we look at these parameters with >2 waves
 
 
 # Multiple wave Latent Difference Score model (LDS)
 
-What is especially nice is that we can extend the model into more than 2 waves. This is a rethinking of how to assess 3+ waves of data. As opposed to thinking of a standard growth process that is unchanging, this instead reconceptualizing the change as a set of difference scores. You can increase, then decrease, then increase, for example. There is flexibility in this approach. First, you can get more precise assessments of when change is occuring. If you are measuring grades 5-12 with some event predictor maybe the change only occured during grades 6-7. How would you test that in a standard growth model? Second, you can model more non-linear associations with parameters that are easier to interpret than quadratics and higher order terms. 
+What is especially nice is that we can extend the model into more than 2 waves. This is a rethinking of how to assess 3+ waves of data. As opposed to thinking of a standard growth process that is unchanging, this instead reconceptualizing the change as a set of difference scores. You can increase, then decrease, then increase, for example. There is flexibility in this approach. First, you can get more precise assessments of when change is occurring. If you are measuring grades 5-12 with some event predictor maybe the change only occurred during grades 6-7. How would you test that in a standard growth model? Second, you can model more non-linear associations with parameters that are easier to interpret than quadratics and higher order terms. 
 
 However there is also downsides. First, there are more parameters to estimate. More parameters mean a more difficult time in estimating the model. So it is possible that you have not as accurate (mean est) and not as precise (larger SEs) compared to a more simplistic model like a growth model. Second, there are increased analytic choices which could lead to confusing, p-hacking and all around disillusion on what is the correct model. For example, do you model all change paramters to have similar covariances across time? Do you constrain variance to be the same and allow the means to differ -- or vice versa? Do you impose MI? 
 
@@ -813,6 +817,9 @@ summary(mw.model, fit.measures=TRUE, standardized=TRUE)
 semPaths(mw.model)
 ```
 Gross. We have to draw this by hand to get a good representation. 
+
+
+
 
 ## predicting change
 
@@ -939,7 +946,7 @@ One top of this type of model you can fit a growth curve. Why?  Can capture both
 
 However, there are some differences from our standard latent growth model. First, if the difference scores are equal across time the mean of the change factor will be 0. This is because the latent change variable are using difference scores as indicators, not standard indicators. As such, this can be interpreted as a constant rate of change (or not). 
 
-If you want to get at a standard interpretation of a growth curve, seperate from change at a specific time point, you can define the change score with loadings of 1 for all difference score variables as opposed to increasing linearly eg 1,2,3,4,5...
+If you want to get at a standard interpretation of a growth curve, separate from change at a specific time point, you can define the change score with loadings of 1 for all difference score variables as opposed to increasing linearly eg 1,2,3,4,5...
 
 ```{r}
 lg.mw.model <-
@@ -1181,7 +1188,7 @@ What does the negative variance here mean?
 
 ## "steyer" models
 
-Similar to the above models but are addative in their interpretation. That is, the difference score between waves can be thought of adding or subtracting cumulatively from the previous wave. This is a closer hybrid between the growth model and the latent difference score model as the final difference score estimate is interpretted as across the entire time period. 
+Similar to the above models but are additive in their interpretation. That is, the difference score between waves can be thought of adding or subtracting cumulatively from the previous wave. This is a closer hybrid between the growth model and the latent difference score model as the final difference score estimate is interpreted as across the entire time period. 
 
 
 ```{r}
@@ -1395,6 +1402,9 @@ y_t_all$alc
 ```
 
 
+
+
+
 # Latent Duel change score model (like a residualized latent change score)
 
 The regression from t-1 to change at t can also be introduced into these models. It will have a new name: self-feedback. It is akin to our standard intercept-change correlation where it may be those who start higher change more (or less). This parameter will become important when we start to examine bivariate models. It is called duel because there are two components: the rate of change (slope) and the self-feedback. 
@@ -1513,9 +1523,21 @@ One could attempt to constrain each of the self-feedback parameters to be the sa
 
 # Bivariate multi wave latent change model
 
-The real benefit of this type of framework is building on this type of change model to incorporate multiple change models simultanously. This allows one to look at multiple change processes in a single model, opening the door to analyzing more dynamic processes.
+The real benefit of this type of framework is building on this type of change model to incorporate multiple change models simultaneously. This allows one to look at multiple change processes in a single model, opening the door to analyzing more dynamic processes.
 
 One of the main parameters of interest is what is called a coupling parameter. Coupling parameter is like a self-feedback, but instead of feeding into change in the same variable, it is feeding into change in a different variable (not unlike the idea of cross-lags).
+
+
+```{r}
+knitr::include_graphics("F5.large.jpg")
+```
+
+
+With coupling parameters you can see how change is associated with change at different levels. For example, think about changes in memory and brain size. As you decrease on memory, lets say you decrease on brain size. However, this may not occur for all levels of memory, or all levels of brain size. Much like an interaction, how you change depends on something. This time it depends it depends on where you are at a particular level of these two variables 
+
+```{r}
+knitr::include_graphics("topo.png")
+```
 
 
 ```{r, echo = FALSE}
@@ -1701,8 +1723,28 @@ summary(fitBDCS, fit.measures=TRUE, standardized=TRUE)
 ```
 
 
-## ALT and ALT-SR
+# RI-CLPM and a unifying framework
 
-Another way to build both a growth model and look at more specific time associations are through auto-regressive latent trajectory models (ALT) and ALT models with structured residuals (ALT-SR). The latter is a newer (and better) implimentation of the ALT idea.  
+All of these two wave and cross lagged models are monsters in a number of ways. 1. They are huge and complicated messes.2. They combine different aspects of other models. Much like Frakenstein, they are built by parts of other models. 
+
+Because they all can be built from one another the models can be thought of as subsets of one another. The differences are typically theoretical in nature. See this paper for an overview: 
+
+https://pdfs.semanticscholar.org/fbf1/167a9ada8b416267ea75a258f8f2881f6654.pdf
+
+
+The key questions are: 
+
+## 1. Do you want to differentiate between within person and between person effects? 
+
+
+
+
+## 2. Do you want to account for growth across time? Or do you want to model it wave to wave. 
+
+
+
+## 3. How do you want to account for measurement error? 
+
+
 
 
